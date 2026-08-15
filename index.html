@@ -1030,7 +1030,7 @@ function renderMenu(el) {
     </div>
     <div class="chips">${sel.map(r => `
       <span class="chip">${esc(r.title)}
-        <button onclick="toggle(${r.id});go('/menu')" aria-label="移出">✕</button>
+        <button onclick="toggle(${r.id});renderMenu(current)" aria-label="移出">✕</button>
       </span>`).join('')}</div>
     ${sel.length ? `
       <div class="bo-talk wait">
