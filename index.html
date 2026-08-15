@@ -703,10 +703,13 @@ window.addEventListener('hashchange', route);
 
 /* ══════════ 首頁 ══════════ */
 
-/* 首頁有兩段：先打招呼（趴著），點一下才出現兩個入口 */
+/* 首頁有兩段：先看到牠在睡，點一下才出現兩個入口 */
 let homeGreeted = false;
+let homeLine = '';
 
 function renderHome(el) {
+  // 招呼語要在 markSeen() 之前算，不然「隔幾天沒來」永遠會是 0 天
+  homeLine = boGreeting();
   el.innerHTML = `<div class="home" id="home"></div>`;
   paintHome($('#home', el));
 }
@@ -734,7 +737,7 @@ function paintHome(box) {
   document.body.classList.remove('no-tray');
   box.onclick = null;
   box.innerHTML = `
-    ${say('今天怎麼辦？', 'bottom', ' data-at="50%"')}
+    ${say(homeLine, 'bottom', ' data-at="50%"')}
     <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
