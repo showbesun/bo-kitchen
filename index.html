@@ -249,7 +249,7 @@ img { display: block; max-width: 100%; }
   transition: transform .12s;
 }
 .card:active { transform: scale(.985); }
-.card-img { width: 100%; height: 158px; object-fit: cover; background: var(--line); }
+.card-img { width: 100%; height: 186px; object-fit: cover; background: var(--bg); }
 .card-b { padding: 12px 15px 14px; }
 .card-t { font-size: 15.5px; font-weight: 700; line-height: 1.35; padding-right: 42px; }
 .card-m { font-size: 12px; color: var(--faint); margin-top: 5px; display: flex; gap: 10px; }
@@ -262,7 +262,7 @@ img { display: block; max-width: 100%; }
 
 /* ＋ 加入今日菜單：食譜牆和推薦結果共用同一顆 */
 .add-btn {
-  position: absolute; right: 11px; top: 158px; transform: translateY(-50%);
+  position: absolute; right: 11px; top: 186px; transform: translateY(-50%);
   width: 38px; height: 38px; border-radius: 50%;
   display: grid; place-items: center;
   font-size: 21px; line-height: 1;
@@ -500,7 +500,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '3';
+const ASSETS = '4';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
