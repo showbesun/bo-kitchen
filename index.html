@@ -139,16 +139,47 @@ img { display: block; max-width: 100%; }
 }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
 
-/* 首頁慢寶前後晃 —— 支點在牠抓著樹枝的地方 */
-.bo-stage.sway img {
-  transform-origin: 50% 9%;
-  animation: sway 4.2s ease-in-out infinite;
+/* 首頁慢寶前後晃。
+   整張圖一起轉的話樹枝也會歪 —— 所以同一張圖疊兩層：
+   下層是會晃的身體，上層只露出樹枝那一段、靜止不動，順便蓋住接縫。 */
+.bo-stage { position: relative; }
+.bo-swing {
+  transform-origin: 50% 17%;         /* 支點在牠抓著樹枝的地方 */
+  animation: sway 4.6s ease-in-out infinite;
+}
+.bo-branch {
+  position: absolute; inset: 0;
+  width: 100%;
+  clip-path: inset(0 0 80% 0);       /* 樹枝在 9%–18%，留一點蓋住接縫 */
+  pointer-events: none;
 }
 @keyframes sway {
-  0%, 100% { transform: rotate(-1.5deg); }
-  50%      { transform: rotate(1.5deg); }
+  0%, 100% { transform: rotate(-1.4deg); }
+  50%      { transform: rotate(1.4deg); }
 }
-@media (prefers-reduced-motion: reduce) { .bo-stage.sway img { animation: none; } }
+
+/* 眨眼：用周圍毛色的小圓片蓋住眼睛，位置是從圖上量出來的 */
+.lid {
+  position: absolute;
+  width: 4%; height: 4.6%;
+  margin: -2.3% 0 0 -2%;
+  background: #E4C09B;
+  border-radius: 50%;
+  transform: scaleY(0);
+  animation: blink 6.5s ease-in-out infinite;
+}
+.lid-a { left: 18.6%; top: 58.3%; }
+.lid-b { left: 29.5%; top: 45.9%; }
+@keyframes blink {
+  0%, 88%, 100%   { transform: scaleY(0); }
+  90%, 92%        { transform: scaleY(1); }
+  94%             { transform: scaleY(0); }
+  96%, 97.5%      { transform: scaleY(1); }   /* 偶爾連眨兩下 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bo-swing, .lid { animation: none; }
+}
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
 .bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
@@ -631,7 +662,7 @@ const routes = [
   [/^\/$/,                 renderHome],
   [/^\/wall$/,             renderWall],
   [/^\/recipe\/(\d+)$/,    renderRecipe],
-  [/^\/menu\/(buy|prep)$/, renderMenu],
+  [/^\/menu$/,            renderMenu],
 ];
 
 let stack = [];            // 走過的路徑，用來判斷前進還是後退
@@ -690,7 +721,13 @@ function paintHome(box) {
     document.body.classList.add('no-tray');
     box.innerHTML = `
       ${say(boGreeting(), 'bottom', ' data-at="30%"')}
-      <div class="bo-stage sway"><img src="${BO.hang}" alt="慢寶"></div>
+      <div class="bo-stage">
+        <div class="bo-swing">
+          <img src="${BO.hang}" alt="慢寶">
+          <i class="lid lid-a"></i><i class="lid lid-b"></i>
+        </div>
+        <img class="bo-branch" src="${BO.hang}" alt="" aria-hidden="true">
+      </div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
     return;
@@ -979,26 +1016,21 @@ function stepsHTML(r) {
 
 /* ══════════ 今日菜單 ══════════ */
 
-function renderMenu(el, m) {
-  const tab = m[1];
+function renderMenu(el) {
   const sel = RECIPES.filter(r => menu.has(r.id));
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
       <div><h1>今日菜單</h1><div class="sub">${sel.length} 道</div></div>
     </div>
-    <div class="tabs">
-      <button class="${tab === 'buy' ? 'on' : ''}" onclick="go('/menu/buy')">買菜</button>
-      <button class="${tab === 'prep' ? 'on' : ''}" onclick="go('/menu/prep')">備料</button>
-    </div>
     <div class="chips">${sel.map(r => `
       <span class="chip">${esc(r.title)}
-        <button onclick="toggle(${r.id});go('/menu/${tab}')" aria-label="移出">✕</button>
+        <button onclick="toggle(${r.id});go('/menu')" aria-label="移出">✕</button>
       </span>`).join('')}</div>
     <div class="wrap">${
       sel.length === 0
         ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>慢寶繼續睡。</div>`
-        : (tab === 'buy' ? buyHTML(sel) : prepHTML(sel))
+        : buyHTML(sel)
     }</div>`;
 }
 
@@ -1046,28 +1078,6 @@ function buyHTML(sel) {
   }).join('');
 }
 
-const PREP_ORDER = ['先洗','先泡','先醃','切絲','切塊','切片','切段','切末','調醬汁','開火前放旁邊'];
-
-function prepHTML(sel) {
-  let out = '';
-  const urgent = sel.filter(r => r.urgentNote);
-  if (urgent.length) {
-    out += `<div class="urgent"><h3>先做，不然會卡住</h3>${
-      urgent.map(r => `<p><b>${esc(r.title)}</b>：${esc(r.urgentNote)}</p>`).join('')
-    }</div>`;
-  }
-  PREP_ORDER.forEach(g => {
-    const items = sel.flatMap(r => (r.prepNotes || []).filter(p => p.group === g).map(p => ({ ...p, from: r.title })));
-    if (!items.length) return;
-    out += `<div class="grp-h">${g}</div>` + items.map(p => `
-      <div class="row">
-        <span>${esc(p.name)}<span class="r-from">　${esc(p.from)}</span></span>
-        <span class="r-amt">${esc(p.amount)}</span>
-      </div>
-      <div class="row" style="border:none;padding-top:0;color:var(--muted);font-size:13px">${esc(p.method)}</div>`).join('');
-  });
-  return out || '<div class="empty">這幾道不用特別備料。</div>';
-}
 
 /* ══════════ 底部菜單條 ══════════ */
 
@@ -1083,7 +1093,7 @@ function paintTray() {
 }
 
 $('#tray-go').onclick = () =>
-  (location.hash || '#/').slice(1).startsWith('/menu') ? back() : go('/menu/buy');
+  (location.hash || '#/').slice(1).startsWith('/menu') ? back() : go('/menu');
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
