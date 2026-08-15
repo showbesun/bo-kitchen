@@ -400,6 +400,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
   flex: none;
 }
 .tray-go:active { transform: scale(.95); }
+.tray-go.finish { background: var(--gold); color: var(--text); }
 .tray-badge {
   position: absolute; top: -5px; right: -5px;
   min-width: 20px; height: 20px; padding: 0 5px;
@@ -451,15 +452,6 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 .rm { flex: none; color: var(--line); font-size: 13px; padding: 2px 4px; }
 .rm:hover { color: var(--brand-dim); }
 
-.done-btn {
-  display: block; width: 100%;
-  margin: 18px 0 4px; padding: 13px;
-  border-radius: var(--r-md);
-  background: var(--brand); color: #fff;
-  font-size: 14.5px; font-weight: 700; letter-spacing: 1px;
-  animation: pop .3s cubic-bezier(.34,1.5,.64,1) both;
-}
-.done-btn:active { transform: scale(.98); }
 
 .have-box { margin: 18px 0 4px; padding: 12px 14px; border: 1.5px dashed var(--line); border-radius: var(--r-md); }
 .have-t { font-size: 11.5px; letter-spacing: 1.5px; color: var(--faint); margin-bottom: 8px; }
@@ -645,6 +637,7 @@ function boLine(path) {
   const n = menu.size;
   if (path.startsWith('/menu')) {
     if (n === 0) return [BO.sleepy, '空的。我繼續睡。'];
+    if (shoppingDone()) return [BO.satisfied, '都買齊了，回來吧。'];
     return path.endsWith('prep')
       ? [BO.cheeky, '要先泡先醃的別拖，不然你會等到天亮。']
       : [BO.satisfied, `這些買齊就夠了，${n} 道份。`];
@@ -1073,27 +1066,19 @@ function toggleBought(name) {
     el.classList.toggle('got', on);
     el.querySelector('.tick').textContent = on ? '✓' : '';
   });
-  refreshDone();
-}
-
-/* 全部勾完才顯示收工鈕 */
-function refreshDone() {
-  const btn = $('#done-btn', current);
-  if (!btn) return;
-  const rows = [...current.querySelectorAll('.row.buy')];
-  btn.hidden = !rows.length || !rows.every(el => el.classList.contains('got'));
+  paintTray();                       // 全部勾完的話，底部橫條會變成收工鈕
 }
 function haveIt(name) {
   haveAtHome.has(name) ? haveAtHome.delete(name) : haveAtHome.add(name);
   bought.delete(name);
-  saveBuy(); renderMenu(current);
+  saveBuy(); renderMenu(current); paintTray();
 }
 
 /* 收工：把這一趟的勾選和「家裡已經有」全部清掉。
    生鮮用完就沒了，這兩份狀態不該跨到下一趟。 */
 function finishShopping() {
   bought.clear(); haveAtHome.clear();
-  saveBuy(); renderMenu(current);
+  saveBuy(); renderMenu(current); paintTray();
 }
 
 const FRESH = {
@@ -1103,7 +1088,8 @@ const FRESH = {
 };
 const catOf = n => Object.keys(FRESH).find(k => FRESH[k].some(w => n.includes(w))) || 'groc';
 
-function buyHTML(sel) {
+/* 彙總這份菜單要買的東西。買菜清單和底部橫條都靠它，兩邊才不會各算各的 */
+function aggregate(sel) {
   const bins = { meat: {}, veg: {}, chill: {}, groc: {}, season: {} };
   const fixed = { meat: [], veg: [], chill: [], groc: [], season: [] };
 
@@ -1127,6 +1113,27 @@ function buyHTML(sel) {
       item.items.forEach(([name, num, unit]) => name !== '水' && put('season', name, num, unit));
     }
   }));
+
+  return { bins, fixed };
+}
+
+/* 還要買的（扣掉家裡已經有的） */
+function shoppingNames() {
+  const sel = RECIPES.filter(r => menu.has(r.id));
+  if (!sel.length) return [];
+  const { bins, fixed } = aggregate(sel);
+  return [...Object.values(bins).flatMap(b => Object.values(b)).map(x => x.name),
+          ...Object.values(fixed).flat().map(x => x[0])]
+         .filter(n => !haveAtHome.has(n));
+}
+
+const shoppingDone = () => {
+  const n = shoppingNames();
+  return n.length > 0 && n.every(x => bought.has(x));
+};
+
+function buyHTML(sel) {
+  const { bins, fixed } = aggregate(sel);
 
   const row = (name, amt) => {
     if (haveAtHome.has(name)) return '';                 // 家裡有的先收起來
@@ -1152,14 +1159,6 @@ function buyHTML(sel) {
     return r ? `<div class="grp-h">${label}</div>${r}` : '';
   }).join('');
 
-  // 全部勾完 = 買完了。收工按鈕只在那時候出現
-  const names = [...Object.values(bins).flatMap(b => Object.values(b)).map(x => x.name),
-                 ...Object.values(fixed).flat().map(x => x[0])]
-                 .filter(n => !haveAtHome.has(n));
-  const allDone = names.length && names.every(n => bought.has(n));
-  html += `<button class="done-btn" id="done-btn" onclick="finishShopping()"
-            ${allDone ? '' : 'hidden'}>買完了，收工</button>`;
-
   // 收起來的那些要有路可以回來，不然就是死路
   const home = [...haveAtHome];
   if (home.length) {
@@ -1182,11 +1181,17 @@ function paintTray() {
   const badge = $('#tray-badge');
   badge.hidden = menu.size === 0;
   badge.textContent = menu.size;
-  $('#tray-go').firstChild.textContent = path.startsWith('/menu') ? '關閉' : '今日菜單';
+  const go_ = $('#tray-go');
+  const done = path.startsWith('/menu') && shoppingDone();
+  go_.firstChild.textContent = done ? '買完了，收工' : (path.startsWith('/menu') ? '關閉' : '今日菜單');
+  go_.classList.toggle('finish', done);
 }
 
-$('#tray-go').onclick = () =>
-  (location.hash || '#/').slice(1).startsWith('/menu') ? back() : go('/menu');
+$('#tray-go').onclick = () => {
+  const path = (location.hash || '#/').slice(1);
+  if (!path.startsWith('/menu')) return go('/menu');
+  return shoppingDone() ? finishShopping() : back();
+};
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
