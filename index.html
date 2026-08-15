@@ -58,6 +58,7 @@ img { display: block; max-width: 100%; }
   position: absolute;
   inset: 0;
   overflow-y: auto;
+  overflow-x: hidden;               /* 對話框的 SVG 四周留了透明餘裕，會撐出橫向捲動 */
   -webkit-overflow-scrolling: touch;
   background: var(--bg);
   padding: env(safe-area-inset-top) 0 24px;
@@ -126,7 +127,6 @@ img { display: block; max-width: 100%; }
 .bub > span { position: relative; z-index: 1; text-wrap: balance; }
 .bub > svg {
   position: absolute;
-  left: -46px; top: -46px;
   overflow: visible;
   pointer-events: none;
   filter: url(#wobble);
@@ -492,7 +492,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=3"></script>
+<script src="recipes.js?v=4"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -528,14 +528,26 @@ const BO = {
    泡泡＋尾巴＝一條封閉路徑。分成兩個元素畫，抖動濾鏡會讓兩條邊線錯開，
    中間就會出現一條接縫 —— 所以整個外框必須是同一條 path。 */
 
-const BUB_PAD = 46;                 // SVG 往外撐的餘裕，讓尾巴有地方畫
+/* 尾巴只從一邊伸出去，所以餘裕只留那一側 ——
+   四邊都留 46px 的話，泡泡一撐到接近滿寬就會多出橫向捲動區。 */
+const BUB_EDGE = 8;                 // 線寬和抖動位移的餘裕
+
+function bubPad(tail) {
+  const len = (tail.len || 30) + 14;
+  return {
+    l: tail.side === 'left'   ? len : BUB_EDGE,
+    r: tail.side === 'right'  ? len : BUB_EDGE,
+    t: BUB_EDGE,
+    b: tail.side === 'bottom' ? len : BUB_EDGE,
+  };
+}
 
 /* w,h = 泡泡本體尺寸；tail = {side, at, len} —— at 是尾尖沿著該邊的位置 */
 function bubblePath(w, h, tail) {
-  const P = BUB_PAD;
+  const p = bubPad(tail);
   const R = 24;                     // 圓角；四角刻意給一點差異，才不像 Word
   const r1 = R + 4, r2 = R - 3, r3 = R + 2, r4 = R - 1;
-  const x0 = P, y0 = P, x1 = P + w, y1 = P + h;
+  const x0 = p.l, y0 = p.t, x1 = p.l + w, y1 = p.t + h;
   const half = tail.half || 15;     // 尾巴根部半寬
   const len = tail.len || 30;
 
@@ -583,16 +595,19 @@ function drawBubble(el) {
   const at = raw
     ? (raw.endsWith('%') ? span * parseFloat(raw) / 100 : +raw)
     : (side === 'bottom' ? w / 2 : Math.min(32, h / 2));
-  const d = bubblePath(w, h, { side, at,
-    len: +(el.dataset.len || 30), half: +(el.dataset.half || 15) });
+  const tail = { side, at, len: +(el.dataset.len || 30), half: +(el.dataset.half || 15) };
+  const p = bubPad(tail);
+  const d = bubblePath(w, h, tail);
   let svg = el.querySelector(':scope > svg');
   if (!svg) {
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
     el.prepend(svg);
   }
-  svg.setAttribute('width', w + BUB_PAD * 2);
-  svg.setAttribute('height', h + BUB_PAD * 2);
+  svg.setAttribute('width', w + p.l + p.r);
+  svg.setAttribute('height', h + p.t + p.b);
+  svg.style.left = -p.l + 'px';
+  svg.style.top  = -p.t + 'px';
   svg.querySelector('path').setAttribute('d', d);
 }
 
@@ -625,38 +640,38 @@ const markSeen = () => localStorage.setItem(SEEN, Date.now());
 function boGreeting() {
   const d = daysSinceSeen();
   const h = new Date().getHours();
-  if (d === null)          return '喔，新的人。';
-  if (d >= 3)              return `${d} 天沒來了。是不是都在吃外送。`;
-  if (h >= 22 || h < 5)    return '這個時間？……好吧。';
-  if (d === 0)             return '又是你。';
-  return '回來啦。';
+  if (d === null)          return '喔，新的人。……好，先看看吃什麼。';
+  if (d >= 3)              return `${d} 天沒來。……好吧，今天吃什麼？`;
+  if (h >= 22 || h < 5)    return '這個時間還要煮？……好吧。';
+  if (d === 0)             return '又是你。……今天也要吃好的？';
+  return '回來啦。今天想吃什麼？';
 }
 
 /* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
 function boLine(path) {
   const n = menu.size;
   if (path.startsWith('/menu')) {
-    if (n === 0) return [BO.sleepy, '空的。我繼續睡。'];
+    if (n === 0) return [BO.sleepy, '空的。……那我先不忙。'];
     if (shoppingDone()) return [BO.satisfied, '都買齊了，回來吧。'];
     return path.endsWith('prep')
-      ? [BO.cheeky, '要先泡先醃的別拖，不然你會等到天亮。']
-      : [BO.satisfied, `這些買齊就夠了，${n} 道份。`];
+      ? [BO.cheeky, '要泡要醃的先處理。你可以拖，食材不會配合。']
+      : [BO.satisfied, `這些買齊就夠了，${n} 道份。別把冰箱塞滿。`];
   }
   if (path.startsWith('/recipe/')) {
     const r = byId(+path.split('/')[2]);
     if (!r) return [BO.blank, ''];
     // 每道自己的碎碎念。有 urgentNote 的那幾則已經把提醒寫進去了，不必再靠下面那句罐頭
     if (r.murmur)      return [r.urgentNote ? BO.cheeky : BO.sleepy, r.murmur];
-    if (r.urgentNote)  return [BO.cheeky, '這道有東西要先做，往下看。'];
-    if (r.stars >= 3)  return [BO.surprised, '這道你確定？……好啦，你可以。'];
-    return [BO.sleepy, '這道我熟。'];
+    if (r.urgentNote)  return [BO.cheeky, '這道有東西要先做。先往下看，省得等等卡住。'];
+    if (r.stars >= 3)  return [BO.surprised, '這道你確定？……好啦，我信你。'];
+    return [BO.sleepy, '這道我熟。照著來就好。'];
   }
   if (path === '/wall') {
-    if (n === 0) return [BO.sleepy, '慢慢看，我不趕時間。'];
-    if (n <= 3)  return [BO.satisfied, `${n} 道了。還要嗎？`];
-    return [BO.cheeky, `${n} 道……你今天很有野心喔。`];
+    if (n === 0) return [BO.sleepy, '慢慢看。挑吃的，本來就不能催。'];
+    if (n <= 3)  return [BO.satisfied, `${n} 道了。還要加？……行啊。`];
+    return [BO.cheeky, `${n} 道……你今天是真的有野心喔。`];
   }
-  return [n ? BO.satisfied : BO.sleepy, n ? `${n} 道在等你。我也在等。` : ''];
+  return [n ? BO.satisfied : BO.sleepy, n ? `菜單裡有 ${n} 道。你挑，我等著吃。` : ''];
 }
 
 /* ── 小工具 ── */
@@ -817,7 +832,7 @@ function paintGrid(el) {
   const g = $('#grid', el);
   g.innerHTML = list.length
     ? list.map(cardHTML).join('')
-    : '<div class="empty">找不到這道菜。<br>慢寶也沒聽過。</div>';
+    : '<div class="empty">找不到這道菜。<br>我也沒聽過。</div>';
 }
 
 function cardHTML(r) {
@@ -1039,7 +1054,7 @@ function renderMenu(el) {
       </div>` : ''}
     <div class="wrap">${
       sel.length === 0
-        ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>慢寶繼續睡。</div>`
+        ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>那我先睡。</div>`
         : `<div class="sect" style="margin:14px 0 0">
              <div class="sect-t">購物清單</div>
              ${buyHTML(sel)}
