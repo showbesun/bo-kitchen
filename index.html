@@ -499,6 +499,10 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
    路由用 hash，瀏覽器／手機的上一頁自動就會動
    ══════════════════════════════════════════════ */
 
+/* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
+const ASSETS = '3';
+const asset = p => p + '?v=' + ASSETS;
+
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -511,17 +515,17 @@ let portions = 2;
 
 /* ── 慢寶 ── */
 const BO = {
-  hang:    'bo/hang_u.webp',
-  sleep:   'bo/hang_sleep.webp',   // 招呼頁：牠還在睡
-  drape:   'bo/hang_drape.webp',
-  cookA:   'bo/cook_bowl.webp',
-  cookB:   'bo/cook_pan.webp',
-  sleepy:  'bo/face_sleepy.webp',
-  satisfied:'bo/face_satisfied.webp',
-  cheeky:  'bo/face_cheeky.webp',
-  blank:   'bo/face_blank.webp',
-  thinking:'bo/face_thinking.webp',
-  surprised:'bo/face_surprised.webp',
+  hang:    asset('bo/hang_u.webp'),
+  sleep:   asset('bo/hang_sleep.webp'),   // 招呼頁：牠還在睡
+  drape:   asset('bo/hang_drape.webp'),
+  cookA:   asset('bo/cook_bowl.webp'),
+  cookB:   asset('bo/cook_pan.webp'),
+  sleepy:  asset('bo/face_sleepy.webp'),
+  satisfied:asset('bo/face_satisfied.webp'),
+  cheeky:  asset('bo/face_cheeky.webp'),
+  blank:   asset('bo/face_blank.webp'),
+  thinking:asset('bo/face_thinking.webp'),
+  surprised:asset('bo/face_surprised.webp'),
 };
 
 /* ══════════ 對話框 ══════════
@@ -839,7 +843,7 @@ function cardHTML(r) {
   const on = menu.has(r.id);
   return `
     <div class="card">
-      <img class="card-img" src="${r.image}" alt="" loading="lazy" onclick="go('/recipe/${r.id}')">
+      <img class="card-img" src="${asset(r.image)}" alt="" loading="lazy" onclick="go('/recipe/${r.id}')">
       <button class="add-btn ${on ? 'on' : ''}" data-id="${r.id}"
               onclick="event.stopPropagation();toggle(${r.id},this)"
               aria-label="加入今日菜單">${on ? '✓' : '＋'}</button>
@@ -882,7 +886,7 @@ function renderRecipe(el, m) {
       <button class="back-btn" onclick="back()">‹</button>
     </div>
 
-    <img class="r-hero" src="${r.image}" alt="">
+    <img class="r-hero" src="${asset(r.image)}" alt="">
 
     <div class="r-card">
       <div class="r-title">${esc(r.title)}</div>
