@@ -151,13 +151,13 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .bo-stage.sway img { animation: none; } }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
-.bo-talk { display: flex; align-items: flex-start; gap: 20px; margin: 18px 14px 0; }
-.bo-talk > img { width: 118px; flex: none; margin-top: 2px; }
+.bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
+.bo-talk > img { width: 104px; flex: none; margin-top: 6px; }
 .bo-talk .bub {
   flex: 1;
-  padding: 14px 18px;
-  font-size: 13.5px; line-height: 1.8; color: var(--muted);
-  margin-top: 6px;
+  margin-left: -30px;              /* 壓在鍋子上，慢寶才不像浮在空中 */
+  padding: 13px 16px;
+  font-size: 13.5px; line-height: 1.75; color: var(--muted);
 }
 
 .home .bub { margin-bottom: 8px; }
@@ -312,7 +312,22 @@ img { display: block; max-width: 100%; }
   font-size: 12px; color: var(--faint); letter-spacing: 1px;
   padding: 2px 2px 14px;
 }
-.ing-group { font-size: 12px; color: var(--gold); font-weight: 700; margin: 14px 0 4px; letter-spacing: 1px; }
+/* 醬汁／醃料：一組有名字的東西，不是一堆散落的調味料 */
+.ing-set {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 12px 14px 6px;
+  margin: 12px 0;
+}
+.ing-set-name {
+  font-size: 13px; font-weight: 700; color: var(--gold);
+  letter-spacing: .5px;
+}
+.ing-set-note { font-size: 12px; color: var(--faint); line-height: 1.6; margin-top: 3px; }
+.ing-set-body { margin-top: 8px; }
+.ing-set-body .ing { padding: 6px 0; font-size: 13.5px; }
+.ing-set-body .ing:first-child { border-top: 1px dashed var(--line); padding-top: 9px; }
 .paren { font-size: 11.5px; color: var(--faint); }
 
 .phase { font-size: 12px; letter-spacing: 2px; color: var(--brand-dim); font-weight: 700; margin: 18px 0 8px; }
@@ -805,7 +820,7 @@ function renderRecipe(el, m) {
     ${r.note ? `
       <div class="bo-talk">
         <img src="${BO.cookB}" alt="慢寶">
-        ${say(r.note, 'left', ' data-at="42" data-len="18" data-half="8"')}
+        ${say(r.note, 'left', ' data-at="34" data-len="14" data-half="7"')}
       </div>` : ''}
 
     <div class="r-tabs">
@@ -866,11 +881,20 @@ function paintIngs(el, r) {
     </div>`;
   };
 
+  // 醬汁／醃料整組framed起來並掛上名字 —— 步驟裡就只要喊名字，不必重列調味料
+  const group = item => {
+    const p = notes.get(item.label);
+    if (p) used.add(item.label);
+    return `<div class="ing-set">
+      <div class="ing-set-name">${esc(item.label)}</div>
+      ${item.note ? `<div class="ing-set-note">${esc(item.note)}</div>` : ''}
+      ${p ? `<div class="ing-set-note">${esc(p.method)}</div>` : ''}
+      <div class="ing-set-body">${item.items.map(line).join('')}</div>
+    </div>`;
+  };
+
   let html = (r.shoppingList || []).map(item =>
-    Array.isArray(item)
-      ? line(item)
-      : `<div class="ing-group">${esc(item.label)}${item.note ? `　<span class="paren">${esc(item.note)}</span>` : ''}</div>`
-        + item.items.map(line).join('')
+    Array.isArray(item) ? line(item) : group(item)
   ).join('');
 
   // prepNotes 裡有、但不是單一食材的（醬汁、醃料那類），補在後面
