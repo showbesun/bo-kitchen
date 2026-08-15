@@ -155,7 +155,7 @@ img { display: block; max-width: 100%; }
 .bo-talk > img { width: 104px; flex: none; margin-top: 6px; }
 .bo-talk .bub {
   flex: 1;
-  margin-left: -30px;              /* 壓在鍋子上，慢寶才不像浮在空中 */
+  margin-left: -14px;              /* 壓住鍋子邊緣就好 —— 壓太多會戳到臉 */
   padding: 13px 16px;
   font-size: 13.5px; line-height: 1.75; color: var(--muted);
 }
@@ -600,7 +600,11 @@ function boLine(path) {
 /* ── 小工具 ── */
 const cardTime = t => String(t || '')
   .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
-  .replace(/約\s*/g, '≈ ').replace(/小時/g, 'Hr').replace(/分鐘/g, 'Min').trim();
+  .replace(/約\s*/g, '')            // 「約」拿掉，時間本來就是估的
+  .replace(/分鐘/g, '分')
+  .replace(/\s+/g, '')
+  .replace(/([\d.]+)/g, ' $1 ')     // 原始資料空格不一致，統一重排
+  .replace(/\s+/g, ' ').trim();
 
 function fmt(n) {
   const v = Math.round(n * 100) / 100;
@@ -820,7 +824,7 @@ function renderRecipe(el, m) {
     ${r.note ? `
       <div class="bo-talk">
         <img src="${BO.cookB}" alt="慢寶">
-        ${say(r.note, 'left', ' data-at="34" data-len="14" data-half="7"')}
+        ${say(r.note, 'left', ' data-at="58%" data-len="16" data-half="7"')}
       </div>` : ''}
 
     <div class="r-tabs">
@@ -911,6 +915,47 @@ function paintIngs(el, r) {
 /* 純備料的階段不進步驟頁 —— 那些內容備料頁已經有了 */
 const PREP_PHASE = /備料/;
 
+/* 步驟裡的食材自動加粗。
+   資料裡本來有的 <strong> 不一致（r10–r12 完全沒有），靠人工補會一直漏，
+   所以改成比對食材清單即時標記 —— 結構上不可能不一致。 */
+function ingredientNames(r) {
+  const raw = [];
+  (r.shoppingList || []).forEach(item => {
+    if (Array.isArray(item)) raw.push(item[0]);
+    else { raw.push(item.label); item.items.forEach(i => raw.push(i[0])); }
+  });
+  const out = new Set();
+  raw.forEach(n => String(n)
+    .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+    .split(/[＋+、／\/]|或/)
+    .forEach(part => { const p = part.trim(); if (p.length >= 2) out.add(p); }));
+  // 長的先比，才不會「大蔥」被「蔥」搶先切掉
+  return [...out].sort((a, b) => b.length - a.length);
+}
+
+function emphasize(step, r) {
+  const plain = String(step).replace(/<[^>]+>/g, '');     // 丟掉資料裡舊的標記
+  const names = ingredientNames(r);
+  const marks = [];
+  let masked = plain;
+  names.forEach(n => {
+    let i;
+    while ((i = masked.indexOf(n)) !== -1) {
+      marks.push([i, i + n.length]);
+      masked = masked.slice(0, i) + '\u0000'.repeat(n.length) + masked.slice(i + n.length);
+    }
+  });
+  if (!marks.length) return esc(plain);
+  marks.sort((a, b) => a[0] - b[0]);
+  let out = '', at = 0;
+  marks.forEach(([a, b]) => {
+    if (a < at) return;
+    out += esc(plain.slice(at, a)) + '<strong>' + esc(plain.slice(a, b)) + '</strong>';
+    at = b;
+  });
+  return out + esc(plain.slice(at));
+}
+
 function stepsHTML(r) {
   let out = '', open = false, skipping = false, skipped = 0;
   (r.steps || []).forEach(s => {
@@ -924,7 +969,7 @@ function stepsHTML(r) {
     } else {
       if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
-      out += `<li>${s}</li>`;                    // steps 內含 <strong>，故不 escape
+      out += `<li>${emphasize(s, r)}</li>`;
     }
   });
   out += open ? '</ol>' : '';
