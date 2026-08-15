@@ -158,28 +158,8 @@ img { display: block; max-width: 100%; }
   50%      { transform: rotate(1.4deg); }
 }
 
-/* 眨眼：用周圍毛色的小圓片蓋住眼睛，位置是從圖上量出來的 */
-.lid {
-  position: absolute;
-  width: 4%; height: 4.6%;
-  margin: -2.3% 0 0 -2%;
-  background: #E4C09B;
-  border-radius: 50%;
-  transform: scaleY(0);
-  animation: blink 6.5s ease-in-out infinite;
-}
-.lid-a { left: 18.6%; top: 58.3%; }
-.lid-b { left: 29.5%; top: 45.9%; }
-@keyframes blink {
-  0%, 88%, 100%   { transform: scaleY(0); }
-  90%, 92%        { transform: scaleY(1); }
-  94%             { transform: scaleY(0); }
-  96%, 97.5%      { transform: scaleY(1); }   /* 偶爾連眨兩下 */
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .bo-swing, .lid { animation: none; }
-}
+@media (prefers-reduced-motion: reduce) { .bo-swing { animation: none; } }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
 .bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
@@ -724,7 +704,6 @@ function paintHome(box) {
       <div class="bo-stage">
         <div class="bo-swing">
           <img src="${BO.hang}" alt="慢寶">
-          <i class="lid lid-a"></i><i class="lid lid-b"></i>
         </div>
         <img class="bo-branch" src="${BO.hang}" alt="" aria-hidden="true">
       </div>
