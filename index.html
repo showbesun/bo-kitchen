@@ -27,6 +27,9 @@
   --shadow: 0 2px 10px rgba(120, 90, 60, 0.07);
   --tray-h: 62px;
 }
+/* 招呼畫面不要底部菜單條 */
+body.no-tray { --tray-h: 0px; }
+body.no-tray .tray { display: none; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -107,45 +110,69 @@ img { display: block; max-width: 100%; }
   text-align: center;
 }
 
-/* 對話框：圓角刻意不對稱，看起來像手畫的，尾巴是圓的不是尖的 */
+/* 對話框：外框走 SVG 位移濾鏡，邊線是抖的，像手畫的，不是 Word 的圓角矩形 */
 .bo-say {
   position: relative;
   display: inline-block;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 30px 26px 28px 24px / 26px 30px 24px 28px;
-  padding: 13px 22px;
+  padding: 15px 26px;
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text);
-  box-shadow: 0 3px 12px rgba(150, 110, 70, .09);
   max-width: 300px;
-  margin: 0 auto 16px;
+  margin: 0 auto 22px;
   animation: pop .32s cubic-bezier(.34,1.5,.64,1) both;
 }
-/* 兩顆逐漸變小的圓，softer than a triangle */
-.bo-say::before, .bo-say::after {
-  content: '';
-  position: absolute;
+.bo-say > span { position: relative; z-index: 2; }
+.bo-say::before {                                  /* 泡泡本體 */
+  content: ''; position: absolute; inset: 0; z-index: 1;
   background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 50%;
+  border: 2px solid var(--line);
+  border-radius: 36px 30px 34px 28px / 30px 36px 28px 34px;
+  filter: url(#wobble);
 }
-.bo-say::before { width: 13px; height: 13px; left: 50%; margin-left: -18px; bottom: -9px; }
-.bo-say::after  { width: 7px;  height: 7px;  left: 50%; margin-left: -3px;  bottom: -19px; }
+/* 尾巴用 SVG 畫，才收得出尖；壓在泡泡底下所以看不到接縫 */
+.bo-tail {
+  position: absolute; z-index: 0;
+  left: calc(50% - 40px); bottom: -27px;
+  width: 46px; height: 38px;
+  overflow: visible;
+  filter: url(#wobble2);
+}
+.bo-tail path { fill: var(--surface); stroke: var(--line); stroke-width: 2.4; stroke-linejoin: round; }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
 
-/* 慢寶在內文裡插嘴：頭像 ＋ 對話框 */
-.bo-aside { display: flex; align-items: flex-start; gap: 10px; margin: 10px 0; }
-.bo-aside img { width: 46px; flex: none; margin-top: 2px; }
+/* 首頁慢寶前後晃 —— 支點在牠抓著樹枝的地方 */
+.bo-stage.sway img {
+  transform-origin: 50% 9%;
+  animation: sway 4.2s ease-in-out infinite;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%      { transform: rotate(1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) { .bo-stage.sway img { animation: none; } }
+
+/* 慢寶在內文裡說話：頭像 ＋ 對話框，尾巴指向左邊的牠 */
+.bo-aside { display: flex; align-items: flex-start; gap: 12px; margin: 16px 14px 0; }
+.bo-aside > img { width: 54px; flex: none; margin-top: 4px; }
 .bo-aside .bub {
   position: relative;
+  flex: 1;
+  padding: 13px 17px;
+  font-size: 13.5px; line-height: 1.75; color: var(--muted);
+}
+.bo-aside .bub > span { position: relative; z-index: 2; }
+.bo-aside .bub::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
   background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 22px 24px 22px 8px / 22px 22px 24px 10px;
-  padding: 10px 15px;
-  font-size: 13.5px; line-height: 1.7; color: var(--muted);
-  box-shadow: 0 2px 8px rgba(150,110,70,.07);
+  border: 2px solid var(--line);
+  border-radius: 26px 22px 24px 20px / 22px 26px 20px 24px;
+  filter: url(#wobble);
+}
+.bo-aside .bub .bo-tail {
+  left: -20px; bottom: auto; top: 12px;
+  width: 34px; height: 30px;
+  transform: rotate(-104deg);
 }
 
 .bo-stage { width: 100%; max-width: 430px; }
@@ -362,6 +389,17 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 .urgent b { font-weight: 700; }
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="wobble">
+    <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="wobble2">
+    <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="19" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
 <div id="viewport"></div>
 
 <div class="tray">
@@ -496,6 +534,8 @@ function route() {
   if (isBack) stack = stack.slice(0, prev + 1);
   else if (stack[stack.length - 1] !== path) stack.push(path);
 
+  if (path !== '/') document.body.classList.remove('no-tray');
+
   const vp = $('#viewport');
   const old = current;
   const page = document.createElement('div');
@@ -527,17 +567,20 @@ function renderHome(el) {
 
 function paintHome(box) {
   if (!homeGreeted) {
+    // 招呼：倒掛，慢慢晃，不要底部菜單條來打擾
+    document.body.classList.add('no-tray');
     box.innerHTML = `
-      <div class="bo-say">${esc(boGreeting())}</div>
-      <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
+      <div class="bo-say"><span>${esc(boGreeting())}</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
+      <div class="bo-stage sway"><img src="${BO.hang}" alt="慢寶"></div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
     return;
   }
+  document.body.classList.remove('no-tray');
   box.onclick = null;
   box.innerHTML = `
-    <div class="bo-say">今天怎麼辦？</div>
-    <div class="bo-stage"><img src="${BO.hang}" alt="慢寶"></div>
+    <div class="bo-say"><span>今天怎麼辦？</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
+    <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
         <div class="g-t">我知道要吃什麼</div>
@@ -629,7 +672,11 @@ function renderRecipe(el, m) {
       <div class="d-title">${esc(r.title)}</div>
       ${r.subtitle ? `<div class="d-sub">${esc(r.subtitle)}</div>` : ''}
     </div>
-    ${r.note ? `<div class="d-note">${esc(r.note)}</div>` : ''}
+    ${r.note ? `
+      <div class="bo-aside">
+        <img src="${BO.cheeky}" alt="慢寶">
+        <div class="bub"><span>${esc(r.note)}</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
+      </div>` : ''}
     <div class="d-bar">
       <div class="r">
         <span class="lbl">時間</span>
@@ -657,12 +704,8 @@ function renderRecipe(el, m) {
     </div>
     ${r.tips && r.tips.length ? `
       <div class="sect">
-        <div class="sect-t">慢寶碎碎念</div>
-        ${r.tips.map((t, i) => `
-          <div class="bo-aside">
-            <img src="${[BO.sleepy, BO.cheeky, BO.blank, BO.satisfied][i % 4]}" alt="">
-            <div class="bub">${esc(t)}</div>
-          </div>`).join('')}
+        <div class="sect-t">注意事項</div>
+        <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
       </div>` : ''}
     <div class="sect">
       <button class="tray-go" style="width:100%;padding:14px"
