@@ -86,7 +86,7 @@ img { display: block; max-width: 100%; }
   position: sticky; top: 0; z-index: 5;
   display: flex; align-items: center; gap: 10px;
   padding: 14px 20px 12px;
-  background: linear-gradient(var(--bg) 72%, transparent);
+  background: linear-gradient(var(--bg) 86%, transparent);
 }
 .back-btn {
   width: 36px; height: 36px; flex: none;
@@ -183,10 +183,10 @@ img { display: block; max-width: 100%; }
   font-size: 13.5px; line-height: 1.75; color: var(--muted);
 }
 
-/* 菜單頁的慢寶 —— 刻意讓牠從左邊出血，看起來是探出來的，不是被切到的 */
-.bo-talk.wait { align-items: center; margin: 6px 14px 0; }
-.bo-talk.wait > img { width: 148px; margin-left: -30px; margin-top: 0; }
-.bo-talk.wait .bub { flex: 0 1 auto; max-width: 250px; margin-left: -10px; }
+/* 菜單頁的慢寶 —— 牠站中間偏左，泡泡往右延伸到跟清單同一個邊界 */
+.bo-talk.wait { align-items: center; margin: 4px 14px 0; padding-left: 14px; }
+.bo-talk.wait > img { width: 132px; margin-top: 0; }
+.bo-talk.wait .bub { flex: 1; max-width: none; margin-left: -12px; }
 
 .home .bub { margin-bottom: 8px; }
 .bo-stage { width: 100%; max-width: 430px; }
@@ -432,6 +432,32 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 .row + .row { border-top: 1px dashed var(--line); }
 .row .r-amt { color: var(--muted); white-space: nowrap; }
 .row .r-from { font-size: 11px; color: var(--faint); }
+
+/* 買菜清單的一列：勾選圈 · 品名 · 份量 · 家裡已經有 */
+.row.buy { display: flex; align-items: center; gap: 10px; padding: 9px 12px; }
+.row.buy .r-name { flex: 1; }
+.row.buy .r-amt { color: var(--muted); white-space: nowrap; }
+.tick {
+  width: 21px; height: 21px; flex: none;
+  border: 1.6px solid var(--line); border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 12px; color: transparent;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.row.buy.got .tick { background: var(--brand); border-color: var(--brand); color: #fff; }
+.row.buy.got .r-name,
+.row.buy.got .r-amt { color: var(--faint); text-decoration: line-through; }
+.rm { flex: none; color: var(--line); font-size: 13px; padding: 2px 4px; }
+.rm:hover { color: var(--brand-dim); }
+
+.have-box { margin: 18px 0 4px; padding: 12px 14px; border: 1.5px dashed var(--line); border-radius: var(--r-md); }
+.have-t { font-size: 11.5px; letter-spacing: 1.5px; color: var(--faint); margin-bottom: 8px; }
+.have-chip {
+  font-size: 12.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 4px 11px; margin: 0 6px 6px 0;
+}
+.have-chip:hover { border-color: var(--brand-dim); color: var(--brand); }
 
 .urgent {
   background: #FFF6E4; border: 1px solid #EBD2A0;
@@ -1015,6 +1041,31 @@ function renderMenu(el) {
   layoutBubbles(el);
 }
 
+/* 買菜狀態：勾起來的、以及家裡已經有的。兩份都存著，關掉再開還在 */
+const BOUGHT = 'bo_bought', HAVE = 'bo_have';
+let bought     = new Set(JSON.parse(localStorage.getItem(BOUGHT) || '[]'));
+let haveAtHome = new Set(JSON.parse(localStorage.getItem(HAVE)   || '[]'));
+const saveBuy = () => {
+  localStorage.setItem(BOUGHT, JSON.stringify([...bought]));
+  localStorage.setItem(HAVE,   JSON.stringify([...haveAtHome]));
+};
+function toggleBought(name) {
+  const on = !bought.has(name);
+  on ? bought.add(name) : bought.delete(name);
+  saveBuy();
+  // 只更新那一列 —— 整頁重繪會把捲動位置洗掉
+  current.querySelectorAll('.row.buy').forEach(el => {
+    if (el.querySelector('.r-name')?.textContent !== name) return;
+    el.classList.toggle('got', on);
+    el.querySelector('.tick').textContent = on ? '✓' : '';
+  });
+}
+function haveIt(name) {
+  haveAtHome.has(name) ? haveAtHome.delete(name) : haveAtHome.add(name);
+  bought.delete(name);
+  saveBuy(); renderMenu(current);
+}
+
 const FRESH = {
   meat: ['雞','棒棒腿','豬','牛','肉','魚','蝦','鴨','羊'],
   veg:  ['蘿蔔','洋蔥','大蔥','蔥','辣椒','蒜','瓜','薯','栗','海帶','香蕉','菇','菜','韭','番茄','青椒','高麗','豆','芹'],
@@ -1047,16 +1098,39 @@ function buyHTML(sel) {
     }
   }));
 
+  const row = (name, amt) => {
+    if (haveAtHome.has(name)) return '';                 // 家裡有的先收起來
+    const on = bought.has(name);
+    return `<div class="row buy ${on ? 'got' : ''}">
+      <button class="tick" onclick="toggleBought('${esc(name).replace(/'/g, "\\'")}')"
+              aria-label="${on ? '取消勾選' : '買到了'}">${on ? '✓' : ''}</button>
+      <span class="r-name">${esc(name)}</span>
+      <span class="r-amt">${esc(amt)}</span>
+      <button class="rm" onclick="haveIt('${esc(name).replace(/'/g, "\\'")}')"
+              aria-label="家裡已經有">✕</button>
+    </div>`;
+  };
+
   const rows = bin => [
-    ...Object.values(bins[bin]).map(x => `<div class="row"><span>${esc(x.name)}</span><span class="r-amt">${fmt(x.n)}${esc(x.u)}</span></div>`),
-    ...fixed[bin].map(([n, u]) => `<div class="row"><span>${esc(n)}</span><span class="r-amt">${esc(u)}</span></div>`),
+    ...Object.values(bins[bin]).map(x => row(x.name, fmt(x.n) + x.u)),
+    ...fixed[bin].map(([n, u]) => row(n, u)),
   ].join('');
 
   const secs = [['meat','肉類海鮮'],['veg','蔬菜水果'],['chill','冷藏'],['groc','雜貨'],['season','調味料']];
-  return secs.map(([k, label]) => {
+  let html = secs.map(([k, label]) => {
     const r = rows(k);
     return r ? `<div class="grp-h">${label}</div>${r}` : '';
   }).join('');
+
+  // 收起來的那些要有路可以回來，不然就是死路
+  const home = [...haveAtHome];
+  if (home.length) {
+    html += `<div class="have-box">
+      <div class="have-t">家裡已經有 ${home.length} 樣</div>
+      ${home.map(n => `<button class="have-chip" onclick="haveIt('${esc(n).replace(/'/g, "\\'")}')">${esc(n)} ↩</button>`).join('')}
+    </div>`;
+  }
+  return html;
 }
 
 
