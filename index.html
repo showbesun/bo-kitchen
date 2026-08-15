@@ -110,35 +110,33 @@ img { display: block; max-width: 100%; }
   text-align: center;
 }
 
-/* 對話框：外框走 SVG 位移濾鏡，邊線是抖的，像手畫的，不是 Word 的圓角矩形 */
-.bo-say {
+/* ── 對話框 ──
+   泡泡和尾巴是「同一條封閉路徑」，所以接縫不可能存在。
+   路徑由 JS 依實際文字尺寸算出來，尾尖座標指定成對準慢寶。 */
+.bub {
   position: relative;
+  z-index: 2;                        /* 尾巴會伸進慢寶那張圖，不能被蓋掉 */
   display: inline-block;
-  padding: 15px 26px;
+  padding: 14px 22px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--text);
-  max-width: 300px;
-  margin: 0 auto 22px;
   animation: pop .32s cubic-bezier(.34,1.5,.64,1) both;
 }
-.bo-say > span { position: relative; z-index: 2; }
-.bo-say::before {                                  /* 泡泡本體 */
-  content: ''; position: absolute; inset: 0; z-index: 1;
-  background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: 36px 30px 34px 28px / 30px 36px 28px 34px;
+.bub > span { position: relative; z-index: 1; }
+.bub > svg {
+  position: absolute;
+  left: -46px; top: -46px;
+  overflow: visible;
+  pointer-events: none;
   filter: url(#wobble);
 }
-/* 尾巴用 SVG 畫，才收得出尖；壓在泡泡底下所以看不到接縫 */
-.bo-tail {
-  position: absolute; z-index: 0;
-  left: calc(50% - 40px); bottom: -27px;
-  width: 46px; height: 38px;
-  overflow: visible;
-  filter: url(#wobble2);
+.bub > svg path {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
 }
-.bo-tail path { fill: var(--surface); stroke: var(--line); stroke-width: 2.4; stroke-linejoin: round; }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
 
 /* 首頁慢寶前後晃 —— 支點在牠抓著樹枝的地方 */
@@ -152,29 +150,17 @@ img { display: block; max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .bo-stage.sway img { animation: none; } }
 
-/* 慢寶在內文裡說話：頭像 ＋ 對話框，尾巴指向左邊的牠 */
-.bo-aside { display: flex; align-items: flex-start; gap: 12px; margin: 16px 14px 0; }
-.bo-aside > img { width: 54px; flex: none; margin-top: 4px; }
-.bo-aside .bub {
-  position: relative;
+/* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
+.bo-talk { display: flex; align-items: flex-start; gap: 6px; margin: 18px 14px 0; }
+.bo-talk > img { width: 118px; flex: none; margin-top: 2px; }
+.bo-talk .bub {
   flex: 1;
-  padding: 13px 17px;
-  font-size: 13.5px; line-height: 1.75; color: var(--muted);
-}
-.bo-aside .bub > span { position: relative; z-index: 2; }
-.bo-aside .bub::before {
-  content: ''; position: absolute; inset: 0; z-index: 1;
-  background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: 26px 22px 24px 20px / 22px 26px 20px 24px;
-  filter: url(#wobble);
-}
-.bo-aside .bub .bo-tail {
-  left: -20px; bottom: auto; top: 12px;
-  width: 34px; height: 30px;
-  transform: rotate(-104deg);
+  padding: 14px 18px;
+  font-size: 13.5px; line-height: 1.8; color: var(--muted);
+  margin-top: 6px;
 }
 
+.home .bub { margin-bottom: 8px; }
 .bo-stage { width: 100%; max-width: 430px; }
 .bo-stage img { width: 100%; }
 
@@ -262,28 +248,46 @@ img { display: block; max-width: 100%; }
 
 /* ─────────── 食譜詳情 ─────────── */
 
-.hero { width: 100%; height: 230px; object-fit: cover; background: var(--line); }
-.d-head { padding: 18px 20px 0; }
-.d-title { font-size: 22px; font-weight: 700; line-height: 1.3; }
-.d-sub { font-size: 13px; color: var(--faint); margin-top: 4px; }
-.d-note {
-  background: var(--surface); border-radius: var(--r-md);
-  padding: 14px 16px; margin: 16px 20px 0;
-  font-size: 13.5px; color: var(--muted); box-shadow: var(--shadow);
+/* 封面：圖 → 決定卡疊上來。一屏之內就能決定要不要煮 */
+.r-hero { width: 100%; height: 246px; object-fit: cover; background: var(--line); }
+.r-card {
+  position: relative;
+  margin: -30px 14px 0;
+  padding: 18px 18px 16px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 18px rgba(120,90,60,.10);
 }
-.d-bar {
-  margin: 16px 14px 0; padding: 4px 16px;
-  background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow);
+.r-title { font-size: 21px; font-weight: 700; line-height: 1.32; }
+.r-sub { font-size: 12.5px; color: var(--faint); margin-top: 3px; }
+.r-stats {
+  display: flex; align-items: center; gap: 0;
+  margin: 14px 0 15px;
 }
-.d-bar .r {
-  display: flex; align-items: center; gap: 14px;
-  padding: 11px 0;
+.r-stat { flex: 1; }
+.r-stat + .r-stat { border-left: 1px solid var(--line); padding-left: 14px; }
+.r-stat .k { font-size: 10.5px; letter-spacing: 1.5px; color: var(--faint); }
+.r-stat .v { font-size: 14.5px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+.r-stat .tn { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+.portion { display: flex; align-items: center; gap: 3px; margin-top: 1px; }
+
+.r-add {
+  width: 100%; padding: 13px;
+  border-radius: var(--r-md);
+  background: var(--brand); color: #fff;
+  font-size: 14.5px; font-weight: 700; letter-spacing: .5px;
+  transition: transform .12s, background .15s;
 }
-.d-bar .r + .r { border-top: 1px dashed var(--line); }
-.d-bar .lbl { font-size: 12px; color: var(--faint); letter-spacing: 1px; flex: none; min-width: 52px; }
-.d-bar .val { font-size: 14.5px; font-weight: 700; }
-.d-bar .tn { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
-.portion { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.r-add:active { transform: scale(.98); }
+.r-add.on { background: var(--gold); color: var(--text); }
+
+/* 備料 / 步驟 分頁 —— 跟今日菜單同一套體例 */
+.r-tabs { display: flex; gap: 4px; margin: 22px 14px 14px; }
+.r-tabs button {
+  flex: 1; padding: 10px 0; font-size: 14px; border-radius: 999px;
+  color: var(--muted); background: var(--surface);
+}
+.r-tabs button.on { background: var(--brand); color: #fff; font-weight: 700; }
 .portion button {
   width: 30px; height: 30px; border-radius: 50%;
   border: 1.5px solid var(--line); font-size: 16px; color: var(--brand);
@@ -439,6 +443,93 @@ const BO = {
   surprised:'bo/face_surprised.webp',
 };
 
+/* ══════════ 對話框 ══════════
+   泡泡＋尾巴＝一條封閉路徑。分成兩個元素畫，抖動濾鏡會讓兩條邊線錯開，
+   中間就會出現一條接縫 —— 所以整個外框必須是同一條 path。 */
+
+const BUB_PAD = 46;                 // SVG 往外撐的餘裕，讓尾巴有地方畫
+
+/* w,h = 泡泡本體尺寸；tail = {side, at, len} —— at 是尾尖沿著該邊的位置 */
+function bubblePath(w, h, tail) {
+  const P = BUB_PAD;
+  const R = 24;                     // 圓角；四角刻意給一點差異，才不像 Word
+  const r1 = R + 4, r2 = R - 3, r3 = R + 2, r4 = R - 1;
+  const x0 = P, y0 = P, x1 = P + w, y1 = P + h;
+  const half = 15;                  // 尾巴根部半寬
+  const len = tail.len || 30;
+
+  const seg = [];
+  seg.push(`M ${x0 + r1} ${y0}`);
+  seg.push(`H ${x1 - r2} Q ${x1} ${y0} ${x1} ${y0 + r2}`);
+
+  if (tail.side === 'right') {
+    const ty = y0 + tail.at;
+    seg.push(`V ${ty - half}`);
+    seg.push(`Q ${x1 + len * .55} ${ty - half * .5} ${x1 + len} ${ty}`);
+    seg.push(`Q ${x1 + len * .45} ${ty + half * .9} ${x1} ${ty + half}`);
+  }
+  seg.push(`V ${y1 - r3} Q ${x1} ${y1} ${x1 - r3} ${y1}`);
+
+  if (tail.side === 'bottom') {
+    const tx = x0 + tail.at;
+    seg.push(`H ${tx + half}`);
+    seg.push(`Q ${tx + half * .5} ${y1 + len * .55} ${tx} ${y1 + len}`);
+    seg.push(`Q ${tx - half * .9} ${y1 + len * .45} ${tx - half} ${y1}`);
+  }
+  seg.push(`H ${x0 + r4} Q ${x0} ${y1} ${x0} ${y1 - r4}`);
+
+  if (tail.side === 'left') {
+    const ty = y0 + tail.at;
+    seg.push(`V ${ty + half}`);
+    seg.push(`Q ${x0 - len * .55} ${ty + half * .5} ${x0 - len} ${ty}`);
+    seg.push(`Q ${x0 - len * .45} ${ty - half * .9} ${x0} ${ty - half}`);
+  }
+  seg.push(`V ${y0 + r1} Q ${x0} ${y0} ${x0 + r1} ${y0} Z`);
+  return seg.join(' ');
+}
+
+/* 量完實際尺寸再畫。
+   字型載入前後、換行變化都會改尺寸 —— 所以用 ResizeObserver 盯著，不是畫一次就算了。 */
+const bubRO = new ResizeObserver(entries => entries.forEach(e => drawBubble(e.target)));
+
+function drawBubble(el) {
+  const w = el.offsetWidth, h = el.offsetHeight;
+  if (!w || !h) return;
+  const side = el.dataset.tail || 'bottom';
+  // at：尾尖沿著那條邊的位置。可寫百分比（"30%"）讓它跟著泡泡寬度走
+  const raw = el.dataset.at;
+  const span = side === 'bottom' ? w : h;
+  const at = raw
+    ? (raw.endsWith('%') ? span * parseFloat(raw) / 100 : +raw)
+    : (side === 'bottom' ? w / 2 : Math.min(32, h / 2));
+  const d = bubblePath(w, h, { side, at, len: +(el.dataset.len || 30) });
+  let svg = el.querySelector(':scope > svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+    el.prepend(svg);
+  }
+  svg.setAttribute('width', w + BUB_PAD * 2);
+  svg.setAttribute('height', h + BUB_PAD * 2);
+  svg.querySelector('path').setAttribute('d', d);
+}
+
+function layoutBubbles(root) {
+  (root || document).querySelectorAll('.bub').forEach(el => {
+    drawBubble(el);
+    bubRO.observe(el);
+  });
+}
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => layoutBubbles());
+}
+
+/* 慢寶說一句話。tail 指定尾巴從哪一邊出去 */
+function say(text, side = 'bottom', extra = '') {
+  return `<div class="bub" data-tail="${side}"${extra}><span>${esc(text)}</span></div>`;
+}
+
 /* 上次來訪 —— 用來決定招呼語 */
 const SEEN = 'bo_seen';
 function daysSinceSeen() {
@@ -550,6 +641,7 @@ function route() {
     setTimeout(() => old.isConnected && old.remove(), 400);
   }
   page.scrollTop = 0;
+  layoutBubbles(page);
   paintTray();
 }
 
@@ -570,7 +662,7 @@ function paintHome(box) {
     // 招呼：倒掛，慢慢晃，不要底部菜單條來打擾
     document.body.classList.add('no-tray');
     box.innerHTML = `
-      <div class="bo-say"><span>${esc(boGreeting())}</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
+      ${say(boGreeting(), 'bottom', ' data-at="30%"')}
       <div class="bo-stage sway"><img src="${BO.hang}" alt="慢寶"></div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
@@ -579,7 +671,7 @@ function paintHome(box) {
   document.body.classList.remove('no-tray');
   box.onclick = null;
   box.innerHTML = `
-    <div class="bo-say"><span>今天怎麼辦？</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
+    ${say('今天怎麼辦？', 'bottom', ' data-at="50%"')}
     <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
@@ -659,68 +751,90 @@ function toggle(id, btn) {
 
 /* ══════════ 食譜詳情 ══════════ */
 
+/* 食譜詳情：上半決定要不要煮，下半才是怎麼煮。不再一路攤到底 */
+let recipeTab = 'prep';
+
 function renderRecipe(el, m) {
   const r = byId(+m[1]);
   if (!r) return go('/wall');
   portions = r.basePortions || 2;
+  recipeTab = 'prep';
+  const on = menu.has(r.id);
   el.innerHTML = `
     <div class="topbar" style="position:absolute;background:none;">
       <button class="back-btn" onclick="back()">‹</button>
     </div>
-    <img class="hero" src="${r.image}" alt="">
-    <div class="d-head">
-      <div class="d-title">${esc(r.title)}</div>
-      ${r.subtitle ? `<div class="d-sub">${esc(r.subtitle)}</div>` : ''}
-    </div>
-    ${r.note ? `
-      <div class="bo-aside">
-        <img src="${BO.cheeky}" alt="慢寶">
-        <div class="bub"><span>${esc(r.note)}</span><svg class="bo-tail" viewBox="0 0 46 38" aria-hidden="true"><path d="M6 2 L38 2 C33 14, 25 25, 3 35 C14 23, 12 12, 6 2 Z"/></svg></div>
-      </div>` : ''}
-    <div class="d-bar">
-      <div class="r">
-        <span class="lbl">時間</span>
-        <div>
-          <div class="val">${esc(r.time)}</div>
-          ${r.timeNote ? `<div class="tn">${esc(r.timeNote)}</div>` : ''}
+
+    <img class="r-hero" src="${r.image}" alt="">
+
+    <div class="r-card">
+      <div class="r-title">${esc(r.title)}</div>
+      ${r.subtitle ? `<div class="r-sub">${esc(r.subtitle)}</div>` : ''}
+      <div class="r-stats">
+        <div class="r-stat">
+          <div class="k">時間</div>
+          <div class="v">${esc(cardTime(r.time))}</div>
+        </div>
+        <div class="r-stat">
+          <div class="k">難度</div>
+          <div class="v">${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)}</div>
+        </div>
+        <div class="r-stat">
+          <div class="k">幾人份</div>
+          <div class="portion">
+            <button onclick="setPortion(-1,${r.id})">−</button>
+            <span class="n" id="pn">${portions}</span>
+            <button onclick="setPortion(1,${r.id})">＋</button>
+          </div>
         </div>
       </div>
-      <div class="r">
-        <span class="lbl">幾人份</span>
-        <div class="portion">
-          <button onclick="setPortion(-1,${r.id})">−</button>
-          <span class="n" id="pn">${portions}</span>
-          <button onclick="setPortion(1,${r.id})">＋</button>
-        </div>
-      </div>
-    </div>
-    <div class="sect">
-      <div class="sect-t">備料清單</div>
-      <div id="ings"></div>
-    </div>
-    <div class="sect">
-      <div class="sect-t">實戰步驟</div>
-      ${stepsHTML(r)}
-    </div>
-    ${r.tips && r.tips.length ? `
-      <div class="sect">
-        <div class="sect-t">注意事項</div>
-        <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
-      </div>` : ''}
-    <div class="sect">
-      <button class="tray-go" style="width:100%;padding:14px"
-              data-add-label="${r.id}" onclick="toggle(${r.id})">
-        ${menu.has(r.id) ? '✓ 已在今日菜單' : '＋ 加入今日菜單'}
+      ${r.timeNote ? `<div class="r-stat"><div class="tn">${esc(r.timeNote)}</div></div>` : ''}
+      <button class="r-add ${on ? 'on' : ''}" data-add-label="${r.id}" onclick="toggle(${r.id})">
+        ${on ? '✓ 已在今日菜單' : '＋ 加入今日菜單'}
       </button>
-    </div>`;
-  paintIngs(el, r);
+    </div>
+
+    ${r.note ? `
+      <div class="bo-talk">
+        <img src="${BO.cookB}" alt="慢寶">
+        ${say(r.note, 'left', ' data-at="40" data-len="28"')}
+      </div>` : ''}
+
+    <div class="r-tabs">
+      <button class="on" data-rtab="prep" onclick="setRecipeTab('prep',${r.id})">備料</button>
+      <button data-rtab="steps" onclick="setRecipeTab('steps',${r.id})">步驟</button>
+    </div>
+    <div class="wrap" id="r-body"></div>`;
+  paintRecipeBody(el, r);
+}
+
+function setRecipeTab(tab, id) {
+  recipeTab = tab;
+  current.querySelectorAll('[data-rtab]').forEach(b =>
+    b.classList.toggle('on', b.dataset.rtab === tab));
+  paintRecipeBody(current, byId(id));
+}
+
+function paintRecipeBody(el, r) {
+  const body = $('#r-body', el);
+  if (recipeTab === 'prep') {
+    body.innerHTML = `
+      ${r.urgentNote ? `<div class="urgent"><h3>先做，不然會卡住</h3><p>${esc(r.urgentNote)}</p></div>` : ''}
+      <div id="ings"></div>`;
+    paintIngs(el, r);
+  } else {
+    body.innerHTML = stepsHTML(r) + (r.tips && r.tips.length
+      ? `<div class="sect"><div class="sect-t">注意事項</div>
+           <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`
+      : '');
+  }
 }
 
 function setPortion(d, id) {
   const r = byId(id);
   portions = Math.max(1, Math.min(12, portions + d));
   $('#pn', current).textContent = portions;
-  paintIngs(current, r);
+  if (recipeTab === 'prep') paintIngs(current, r);
 }
 
 function paintIngs(el, r) {
