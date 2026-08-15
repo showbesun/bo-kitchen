@@ -709,6 +709,7 @@ function paintHome(box) {
       </div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
+    layoutBubbles(box);
     return;
   }
   document.body.classList.remove('no-tray');
@@ -726,6 +727,7 @@ function paintHome(box) {
         <div class="g-s">回答三個問題，慢寶幫你挑</div>
       </button>
     </div>`;
+  layoutBubbles(box);
 }
 
 /* ══════════ 食譜牆 ══════════ */
