@@ -151,7 +151,7 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .bo-stage.sway img { animation: none; } }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
-.bo-talk { display: flex; align-items: flex-start; gap: 6px; margin: 18px 14px 0; }
+.bo-talk { display: flex; align-items: flex-start; gap: 20px; margin: 18px 14px 0; }
 .bo-talk > img { width: 118px; flex: none; margin-top: 2px; }
 .bo-talk .bub {
   flex: 1;
@@ -302,9 +302,16 @@ img { display: block; max-width: 100%; }
   font-weight: 700; padding-bottom: 7px; border-bottom: 1.5px solid var(--line);
   margin-bottom: 12px;
 }
-.ing { display: flex; justify-content: space-between; gap: 14px; padding: 7px 2px; font-size: 14px; }
+.ing { padding: 9px 2px; font-size: 14px; }
 .ing + .ing { border-top: 1px dashed var(--line); }
+.ing-head { display: flex; justify-content: space-between; gap: 14px; }
 .ing .amt { color: var(--muted); white-space: nowrap; }
+/* 怎麼處理，跟份量放同一格 —— 使用者不必再去步驟頁找 */
+.ing-how { font-size: 12.5px; color: var(--faint); line-height: 1.6; margin-top: 2px; padding-right: 40px; }
+.from-prep {
+  font-size: 12px; color: var(--faint); letter-spacing: 1px;
+  padding: 2px 2px 14px;
+}
 .ing-group { font-size: 12px; color: var(--gold); font-weight: 700; margin: 14px 0 4px; letter-spacing: 1px; }
 .paren { font-size: 11.5px; color: var(--faint); }
 
@@ -455,7 +462,7 @@ function bubblePath(w, h, tail) {
   const R = 24;                     // 圓角；四角刻意給一點差異，才不像 Word
   const r1 = R + 4, r2 = R - 3, r3 = R + 2, r4 = R - 1;
   const x0 = P, y0 = P, x1 = P + w, y1 = P + h;
-  const half = 15;                  // 尾巴根部半寬
+  const half = tail.half || 15;     // 尾巴根部半寬
   const len = tail.len || 30;
 
   const seg = [];
@@ -502,7 +509,8 @@ function drawBubble(el) {
   const at = raw
     ? (raw.endsWith('%') ? span * parseFloat(raw) / 100 : +raw)
     : (side === 'bottom' ? w / 2 : Math.min(32, h / 2));
-  const d = bubblePath(w, h, { side, at, len: +(el.dataset.len || 30) });
+  const d = bubblePath(w, h, { side, at,
+    len: +(el.dataset.len || 30), half: +(el.dataset.half || 15) });
   let svg = el.querySelector(':scope > svg');
   if (!svg) {
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -797,7 +805,7 @@ function renderRecipe(el, m) {
     ${r.note ? `
       <div class="bo-talk">
         <img src="${BO.cookB}" alt="慢寶">
-        ${say(r.note, 'left', ' data-at="40" data-len="28"')}
+        ${say(r.note, 'left', ' data-at="42" data-len="18" data-half="8"')}
       </div>` : ''}
 
     <div class="r-tabs">
@@ -828,6 +836,7 @@ function paintRecipeBody(el, r) {
            <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`
       : '');
   }
+  layoutBubbles(el);
 }
 
 function setPortion(d, id) {
@@ -837,36 +846,66 @@ function setPortion(d, id) {
   if (recipeTab === 'prep') paintIngs(current, r);
 }
 
+/* 備料頁：份量和處理方式合成一行。
+   原本份量在這裡、處理方式在步驟的「備料」階段，使用者得自己把兩邊拼起來。 */
 function paintIngs(el, r) {
   const f = portions / (r.basePortions || 2);
+  const notes = new Map((r.prepNotes || []).map(p => [p.name, p]));
+  const used = new Set();
+
   const line = ([name, num, unit]) => {
     const { u, note } = splitUnit(unit || '');
+    const p = notes.get(name);
+    if (p) used.add(name);
     return `<div class="ing">
-      <span>${esc(name)}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
-      <span class="amt">${esc(amountText(num, u, f))}</span>
+      <div class="ing-head">
+        <span>${esc(name)}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
+        <span class="amt">${esc(amountText(num, u, f))}</span>
+      </div>
+      ${p ? `<div class="ing-how">${esc(p.method)}</div>` : ''}
     </div>`;
   };
-  $('#ings', el).innerHTML = (r.shoppingList || []).map(item =>
+
+  let html = (r.shoppingList || []).map(item =>
     Array.isArray(item)
       ? line(item)
       : `<div class="ing-group">${esc(item.label)}${item.note ? `　<span class="paren">${esc(item.note)}</span>` : ''}</div>`
         + item.items.map(line).join('')
   ).join('');
+
+  // prepNotes 裡有、但不是單一食材的（醬汁、醃料那類），補在後面
+  const extra = (r.prepNotes || []).filter(p => !used.has(p.name));
+  if (extra.length) {
+    html += extra.map(p => `<div class="ing">
+      <div class="ing-head"><span>${esc(p.name)}</span><span class="amt">${esc(p.amount)}</span></div>
+      <div class="ing-how">${esc(p.method)}</div>
+    </div>`).join('');
+  }
+  $('#ings', el).innerHTML = html;
 }
 
+/* 純備料的階段不進步驟頁 —— 那些內容備料頁已經有了 */
+const PREP_PHASE = /備料/;
+
 function stepsHTML(r) {
-  let out = '', open = false;
+  let out = '', open = false, skipping = false, skipped = 0;
   (r.steps || []).forEach(s => {
     if (s.startsWith('## ')) {
-      if (open) out += '</ol>';
-      out += `<div class="phase">${esc(s.slice(3))}</div><ol class="steps">`;
+      const name = s.slice(3);
+      if (open) { out += '</ol>'; open = false; }
+      skipping = PREP_PHASE.test(name);
+      if (skipping) { skipped++; return; }
+      out += `<div class="phase">${esc(name)}</div><ol class="steps">`;
       open = true;
     } else {
+      if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
       out += `<li>${s}</li>`;                    // steps 內含 <strong>，故不 escape
     }
   });
-  return out + (open ? '</ol>' : '');
+  out += open ? '</ol>' : '';
+  if (skipped) out = `<div class="from-prep">備料完成後，從這裡開始。</div>` + out;
+  return out;
 }
 
 /* ══════════ 今日菜單 ══════════ */
