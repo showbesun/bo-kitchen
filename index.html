@@ -415,20 +415,13 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 }
 .tabs button.on { background: var(--brand); color: #fff; font-weight: 700; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 2px 16px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 20px 18px; }
 .chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 999px;
-  padding: 5px 7px 5px 12px;
-  font-size: 12.5px;
-  box-shadow: 0 1px 5px rgba(150,110,70,.06);
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface); border-radius: 999px;
+  padding: 6px 8px 6px 14px; font-size: 13px; box-shadow: var(--shadow);
 }
-/* 交錯的小角度 —— 手貼上去的感覺，不是排版出來的 */
-.chip:nth-child(odd)  { transform: rotate(-.7deg); }
-.chip:nth-child(even) { transform: rotate(.6deg); }
-.chip button { color: var(--faint); font-size: 14px; line-height: 1; padding: 0 2px; }
+.chip button { color: var(--faint); font-size: 15px; line-height: 1; padding: 0 3px; }
 
 .grp-h {
   font-size: 11px; letter-spacing: 2px; color: var(--faint);
