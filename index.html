@@ -139,6 +139,18 @@ img { display: block; max-width: 100%; }
 }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
 
+/* 招呼頁的標題 —— 牠在睡，不該講話，所以這裡放的是 app 的名字 */
+.wordmark { margin-bottom: 18px; animation: pop .4s cubic-bezier(.34,1.5,.64,1) both; }
+.wm-name {
+  font-size: 34px; font-weight: 700;
+  letter-spacing: 8px; text-indent: 8px;      /* 字距補償，視覺才置中 */
+  color: var(--text);
+}
+.wm-sub {
+  font-size: 13px; letter-spacing: 3px; text-indent: 3px;
+  color: var(--faint); margin-top: 6px;
+}
+
 /* 首頁慢寶前後晃。
    整張圖一起轉的話樹枝也會歪 —— 所以同一張圖疊兩層：
    下層是會晃的身體，上層只露出樹枝那一段、靜止不動，順便蓋住接縫。 */
@@ -445,7 +457,8 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
   <button class="tray-go" id="tray-go">今日菜單<span class="tray-badge" id="tray-badge" hidden></span></button>
 </div>
 
-<script src="recipes.js"></script>
+<!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
+<script src="recipes.js?v=2"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -597,6 +610,8 @@ function boLine(path) {
   if (path.startsWith('/recipe/')) {
     const r = byId(+path.split('/')[2]);
     if (!r) return [BO.blank, ''];
+    // 每道自己的碎碎念。有 urgentNote 的那幾則已經把提醒寫進去了，不必再靠下面那句罐頭
+    if (r.murmur)      return [r.urgentNote ? BO.cheeky : BO.sleepy, r.murmur];
     if (r.urgentNote)  return [BO.cheeky, '這道有東西要先做，往下看。'];
     if (r.stars >= 3)  return [BO.surprised, '這道你確定？……好啦，你可以。'];
     return [BO.sleepy, '這道我熟。'];
@@ -701,7 +716,10 @@ function paintHome(box) {
     // 招呼：倒掛，慢慢晃，不要底部菜單條來打擾
     document.body.classList.add('no-tray');
     box.innerHTML = `
-      ${say(boGreeting(), 'bottom', ' data-at="30%"')}
+      <div class="wordmark">
+        <div class="wm-name">慢寶</div>
+        <div class="wm-sub">今天也要好好吃飯</div>
+      </div>
       <div class="bo-stage">
         <div class="bo-swing">
           <img src="${BO.sleep}" alt="慢寶">
