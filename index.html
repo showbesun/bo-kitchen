@@ -1,0 +1,726 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F9E6D1">
+<title>慢寶</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* 底色跟慢寶插畫的背景一致，牠才貼得無縫 */
+  --bg:        #F9E6D1;
+  --surface:   #FFFCF7;
+  --line:      #E8D5BE;
+  --text:      #4A3B32;
+  --muted:     #8A7361;
+  --faint:     #A89380;
+  --brand:     #B0724F;
+  --brand-dim: #C9977A;
+  --gold:      #D9A441;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --shadow: 0 2px 10px rgba(120, 90, 60, 0.07);
+  --tray-h: 62px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;                 /* 捲動交給各頁自己處理 */
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* ─────────── 頁面容器與轉場 ─────────── */
+
+#viewport {
+  position: fixed;
+  inset: 0 0 var(--tray-h) 0;
+  overflow: hidden;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+  padding: env(safe-area-inset-top) 0 24px;
+}
+
+/* 前進：新頁從右邊進來。後退：新頁從左邊進來 */
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes slideInLeft  { from { transform: translateX(-30%); opacity: .6; } to { transform: none; opacity: 1; } }
+@keyframes slideOutLeft { from { transform: none; } to { transform: translateX(-30%); opacity: .6; } }
+@keyframes slideOutRight{ from { transform: none; } to { transform: translateX(100%); } }
+
+.page.in-fwd  { animation: slideInRight .26s cubic-bezier(.32,.72,0,1) both; }
+.page.in-back { animation: slideInLeft  .26s cubic-bezier(.32,.72,0,1) both; }
+.page.out-fwd { animation: slideOutLeft .26s cubic-bezier(.32,.72,0,1) both; }
+.page.out-back{ animation: slideOutRight .26s cubic-bezier(.32,.72,0,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page.in-fwd, .page.in-back, .page.out-fwd, .page.out-back { animation-duration: .01s; }
+}
+
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+/* ─────────── 頂端列 ─────────── */
+
+.topbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px 12px;
+  background: linear-gradient(var(--bg) 72%, transparent);
+}
+.back-btn {
+  width: 36px; height: 36px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  font-size: 19px; color: var(--brand);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.back-btn:active { transform: scale(.93); }
+.topbar h1 { font-size: 17px; font-weight: 700; letter-spacing: .5px; }
+.topbar .sub { font-size: 12px; color: var(--faint); }
+
+/* ─────────── 首頁 ─────────── */
+
+.home {
+  min-height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px 20px 10px;
+  text-align: center;
+}
+.home-logo { font-size: 30px; font-weight: 700; letter-spacing: 3px; }
+.home-tag { font-size: 12.5px; color: var(--faint); letter-spacing: 2px; margin-top: 2px; }
+
+.bo-stage { margin: 10px 0 4px; width: 100%; max-width: 300px; }
+.bo-stage img { width: 100%; }
+
+.bo-say {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 13px 20px;
+  font-size: 14.5px;
+  box-shadow: var(--shadow);
+  margin-bottom: 26px;
+  max-width: 330px;
+}
+
+.gate { display: grid; gap: 12px; width: 100%; max-width: 330px; }
+.gate button {
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  text-align: left;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  border: 1.5px solid transparent;
+  transition: border-color .15s, transform .12s;
+}
+.gate button:active { transform: scale(.98); }
+.gate .g-t { font-size: 15.5px; font-weight: 700; }
+.gate .g-s { font-size: 12.5px; color: var(--faint); margin-top: 2px; }
+.gate .primary { border-color: var(--brand-dim); }
+
+/* ─────────── 食譜牆 ─────────── */
+
+.search {
+  position: relative; margin: 0 20px 14px;
+}
+.search input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--r-pill, 999px);
+  padding: 11px 40px 11px 18px;
+  font-size: 14px; font-family: inherit; color: var(--text);
+  outline: none;
+}
+.search input:focus { border-color: var(--brand-dim); }
+.search .clr {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%;
+  color: var(--faint); font-size: 15px;
+  display: none; place-items: center;
+}
+.search .clr.on { display: grid; }
+
+.grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+.card {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform .12s;
+}
+.card:active { transform: scale(.985); }
+.card-img { width: 100%; height: 158px; object-fit: cover; background: var(--line); }
+.card-b { padding: 12px 15px 14px; }
+.card-t { font-size: 15.5px; font-weight: 700; line-height: 1.35; padding-right: 42px; }
+.card-m { font-size: 12px; color: var(--faint); margin-top: 5px; display: flex; gap: 10px; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.tag {
+  font-size: 11px; color: var(--brand);
+  border: 1px solid var(--line);
+  border-radius: 999px; padding: 2px 9px;
+}
+
+/* ＋ 加入今日菜單：食譜牆和推薦結果共用同一顆 */
+.add-btn {
+  position: absolute; right: 11px; top: 158px; transform: translateY(-50%);
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 21px; line-height: 1;
+  background: var(--surface); color: var(--brand);
+  box-shadow: 0 2px 8px rgba(120,90,60,.18);
+  transition: transform .14s, background .14s, color .14s;
+}
+.add-btn:active { transform: translateY(-50%) scale(.88); }
+.add-btn.on { background: var(--brand); color: #fff; }
+
+.empty { text-align: center; color: var(--faint); font-size: 13.5px; padding: 40px 20px; }
+
+/* ─────────── 食譜詳情 ─────────── */
+
+.hero { width: 100%; height: 230px; object-fit: cover; background: var(--line); }
+.d-head { padding: 18px 20px 0; }
+.d-title { font-size: 22px; font-weight: 700; line-height: 1.3; }
+.d-sub { font-size: 13px; color: var(--faint); margin-top: 4px; }
+.d-note {
+  background: var(--surface); border-radius: var(--r-md);
+  padding: 14px 16px; margin: 16px 20px 0;
+  font-size: 13.5px; color: var(--muted); box-shadow: var(--shadow);
+}
+.d-bar {
+  display: flex; align-items: center; gap: 14px;
+  margin: 16px 20px 0; padding: 13px 16px;
+  background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow);
+}
+.d-bar .lbl { font-size: 11px; color: var(--faint); letter-spacing: 1px; }
+.d-bar .val { font-size: 14px; font-weight: 700; }
+.portion { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.portion button {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid var(--line); font-size: 16px; color: var(--brand);
+  display: grid; place-items: center;
+}
+.portion button:active { background: var(--line); }
+.portion .n { min-width: 26px; text-align: center; font-weight: 700; }
+
+.sect { margin: 26px 20px 0; }
+.sect-t {
+  font-size: 12px; letter-spacing: 2px; color: var(--brand);
+  font-weight: 700; padding-bottom: 7px; border-bottom: 1.5px solid var(--line);
+  margin-bottom: 12px;
+}
+.ing { display: flex; justify-content: space-between; gap: 14px; padding: 7px 2px; font-size: 14px; }
+.ing + .ing { border-top: 1px dashed var(--line); }
+.ing .amt { color: var(--muted); white-space: nowrap; }
+.ing-group { font-size: 12px; color: var(--gold); font-weight: 700; margin: 14px 0 4px; letter-spacing: 1px; }
+.paren { font-size: 11.5px; color: var(--faint); }
+
+.phase { font-size: 12px; letter-spacing: 2px; color: var(--brand-dim); font-weight: 700; margin: 18px 0 8px; }
+.phase:first-child { margin-top: 0; }
+ol.steps { list-style: none; counter-reset: s; }
+ol.steps li {
+  counter-increment: s; position: relative;
+  padding: 7px 0 7px 30px; font-size: 14px; line-height: 1.75;
+}
+ol.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 8px;
+  width: 21px; height: 21px; border-radius: 50%;
+  background: var(--line); color: var(--brand);
+  font-size: 11px; font-weight: 700;
+  display: grid; place-items: center;
+}
+ol.steps strong { color: var(--brand); font-weight: 700; }
+.tips li { font-size: 13.5px; color: var(--muted); padding: 6px 0 6px 16px; position: relative; list-style: none; }
+.tips li::before { content: '·'; position: absolute; left: 4px; color: var(--gold); font-weight: 700; }
+
+/* ─────────── 今日菜單 ─────────── */
+
+.tray {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  height: calc(var(--tray-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex; align-items: center; gap: 12px;
+  padding-left: 18px; padding-right: 14px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -2px 14px rgba(120,90,60,.06);
+}
+.tray-face { width: 38px; flex: none; }
+.tray-txt { flex: 1; font-size: 13.5px; line-height: 1.35; }
+.tray-txt b { font-size: 14.5px; }
+.tray-txt .s { display: block; font-size: 11.5px; color: var(--faint); }
+.tray-go {
+  background: var(--brand); color: #fff;
+  border-radius: 999px; padding: 9px 17px;
+  font-size: 13px; font-weight: 700; letter-spacing: .5px;
+}
+.tray-go:active { transform: scale(.95); }
+.tray-go[disabled] { background: var(--line); color: var(--faint); }
+
+.tabs { display: flex; gap: 4px; margin: 4px 20px 16px; }
+.tabs button {
+  flex: 1; padding: 9px 0; font-size: 13.5px; border-radius: 999px;
+  color: var(--muted); background: var(--surface);
+}
+.tabs button.on { background: var(--brand); color: #fff; font-weight: 700; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 20px 18px; }
+.chip {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface); border-radius: 999px;
+  padding: 6px 8px 6px 14px; font-size: 13px; box-shadow: var(--shadow);
+}
+.chip button { color: var(--faint); font-size: 15px; line-height: 1; padding: 0 3px; }
+
+.grp-h {
+  font-size: 11px; letter-spacing: 2px; color: var(--faint);
+  background: rgba(255,255,255,.5); padding: 8px 14px;
+  border-radius: var(--r-sm); margin: 16px 0 6px;
+}
+.row { display: flex; justify-content: space-between; gap: 14px; padding: 8px 14px; font-size: 14px; }
+.row + .row { border-top: 1px dashed var(--line); }
+.row .r-amt { color: var(--muted); white-space: nowrap; }
+.row .r-from { font-size: 11px; color: var(--faint); }
+
+.urgent {
+  background: #FFF6E4; border: 1px solid #EBD2A0;
+  border-radius: var(--r-md); padding: 14px 16px; margin: 0 0 6px;
+}
+.urgent h3 { font-size: 12px; letter-spacing: 1.5px; color: #A9762C; margin-bottom: 8px; }
+.urgent p { font-size: 13px; padding: 5px 0; line-height: 1.6; }
+.urgent p + p { border-top: 1px solid rgba(235,210,160,.55); }
+.urgent b { font-weight: 700; }
+</style>
+
+<div id="viewport"></div>
+
+<div class="tray" onclick="go('/menu/buy')">
+  <img class="tray-face" id="tray-face" src="bo/face_sleepy.webp" alt="">
+  <div class="tray-txt" id="tray-txt"></div>
+  <button class="tray-go" id="tray-go">看清單</button>
+</div>
+
+<script src="recipes.js"></script>
+<script>
+/* ══════════════════════════════════════════════
+   慢寶 · 骨架
+   路由用 hash，瀏覽器／手機的上一頁自動就會動
+   ══════════════════════════════════════════════ */
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ── 狀態 ── */
+const KEY = 'bo_menu';
+let menu = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+const saveMenu = () => localStorage.setItem(KEY, JSON.stringify([...menu]));
+
+let portions = 2;
+
+/* ── 慢寶 ── */
+const BO = {
+  hang:    'bo/hang_u.webp',
+  drape:   'bo/hang_drape.webp',
+  cookA:   'bo/cook_bowl.webp',
+  cookB:   'bo/cook_pan.webp',
+  sleepy:  'bo/face_sleepy.webp',
+  satisfied:'bo/face_satisfied.webp',
+  cheeky:  'bo/face_cheeky.webp',
+  blank:   'bo/face_blank.webp',
+  thinking:'bo/face_thinking.webp',
+  surprised:'bo/face_surprised.webp',
+};
+
+/* 慢寶在首頁講的話 —— 之後照最後煮飯時間／菜單狀況再細分 */
+function boHomeLine() {
+  const n = menu.size;
+  if (n === 0) return ['今天怎麼辦？', BO.hang];
+  if (n === 1) return ['先加了一道。還要嗎？', BO.drape];
+  if (n <= 3)  return [`${n} 道了，看起來是認真的。`, BO.drape];
+  return [`${n} 道……你今天很有野心喔。`, BO.cheeky];
+}
+
+/* ── 小工具 ── */
+const cardTime = t => String(t || '')
+  .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+  .replace(/約\s*/g, '≈ ').replace(/小時/g, 'Hr').replace(/分鐘/g, 'Min').trim();
+
+function fmt(n) {
+  const v = Math.round(n * 100) / 100;
+  return Number.isInteger(v) ? v : v;
+}
+
+/* 份量縮放：number 為 null 代表「適量」這種不縮放的 */
+function amountText(num, unit, factor) {
+  if (num === null || num === undefined) return unit;
+  return fmt(num * factor) + unit;
+}
+
+/* 把 unit 裡的括號說明搬到名字後面 */
+function splitUnit(unit) {
+  const m = String(unit).match(/^([^（(]*)([（(].*)$/);
+  return m ? { u: m[1].trim(), note: m[2] } : { u: unit, note: '' };
+}
+
+const byId = id => RECIPES.find(r => r.id === id);
+
+/* ══════════ 路由 ══════════ */
+
+const routes = [
+  [/^\/$/,                 renderHome],
+  [/^\/wall$/,             renderWall],
+  [/^\/recipe\/(\d+)$/,    renderRecipe],
+  [/^\/menu\/(buy|prep)$/, renderMenu],
+];
+
+let stack = [];            // 走過的路徑，用來判斷前進還是後退
+let current = null;
+
+function go(path)      { location.hash = '#' + path; }
+function back()        { history.back(); }
+
+function route() {
+  const path = (location.hash || '#/').slice(1) || '/';
+  const hit = routes.map(([re, fn]) => [path.match(re), fn]).find(([m]) => m);
+  if (!hit) return go('/');
+  const [m, fn] = hit;
+
+  // 這個路徑在堆疊裡出現過 → 是後退
+  const prev = stack.indexOf(path);
+  const isBack = prev !== -1 && prev < stack.length - 1;
+  if (isBack) stack = stack.slice(0, prev + 1);
+  else if (stack[stack.length - 1] !== path) stack.push(path);
+
+  const vp = $('#viewport');
+  const old = current;
+  const page = document.createElement('div');
+  page.className = 'page ' + (old ? (isBack ? 'in-back' : 'in-fwd') : '');
+  fn(page, m);
+  vp.appendChild(page);
+  current = page;
+
+  if (old) {
+    old.className = 'page ' + (isBack ? 'out-back' : 'out-fwd');
+    old.addEventListener('animationend', () => old.remove(), { once: true });
+    setTimeout(() => old.isConnected && old.remove(), 400);
+  }
+  page.scrollTop = 0;
+  paintTray();
+}
+
+window.addEventListener('hashchange', route);
+
+/* ══════════ 首頁 ══════════ */
+
+function renderHome(el) {
+  const [line, img] = boHomeLine();
+  el.innerHTML = `
+    <div class="home">
+      <div class="home-logo">慢寶</div>
+      <div class="home-tag">SLOW COOK · 늘보</div>
+      <div class="bo-stage"><img src="${img}" alt="慢寶"></div>
+      <div class="bo-say">${esc(line)}</div>
+      <div class="gate">
+        <button class="primary" onclick="go('/wall')">
+          <div class="g-t">我知道要吃什麼</div>
+          <div class="g-s">自己翻，看到想吃的就加進菜單</div>
+        </button>
+        <button onclick="alert('問答流程還沒做 — 下一步就是它')">
+          <div class="g-t">完全沒想法</div>
+          <div class="g-s">回答三個問題，慢寶幫你挑</div>
+        </button>
+      </div>
+    </div>`;
+}
+
+/* ══════════ 食譜牆 ══════════ */
+
+let wallQuery = '';
+
+function renderWall(el) {
+  el.innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="back()">‹</button>
+      <div><h1>食譜牆</h1><div class="sub">${RECIPES.length} 道</div></div>
+    </div>
+    <div class="search">
+      <input id="q" placeholder="搜尋名稱、菜系、標籤…" value="${esc(wallQuery)}">
+      <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
+    </div>
+    <div class="wrap"><div class="grid" id="grid"></div></div>`;
+
+  const input = $('#q', el), clr = $('#qc', el);
+  input.oninput = () => { wallQuery = input.value; clr.classList.toggle('on', !!wallQuery); paintGrid(el); };
+  clr.onclick = () => { wallQuery = ''; input.value = ''; clr.classList.remove('on'); paintGrid(el); input.focus(); };
+  paintGrid(el);
+}
+
+function paintGrid(el) {
+  const q = wallQuery.trim().toLowerCase();
+  const list = RECIPES
+    .filter(r => !q || [r.title, r.subtitle, r.cuisine, ...(r.tags || [])].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => b.id - a.id);
+  const g = $('#grid', el);
+  g.innerHTML = list.length
+    ? list.map(cardHTML).join('')
+    : '<div class="empty">找不到這道菜。<br>慢寶也沒聽過。</div>';
+}
+
+function cardHTML(r) {
+  const on = menu.has(r.id);
+  return `
+    <div class="card">
+      <img class="card-img" src="${r.image}" alt="" loading="lazy" onclick="go('/recipe/${r.id}')">
+      <button class="add-btn ${on ? 'on' : ''}" data-id="${r.id}"
+              onclick="event.stopPropagation();toggle(${r.id},this)"
+              aria-label="加入今日菜單">${on ? '✓' : '＋'}</button>
+      <div class="card-b" onclick="go('/recipe/${r.id}')">
+        <div class="card-t">${esc(r.title)}</div>
+        <div class="card-m"><span>${esc(cardTime(r.time))}</span><span>${'★'.repeat(r.stars)}</span></div>
+        <div class="card-tags">${(r.tags || []).slice(0, 3).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      </div>
+    </div>`;
+}
+
+/* 加入／移出今日菜單 —— 食譜牆、詳情、之後的推薦結果都用這一顆 */
+function toggle(id, btn) {
+  menu.has(id) ? menu.delete(id) : menu.add(id);
+  saveMenu();
+  const on = menu.has(id);
+  document.querySelectorAll(`.add-btn[data-id="${id}"]`).forEach(b => {
+    b.classList.toggle('on', on);
+    b.textContent = on ? '✓' : '＋';
+  });
+  document.querySelectorAll(`[data-add-label="${id}"]`).forEach(b => {
+    b.textContent = on ? '✓ 已在今日菜單' : '＋ 加入今日菜單';
+  });
+  paintTray();
+}
+
+/* ══════════ 食譜詳情 ══════════ */
+
+function renderRecipe(el, m) {
+  const r = byId(+m[1]);
+  if (!r) return go('/wall');
+  portions = r.basePortions || 2;
+  el.innerHTML = `
+    <div class="topbar" style="position:absolute;background:none;">
+      <button class="back-btn" onclick="back()">‹</button>
+    </div>
+    <img class="hero" src="${r.image}" alt="">
+    <div class="d-head">
+      <div class="d-title">${esc(r.title)}</div>
+      ${r.subtitle ? `<div class="d-sub">${esc(r.subtitle)}</div>` : ''}
+    </div>
+    ${r.note ? `<div class="d-note">${esc(r.note)}</div>` : ''}
+    <div class="d-bar">
+      <div>
+        <div class="lbl">時間</div>
+        <div class="val">${esc(r.time)}</div>
+      </div>
+      <div class="portion">
+        <button onclick="setPortion(-1,${r.id})">−</button>
+        <span class="n" id="pn">${portions}</span>
+        <button onclick="setPortion(1,${r.id})">＋</button>
+      </div>
+    </div>
+    ${r.timeNote ? `<div class="d-note" style="margin-top:10px">${esc(r.timeNote)}</div>` : ''}
+    <div class="sect">
+      <div class="sect-t">備料清單</div>
+      <div id="ings"></div>
+    </div>
+    <div class="sect">
+      <div class="sect-t">實戰步驟</div>
+      ${stepsHTML(r)}
+    </div>
+    ${r.tips && r.tips.length ? `
+      <div class="sect">
+        <div class="sect-t">慢寶的提醒</div>
+        <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+      </div>` : ''}
+    <div class="sect">
+      <button class="tray-go" style="width:100%;padding:14px"
+              data-add-label="${r.id}" onclick="toggle(${r.id})">
+        ${menu.has(r.id) ? '✓ 已在今日菜單' : '＋ 加入今日菜單'}
+      </button>
+    </div>`;
+  paintIngs(el, r);
+}
+
+function setPortion(d, id) {
+  const r = byId(id);
+  portions = Math.max(1, Math.min(12, portions + d));
+  $('#pn', current).textContent = portions;
+  paintIngs(current, r);
+}
+
+function paintIngs(el, r) {
+  const f = portions / (r.basePortions || 2);
+  const line = ([name, num, unit]) => {
+    const { u, note } = splitUnit(unit || '');
+    return `<div class="ing">
+      <span>${esc(name)}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
+      <span class="amt">${esc(amountText(num, u, f))}</span>
+    </div>`;
+  };
+  $('#ings', el).innerHTML = (r.shoppingList || []).map(item =>
+    Array.isArray(item)
+      ? line(item)
+      : `<div class="ing-group">${esc(item.label)}${item.note ? `　<span class="paren">${esc(item.note)}</span>` : ''}</div>`
+        + item.items.map(line).join('')
+  ).join('');
+}
+
+function stepsHTML(r) {
+  let out = '', open = false;
+  (r.steps || []).forEach(s => {
+    if (s.startsWith('## ')) {
+      if (open) out += '</ol>';
+      out += `<div class="phase">${esc(s.slice(3))}</div><ol class="steps">`;
+      open = true;
+    } else {
+      if (!open) { out += '<ol class="steps">'; open = true; }
+      out += `<li>${s}</li>`;                    // steps 內含 <strong>，故不 escape
+    }
+  });
+  return out + (open ? '</ol>' : '');
+}
+
+/* ══════════ 今日菜單 ══════════ */
+
+function renderMenu(el, m) {
+  const tab = m[1];
+  const sel = RECIPES.filter(r => menu.has(r.id));
+  el.innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="back()">‹</button>
+      <div><h1>今日菜單</h1><div class="sub">${sel.length} 道</div></div>
+    </div>
+    <div class="tabs">
+      <button class="${tab === 'buy' ? 'on' : ''}" onclick="go('/menu/buy')">買菜</button>
+      <button class="${tab === 'prep' ? 'on' : ''}" onclick="go('/menu/prep')">備料</button>
+    </div>
+    <div class="chips">${sel.map(r => `
+      <span class="chip">${esc(r.title)}
+        <button onclick="toggle(${r.id});go('/menu/${tab}')" aria-label="移出">✕</button>
+      </span>`).join('')}</div>
+    <div class="wrap">${
+      sel.length === 0
+        ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>慢寶繼續睡。</div>`
+        : (tab === 'buy' ? buyHTML(sel) : prepHTML(sel))
+    }</div>`;
+}
+
+const FRESH = {
+  meat: ['雞','棒棒腿','豬','牛','肉','魚','蝦','鴨','羊'],
+  veg:  ['蘿蔔','洋蔥','大蔥','蔥','辣椒','蒜','瓜','薯','栗','海帶','香蕉','菇','菜','韭','番茄','青椒','高麗','豆','芹'],
+  chill:['蛋','奶油','優格','牛奶','起司','乳酪','鮮奶油'],
+};
+const catOf = n => Object.keys(FRESH).find(k => FRESH[k].some(w => n.includes(w))) || 'groc';
+
+function buyHTML(sel) {
+  const bins = { meat: {}, veg: {}, chill: {}, groc: {}, season: {} };
+  const fixed = { meat: [], veg: [], chill: [], groc: [], season: [] };
+
+  const put = (bin, name, num, unit) => {
+    const u = splitUnit(unit || '').u;
+    if (num === null || num === undefined) {
+      if (!fixed[bin].some(x => x[0] === name)) fixed[bin].push([name, u || unit]);
+      return;
+    }
+    const k = name + '||' + u;
+    bins[bin][k] ? bins[bin][k].n += num : bins[bin][k] = { name, n: num, u };
+  };
+
+  sel.forEach(r => (r.shoppingList || []).forEach(item => {
+    if (Array.isArray(item)) {
+      const [name, num, unit] = item;
+      if (name === '水') return;
+      const bin = /鹽|酒|香草精/.test(name) ? 'season' : catOf(name);
+      put(bin, name, num, unit);
+    } else {
+      item.items.forEach(([name, num, unit]) => name !== '水' && put('season', name, num, unit));
+    }
+  }));
+
+  const rows = bin => [
+    ...Object.values(bins[bin]).map(x => `<div class="row"><span>${esc(x.name)}</span><span class="r-amt">${fmt(x.n)}${esc(x.u)}</span></div>`),
+    ...fixed[bin].map(([n, u]) => `<div class="row"><span>${esc(n)}</span><span class="r-amt">${esc(u)}</span></div>`),
+  ].join('');
+
+  const secs = [['meat','肉類海鮮'],['veg','蔬菜水果'],['chill','冷藏'],['groc','雜貨'],['season','調味料']];
+  return secs.map(([k, label]) => {
+    const r = rows(k);
+    return r ? `<div class="grp-h">${label}</div>${r}` : '';
+  }).join('');
+}
+
+const PREP_ORDER = ['先洗','先泡','先醃','切絲','切塊','切片','切段','切末','調醬汁','開火前放旁邊'];
+
+function prepHTML(sel) {
+  let out = '';
+  const urgent = sel.filter(r => r.urgentNote);
+  if (urgent.length) {
+    out += `<div class="urgent"><h3>先做，不然會卡住</h3>${
+      urgent.map(r => `<p><b>${esc(r.title)}</b>：${esc(r.urgentNote)}</p>`).join('')
+    }</div>`;
+  }
+  PREP_ORDER.forEach(g => {
+    const items = sel.flatMap(r => (r.prepNotes || []).filter(p => p.group === g).map(p => ({ ...p, from: r.title })));
+    if (!items.length) return;
+    out += `<div class="grp-h">${g}</div>` + items.map(p => `
+      <div class="row">
+        <span>${esc(p.name)}<span class="r-from">　${esc(p.from)}</span></span>
+        <span class="r-amt">${esc(p.amount)}</span>
+      </div>
+      <div class="row" style="border:none;padding-top:0;color:var(--muted);font-size:13px">${esc(p.method)}</div>`).join('');
+  });
+  return out || '<div class="empty">這幾道不用特別備料。</div>';
+}
+
+/* ══════════ 底部菜單條 ══════════ */
+
+function paintTray() {
+  const n = menu.size;
+  const path = (location.hash || '#/').slice(1);
+  $('#tray-txt').innerHTML = n === 0
+    ? '今日菜單是空的<span class="s">看到想吃的就按 ＋</span>'
+    : `<b>今日菜單 ${n} 道</b><span class="s">${RECIPES.filter(r => menu.has(r.id)).map(r => r.title).join('、')}</span>`;
+  $('#tray-face').src = n === 0 ? BO.sleepy : (n > 3 ? BO.cheeky : BO.satisfied);
+  const go_ = $('#tray-go');
+  go_.disabled = n === 0;
+  go_.textContent = path.startsWith('/menu') ? '關閉' : '看清單';
+}
+
+$('#tray-go').onclick = e => {
+  e.stopPropagation();
+  if (menu.size === 0) return;
+  (location.hash || '#/').slice(1).startsWith('/menu') ? back() : go('/menu/buy');
+};
+
+/* ══════════ 起飛 ══════════ */
+if (!location.hash) location.hash = '#/';
+route();
+</script>
