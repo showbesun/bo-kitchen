@@ -190,8 +190,14 @@ img { display: block; max-width: 100%; }
 .bo-talk.wait .bub { flex: 1; max-width: none; margin-left: -12px; }
 
 .home .bub { margin-bottom: 8px; }
-.bo-stage { width: 100%; max-width: 430px; }
+
+/* 插畫要依畫面高度收斂 —— 手機上不設上限的話，內容會超過視窗，
+   而 flex 置中時上方溢出的部分是捲不到的（對話框就這樣消失了）。
+   用寬高比換算成寬度上限，樹枝那層才會跟著一起縮。 */
+.bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
+.bo-stage.sleep { width: min(100%, 400px, 54vh); }    /* 640x505，比 1.267 */
+.bo-stage.drape { width: min(100%, 240px, 25vh); }    /* 560x721，比 0.777 —— 要留位置給兩個入口 */
 
 .tap-hint {
   font-size: 12px; color: var(--faint); letter-spacing: 2px;
@@ -501,7 +507,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '5';
+const ASSETS = '6';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -778,7 +784,7 @@ function paintHome(box) {
         <div class="wm-name">慢寶</div>
         <div class="wm-sub">今天也要好好吃飯</div>
       </div>
-      <div class="bo-stage">
+      <div class="bo-stage sleep">
         <div class="bo-swing">
           <img src="${BO.sleep}" alt="慢寶">
         </div>
@@ -793,7 +799,7 @@ function paintHome(box) {
   box.onclick = null;
   box.innerHTML = `
     ${say(homeLine, 'bottom', ' data-at="50%"')}
-    <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
+    <div class="bo-stage drape"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
         <div class="g-t">我知道要吃什麼</div>
