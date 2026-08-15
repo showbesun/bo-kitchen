@@ -107,26 +107,46 @@ img { display: block; max-width: 100%; }
   text-align: center;
 }
 
-/* 對話框在慢寶頭上，尾巴朝下指著牠 */
+/* 對話框：圓角刻意不對稱，看起來像手畫的，尾巴是圓的不是尖的 */
 .bo-say {
   position: relative;
+  display: inline-block;
   background: var(--surface);
-  border-radius: var(--r-lg);
-  padding: 14px 22px;
+  border: 1.5px solid var(--line);
+  border-radius: 30px 26px 28px 24px / 26px 30px 24px 28px;
+  padding: 13px 22px;
   font-size: 15px;
-  box-shadow: var(--shadow);
+  line-height: 1.55;
+  color: var(--text);
+  box-shadow: 0 3px 12px rgba(150, 110, 70, .09);
   max-width: 300px;
-  margin: 0 auto 14px;
-  animation: pop .3s cubic-bezier(.34,1.56,.64,1) both;
+  margin: 0 auto 16px;
+  animation: pop .32s cubic-bezier(.34,1.5,.64,1) both;
 }
-.bo-say::after {
+/* 兩顆逐漸變小的圓，softer than a triangle */
+.bo-say::before, .bo-say::after {
   content: '';
-  position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%);
-  border: 9px solid transparent;
-  border-top-color: var(--surface);
-  border-bottom: 0;
+  position: absolute;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
 }
-@keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
+.bo-say::before { width: 13px; height: 13px; left: 50%; margin-left: -18px; bottom: -9px; }
+.bo-say::after  { width: 7px;  height: 7px;  left: 50%; margin-left: -3px;  bottom: -19px; }
+@keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
+
+/* 慢寶在內文裡插嘴：頭像 ＋ 對話框 */
+.bo-aside { display: flex; align-items: flex-start; gap: 10px; margin: 10px 0; }
+.bo-aside img { width: 46px; flex: none; margin-top: 2px; }
+.bo-aside .bub {
+  position: relative;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 22px 24px 22px 8px / 22px 22px 24px 10px;
+  padding: 10px 15px;
+  font-size: 13.5px; line-height: 1.7; color: var(--muted);
+  box-shadow: 0 2px 8px rgba(150,110,70,.07);
+}
 
 .bo-stage { width: 100%; max-width: 430px; }
 .bo-stage img { width: 100%; }
@@ -225,12 +245,17 @@ img { display: block; max-width: 100%; }
   font-size: 13.5px; color: var(--muted); box-shadow: var(--shadow);
 }
 .d-bar {
-  display: flex; align-items: center; gap: 14px;
-  margin: 16px 20px 0; padding: 13px 16px;
+  margin: 16px 14px 0; padding: 4px 16px;
   background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow);
 }
-.d-bar .lbl { font-size: 11px; color: var(--faint); letter-spacing: 1px; }
-.d-bar .val { font-size: 14px; font-weight: 700; }
+.d-bar .r {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 0;
+}
+.d-bar .r + .r { border-top: 1px dashed var(--line); }
+.d-bar .lbl { font-size: 12px; color: var(--faint); letter-spacing: 1px; flex: none; min-width: 52px; }
+.d-bar .val { font-size: 14.5px; font-weight: 700; }
+.d-bar .tn { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
 .portion { margin-left: auto; display: flex; align-items: center; gap: 4px; }
 .portion button {
   width: 30px; height: 30px; border-radius: 50%;
@@ -606,17 +631,22 @@ function renderRecipe(el, m) {
     </div>
     ${r.note ? `<div class="d-note">${esc(r.note)}</div>` : ''}
     <div class="d-bar">
-      <div>
-        <div class="lbl">時間</div>
-        <div class="val">${esc(r.time)}</div>
+      <div class="r">
+        <span class="lbl">時間</span>
+        <div>
+          <div class="val">${esc(r.time)}</div>
+          ${r.timeNote ? `<div class="tn">${esc(r.timeNote)}</div>` : ''}
+        </div>
       </div>
-      <div class="portion">
-        <button onclick="setPortion(-1,${r.id})">−</button>
-        <span class="n" id="pn">${portions}</span>
-        <button onclick="setPortion(1,${r.id})">＋</button>
+      <div class="r">
+        <span class="lbl">幾人份</span>
+        <div class="portion">
+          <button onclick="setPortion(-1,${r.id})">−</button>
+          <span class="n" id="pn">${portions}</span>
+          <button onclick="setPortion(1,${r.id})">＋</button>
+        </div>
       </div>
     </div>
-    ${r.timeNote ? `<div class="d-note" style="margin-top:10px">${esc(r.timeNote)}</div>` : ''}
     <div class="sect">
       <div class="sect-t">備料清單</div>
       <div id="ings"></div>
@@ -627,8 +657,12 @@ function renderRecipe(el, m) {
     </div>
     ${r.tips && r.tips.length ? `
       <div class="sect">
-        <div class="sect-t">慢寶的提醒</div>
-        <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+        <div class="sect-t">慢寶碎碎念</div>
+        ${r.tips.map((t, i) => `
+          <div class="bo-aside">
+            <img src="${[BO.sleepy, BO.cheeky, BO.blank, BO.satisfied][i % 4]}" alt="">
+            <div class="bub">${esc(t)}</div>
+          </div>`).join('')}
       </div>` : ''}
     <div class="sect">
       <button class="tray-go" style="width:100%;padding:14px"
