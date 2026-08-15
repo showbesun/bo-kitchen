@@ -144,13 +144,13 @@ img { display: block; max-width: 100%; }
    下層是會晃的身體，上層只露出樹枝那一段、靜止不動，順便蓋住接縫。 */
 .bo-stage { position: relative; }
 .bo-swing {
-  transform-origin: 50% 17%;         /* 支點在牠抓著樹枝的地方 */
+  transform-origin: 50% 14%;         /* 支點在牠抓著樹枝的地方 */
   animation: sway 4.6s ease-in-out infinite;
 }
 .bo-branch {
   position: absolute; inset: 0;
   width: 100%;
-  clip-path: inset(0 0 80% 0);       /* 樹枝在 9%–18%，留一點蓋住接縫 */
+  clip-path: inset(0 0 83% 0);       /* 樹枝在 6%–15%，多留一點蓋住接縫 */
   pointer-events: none;
 }
 @keyframes sway {
@@ -465,6 +465,7 @@ let portions = 2;
 /* ── 慢寶 ── */
 const BO = {
   hang:    'bo/hang_u.webp',
+  sleep:   'bo/hang_sleep.webp',   // 招呼頁：牠還在睡
   drape:   'bo/hang_drape.webp',
   cookA:   'bo/cook_bowl.webp',
   cookB:   'bo/cook_pan.webp',
@@ -703,9 +704,9 @@ function paintHome(box) {
       ${say(boGreeting(), 'bottom', ' data-at="30%"')}
       <div class="bo-stage">
         <div class="bo-swing">
-          <img src="${BO.hang}" alt="慢寶">
+          <img src="${BO.sleep}" alt="慢寶">
         </div>
-        <img class="bo-branch" src="${BO.hang}" alt="" aria-hidden="true">
+        <img class="bo-branch" src="${BO.sleep}" alt="" aria-hidden="true">
       </div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
