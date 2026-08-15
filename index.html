@@ -75,7 +75,7 @@ img { display: block; max-width: 100%; }
   .page.in-fwd, .page.in-back, .page.out-fwd, .page.out-back { animation-duration: .01s; }
 }
 
-.wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
 /* ─────────── 頂端列 ─────────── */
 
@@ -103,26 +103,41 @@ img { display: block; max-width: 100%; }
   min-height: 100%;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 20px 20px 10px;
+  padding: 24px 8px 12px;              /* 左右留很少，插畫要放得開 */
   text-align: center;
 }
-.home-logo { font-size: 30px; font-weight: 700; letter-spacing: 3px; }
-.home-tag { font-size: 12.5px; color: var(--faint); letter-spacing: 2px; margin-top: 2px; }
 
-.bo-stage { margin: 10px 0 4px; width: 100%; max-width: 300px; }
-.bo-stage img { width: 100%; }
-
+/* 對話框在慢寶頭上，尾巴朝下指著牠 */
 .bo-say {
+  position: relative;
   background: var(--surface);
   border-radius: var(--r-lg);
-  padding: 13px 20px;
-  font-size: 14.5px;
+  padding: 14px 22px;
+  font-size: 15px;
   box-shadow: var(--shadow);
-  margin-bottom: 26px;
-  max-width: 330px;
+  max-width: 300px;
+  margin: 0 auto 14px;
+  animation: pop .3s cubic-bezier(.34,1.56,.64,1) both;
 }
+.bo-say::after {
+  content: '';
+  position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%);
+  border: 9px solid transparent;
+  border-top-color: var(--surface);
+  border-bottom: 0;
+}
+@keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
 
-.gate { display: grid; gap: 12px; width: 100%; max-width: 330px; }
+.bo-stage { width: 100%; max-width: 430px; }
+.bo-stage img { width: 100%; }
+
+.tap-hint {
+  font-size: 12px; color: var(--faint); letter-spacing: 2px;
+  margin-top: 18px; animation: breathe 2.4s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+
+.gate { display: grid; gap: 12px; width: 100%; max-width: 330px; margin-top: 20px; }
 .gate button {
   border-radius: var(--r-md);
   padding: 16px 18px;
@@ -140,7 +155,7 @@ img { display: block; max-width: 100%; }
 /* ─────────── 食譜牆 ─────────── */
 
 .search {
-  position: relative; margin: 0 20px 14px;
+  position: relative; margin: 0 14px 14px;
 }
 .search input {
   width: 100%;
@@ -267,17 +282,25 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
   border-top: 1px solid var(--line);
   box-shadow: 0 -2px 14px rgba(120,90,60,.06);
 }
-.tray-face { width: 38px; flex: none; }
-.tray-txt { flex: 1; font-size: 13.5px; line-height: 1.35; }
-.tray-txt b { font-size: 14.5px; }
-.tray-txt .s { display: block; font-size: 11.5px; color: var(--faint); }
+.tray-face { width: 42px; flex: none; }
+/* 慢寶在底部一直都在，這裡就是牠的嘴巴 */
+.tray-txt { flex: 1; font-size: 13.5px; line-height: 1.4; color: var(--muted); }
 .tray-go {
+  position: relative;
   background: var(--brand); color: #fff;
   border-radius: 999px; padding: 9px 17px;
   font-size: 13px; font-weight: 700; letter-spacing: .5px;
+  flex: none;
 }
 .tray-go:active { transform: scale(.95); }
-.tray-go[disabled] { background: var(--line); color: var(--faint); }
+.tray-badge {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: 999px;
+  background: var(--gold); color: #4A3B32;
+  font-size: 11.5px; line-height: 20px; text-align: center;
+  box-shadow: 0 1px 4px rgba(120,90,60,.25);
+}
 
 .tabs { display: flex; gap: 4px; margin: 4px 20px 16px; }
 .tabs button {
@@ -316,10 +339,10 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 
 <div id="viewport"></div>
 
-<div class="tray" onclick="go('/menu/buy')">
-  <img class="tray-face" id="tray-face" src="bo/face_sleepy.webp" alt="">
+<div class="tray">
+  <img class="tray-face" id="tray-face" src="bo/face_sleepy.webp" alt="慢寶">
   <div class="tray-txt" id="tray-txt"></div>
-  <button class="tray-go" id="tray-go">看清單</button>
+  <button class="tray-go" id="tray-go">今日菜單<span class="tray-badge" id="tray-badge" hidden></span></button>
 </div>
 
 <script src="recipes.js"></script>
@@ -353,13 +376,48 @@ const BO = {
   surprised:'bo/face_surprised.webp',
 };
 
-/* 慢寶在首頁講的話 —— 之後照最後煮飯時間／菜單狀況再細分 */
-function boHomeLine() {
+/* 上次來訪 —— 用來決定招呼語 */
+const SEEN = 'bo_seen';
+function daysSinceSeen() {
+  const t = +localStorage.getItem(SEEN) || 0;
+  if (!t) return null;
+  return Math.floor((Date.now() - t) / 86400000);
+}
+const markSeen = () => localStorage.setItem(SEEN, Date.now());
+
+/* 招呼（進 app 第一眼，慢寶趴著） */
+function boGreeting() {
+  const d = daysSinceSeen();
+  const h = new Date().getHours();
+  if (d === null)          return '喔，新的人。';
+  if (d >= 3)              return `${d} 天沒來了。是不是都在吃外送。`;
+  if (h >= 22 || h < 5)    return '這個時間？……好吧。';
+  if (d === 0)             return '又是你。';
+  return '回來啦。';
+}
+
+/* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
+function boLine(path) {
   const n = menu.size;
-  if (n === 0) return ['今天怎麼辦？', BO.hang];
-  if (n === 1) return ['先加了一道。還要嗎？', BO.drape];
-  if (n <= 3)  return [`${n} 道了，看起來是認真的。`, BO.drape];
-  return [`${n} 道……你今天很有野心喔。`, BO.cheeky];
+  if (path.startsWith('/menu')) {
+    if (n === 0) return [BO.sleepy, '空的。我繼續睡。'];
+    return path.endsWith('prep')
+      ? [BO.cheeky, '要先泡先醃的別拖，不然你會等到天亮。']
+      : [BO.satisfied, `這些買齊就夠了，${n} 道份。`];
+  }
+  if (path.startsWith('/recipe/')) {
+    const r = byId(+path.split('/')[2]);
+    if (!r) return [BO.blank, ''];
+    if (r.urgentNote)  return [BO.cheeky, '這道有東西要先做，往下看。'];
+    if (r.stars >= 3)  return [BO.surprised, '這道你確定？……好啦，你可以。'];
+    return [BO.sleepy, '這道我熟。'];
+  }
+  if (path === '/wall') {
+    if (n === 0) return [BO.sleepy, '慢慢看，我不趕時間。'];
+    if (n <= 3)  return [BO.satisfied, `${n} 道了。還要嗎？`];
+    return [BO.cheeky, `${n} 道……你今天很有野心喔。`];
+  }
+  return [n ? BO.satisfied : BO.sleepy, n ? `菜單裡有 ${n} 道。` : ''];
 }
 
 /* ── 小工具 ── */
@@ -434,24 +492,36 @@ window.addEventListener('hashchange', route);
 
 /* ══════════ 首頁 ══════════ */
 
+/* 首頁有兩段：先打招呼（趴著），點一下才出現兩個入口 */
+let homeGreeted = false;
+
 function renderHome(el) {
-  const [line, img] = boHomeLine();
-  el.innerHTML = `
-    <div class="home">
-      <div class="home-logo">慢寶</div>
-      <div class="home-tag">SLOW COOK · 늘보</div>
-      <div class="bo-stage"><img src="${img}" alt="慢寶"></div>
-      <div class="bo-say">${esc(line)}</div>
-      <div class="gate">
-        <button class="primary" onclick="go('/wall')">
-          <div class="g-t">我知道要吃什麼</div>
-          <div class="g-s">自己翻，看到想吃的就加進菜單</div>
-        </button>
-        <button onclick="alert('問答流程還沒做 — 下一步就是它')">
-          <div class="g-t">完全沒想法</div>
-          <div class="g-s">回答三個問題，慢寶幫你挑</div>
-        </button>
-      </div>
+  el.innerHTML = `<div class="home" id="home"></div>`;
+  paintHome($('#home', el));
+}
+
+function paintHome(box) {
+  if (!homeGreeted) {
+    box.innerHTML = `
+      <div class="bo-say">${esc(boGreeting())}</div>
+      <div class="bo-stage"><img src="${BO.drape}" alt="慢寶"></div>
+      <div class="tap-hint">點一下</div>`;
+    box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
+    return;
+  }
+  box.onclick = null;
+  box.innerHTML = `
+    <div class="bo-say">今天怎麼辦？</div>
+    <div class="bo-stage"><img src="${BO.hang}" alt="慢寶"></div>
+    <div class="gate">
+      <button class="primary" onclick="go('/wall')">
+        <div class="g-t">我知道要吃什麼</div>
+        <div class="g-s">自己翻，看到想吃的就加進菜單</div>
+      </button>
+      <button onclick="alert('問答流程還沒做 — 下一步就是它')">
+        <div class="g-t">完全沒想法</div>
+        <div class="g-s">回答三個問題，慢寶幫你挑</div>
+      </button>
     </div>`;
 }
 
@@ -703,22 +773,18 @@ function prepHTML(sel) {
 /* ══════════ 底部菜單條 ══════════ */
 
 function paintTray() {
-  const n = menu.size;
-  const path = (location.hash || '#/').slice(1);
-  $('#tray-txt').innerHTML = n === 0
-    ? '今日菜單是空的<span class="s">看到想吃的就按 ＋</span>'
-    : `<b>今日菜單 ${n} 道</b><span class="s">${RECIPES.filter(r => menu.has(r.id)).map(r => r.title).join('、')}</span>`;
-  $('#tray-face').src = n === 0 ? BO.sleepy : (n > 3 ? BO.cheeky : BO.satisfied);
-  const go_ = $('#tray-go');
-  go_.disabled = n === 0;
-  go_.textContent = path.startsWith('/menu') ? '關閉' : '看清單';
+  const path = (location.hash || '#/').slice(1) || '/';
+  const [face, line] = boLine(path);
+  $('#tray-face').src = face;
+  $('#tray-txt').textContent = line;
+  const badge = $('#tray-badge');
+  badge.hidden = menu.size === 0;
+  badge.textContent = menu.size;
+  $('#tray-go').firstChild.textContent = path.startsWith('/menu') ? '關閉' : '今日菜單';
 }
 
-$('#tray-go').onclick = e => {
-  e.stopPropagation();
-  if (menu.size === 0) return;
+$('#tray-go').onclick = () =>
   (location.hash || '#/').slice(1).startsWith('/menu') ? back() : go('/menu/buy');
-};
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
