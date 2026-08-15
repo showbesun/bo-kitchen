@@ -955,45 +955,9 @@ function paintIngs(el, r) {
 /* 純備料的階段不進步驟頁 —— 那些內容備料頁已經有了 */
 const PREP_PHASE = /備料/;
 
-/* 步驟裡的食材自動加粗。
-   資料裡本來有的 <strong> 不一致（r10–r12 完全沒有），靠人工補會一直漏，
-   所以改成比對食材清單即時標記 —— 結構上不可能不一致。 */
-function ingredientNames(r) {
-  const raw = [];
-  (r.shoppingList || []).forEach(item => {
-    if (Array.isArray(item)) raw.push(item[0]);
-    else { raw.push(item.label); item.items.forEach(i => raw.push(i[0])); }
-  });
-  const out = new Set();
-  raw.forEach(n => String(n)
-    .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
-    .split(/[＋+、／\/]|或/)
-    .forEach(part => { const p = part.trim(); if (p.length >= 2) out.add(p); }));
-  // 長的先比，才不會「大蔥」被「蔥」搶先切掉
-  return [...out].sort((a, b) => b.length - a.length);
-}
-
-function emphasize(step, r) {
-  const plain = String(step).replace(/<[^>]+>/g, '');     // 丟掉資料裡舊的標記
-  const names = ingredientNames(r);
-  const marks = [];
-  let masked = plain;
-  names.forEach(n => {
-    let i;
-    while ((i = masked.indexOf(n)) !== -1) {
-      marks.push([i, i + n.length]);
-      masked = masked.slice(0, i) + '\u0000'.repeat(n.length) + masked.slice(i + n.length);
-    }
-  });
-  if (!marks.length) return esc(plain);
-  marks.sort((a, b) => a[0] - b[0]);
-  let out = '', at = 0;
-  marks.forEach(([a, b]) => {
-    if (a < at) return;
-    out += esc(plain.slice(at, a)) + '<strong>' + esc(plain.slice(a, b)) + '</strong>';
-    at = b;
-  });
-  return out + esc(plain.slice(at));
+/* 步驟只出純文字。資料裡殘留的 <strong> 要先剝掉，不然標籤會變成字露出來。 */
+function stepText(step) {
+  return esc(String(step).replace(/<[^>]+>/g, ''));
 }
 
 function stepsHTML(r) {
@@ -1009,7 +973,7 @@ function stepsHTML(r) {
     } else {
       if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
-      out += `<li>${emphasize(s, r)}</li>`;
+      out += `<li>${stepText(s)}</li>`;
     }
   });
   out += open ? '</ol>' : '';
@@ -1030,11 +994,20 @@ function renderMenu(el) {
       <span class="chip">${esc(r.title)}
         <button onclick="toggle(${r.id});go('/menu')" aria-label="移出">✕</button>
       </span>`).join('')}</div>
+    ${sel.length ? `
+      <div class="bo-talk">
+        <img src="${BO.drape}" alt="慢寶">
+        ${say('你去買，我在家等。反正我也跑不掉。', 'left', ' data-at="52%" data-len="16" data-half="7"')}
+      </div>` : ''}
     <div class="wrap">${
       sel.length === 0
         ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>慢寶繼續睡。</div>`
-        : buyHTML(sel)
+        : `<div class="sect" style="margin:22px 0 0">
+             <div class="sect-t">購物清單</div>
+             ${buyHTML(sel)}
+           </div>`
     }</div>`;
+  layoutBubbles(el);
 }
 
 const FRESH = {
