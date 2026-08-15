@@ -130,6 +130,7 @@ img { display: block; max-width: 100%; }
   overflow: visible;
   pointer-events: none;
   filter: url(#wobble);
+  transform: translateZ(0);          /* 自成一層 —— 不然別處一重繪，濾鏡就重算一次，會閃 */
 }
 .bub > svg path {
   fill: var(--surface);
@@ -450,6 +451,16 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 .rm { flex: none; color: var(--line); font-size: 13px; padding: 2px 4px; }
 .rm:hover { color: var(--brand-dim); }
 
+.done-btn {
+  display: block; width: 100%;
+  margin: 18px 0 4px; padding: 13px;
+  border-radius: var(--r-md);
+  background: var(--brand); color: #fff;
+  font-size: 14.5px; font-weight: 700; letter-spacing: 1px;
+  animation: pop .3s cubic-bezier(.34,1.5,.64,1) both;
+}
+.done-btn:active { transform: scale(.98); }
+
 .have-box { margin: 18px 0 4px; padding: 12px 14px; border: 1.5px dashed var(--line); border-radius: var(--r-md); }
 .have-t { font-size: 11.5px; letter-spacing: 1.5px; color: var(--faint); margin-bottom: 8px; }
 .have-chip {
@@ -489,7 +500,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=2"></script>
+<script src="recipes.js?v=3"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -652,7 +663,7 @@ function boLine(path) {
     if (n <= 3)  return [BO.satisfied, `${n} 道了。還要嗎？`];
     return [BO.cheeky, `${n} 道……你今天很有野心喔。`];
   }
-  return [n ? BO.satisfied : BO.sleepy, n ? `菜單裡有 ${n} 道。` : ''];
+  return [n ? BO.satisfied : BO.sleepy, n ? `${n} 道在等你。我也在等。` : ''];
 }
 
 /* ── 小工具 ── */
@@ -1016,6 +1027,9 @@ function stepsHTML(r) {
 
 function renderMenu(el) {
   const sel = RECIPES.filter(r => menu.has(r.id));
+  if (!sel.length && (bought.size || haveAtHome.size)) {   // 菜單清空＝這趟結束
+    bought.clear(); haveAtHome.clear(); saveBuy();
+  }
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
@@ -1059,10 +1073,26 @@ function toggleBought(name) {
     el.classList.toggle('got', on);
     el.querySelector('.tick').textContent = on ? '✓' : '';
   });
+  refreshDone();
+}
+
+/* 全部勾完才顯示收工鈕 */
+function refreshDone() {
+  const btn = $('#done-btn', current);
+  if (!btn) return;
+  const rows = [...current.querySelectorAll('.row.buy')];
+  btn.hidden = !rows.length || !rows.every(el => el.classList.contains('got'));
 }
 function haveIt(name) {
   haveAtHome.has(name) ? haveAtHome.delete(name) : haveAtHome.add(name);
   bought.delete(name);
+  saveBuy(); renderMenu(current);
+}
+
+/* 收工：把這一趟的勾選和「家裡已經有」全部清掉。
+   生鮮用完就沒了，這兩份狀態不該跨到下一趟。 */
+function finishShopping() {
+  bought.clear(); haveAtHome.clear();
   saveBuy(); renderMenu(current);
 }
 
@@ -1121,6 +1151,14 @@ function buyHTML(sel) {
     const r = rows(k);
     return r ? `<div class="grp-h">${label}</div>${r}` : '';
   }).join('');
+
+  // 全部勾完 = 買完了。收工按鈕只在那時候出現
+  const names = [...Object.values(bins).flatMap(b => Object.values(b)).map(x => x.name),
+                 ...Object.values(fixed).flat().map(x => x[0])]
+                 .filter(n => !haveAtHome.has(n));
+  const allDone = names.length && names.every(n => bought.has(n));
+  html += `<button class="done-btn" id="done-btn" onclick="finishShopping()"
+            ${allDone ? '' : 'hidden'}>買完了，收工</button>`;
 
   // 收起來的那些要有路可以回來，不然就是死路
   const home = [...haveAtHome];
