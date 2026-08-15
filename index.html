@@ -1078,7 +1078,8 @@ function haveIt(name) {
    生鮮用完就沒了，這兩份狀態不該跨到下一趟。 */
 function finishShopping() {
   bought.clear(); haveAtHome.clear();
-  saveBuy(); renderMenu(current); paintTray();
+  saveBuy();
+  back();                            // 收工就離開清單頁；paintTray 會在換頁時跑
 }
 
 const FRESH = {
