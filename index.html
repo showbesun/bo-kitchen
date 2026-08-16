@@ -188,7 +188,7 @@ img { display: block; max-width: 100%; }
   width: 100%;
   pointer-events: none;
 }
-.bo-branch { clip-path: inset(24.0% 0 61.6% 0); }   /* 純樹枝，不動 */
+.bo-branch { clip-path: inset(24.0% 0 60.7% 0); }   /* 純樹枝，不動。下緣跟著 sway 的角度走 */
 
 /* 枝葉橫切成三片，切線落在三叢之間的空白處（x=438 / 686 於 900 寬）。
    每一片只畫一次，所以不會有「靜止的和會動的疊在一起」的殘影。
@@ -210,9 +210,13 @@ img { display: block; max-width: 100%; }
    起點看起來會突然高 60px，把切線硬拉上去（那 32 欄會讓葉帶只剩 15%，
    一半的葉子變成靜止的）。要再用移動中位數把那些欄剔掉，才是主樹枝真正的上緣。 */
 
+/* ⚠️ 幅度要看**身體最低點在畫面上移動幾 px**，不是看角度好不好聽。
+   ±1.4° 在舊那張（細長垂下來的身體）看得出來，換成這張寬 U 型的身體之後
+   只剩 9px 來回、還分散在 4.6 秒裡，使用者以為它壞了。
+   現在 ±2.4°＝來回約 16px。角度一改，下面樹枝帶的重疊也要跟著加大。 */
 @keyframes sway {
-  0%, 100% { transform: rotate(-1.4deg); }
-  50%      { transform: rotate(1.4deg); }
+  0%, 100% { transform: rotate(-2.4deg); }
+  50%      { transform: rotate(2.4deg); }
 }
 @keyframes breeze-b {
   0%, 100% { transform: skewX(-2deg); }
