@@ -264,7 +264,7 @@ img { display: block; max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-swing, .bo-leaf-a, .bo-leaf-b, .blink { animation: none; }
+  .bo-swing, .bo-leaf-a, .bo-leaf-b, .blink, .leg { animation: none; }
 }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭。
@@ -336,13 +336,32 @@ img { display: block; max-width: 100%; }
   position: absolute;
   left: 38.78%; top: 22.70%; width: 21.71%;
   opacity: 0; pointer-events: none;
-  animation: blink 6.5s linear infinite;
+  animation: blink 3.6s linear infinite;
 }
+/* 兩條腿開開合合。
+   腿是從同一張圖切下來的透明素材（懸空、左右和中間都是背景，邊界乾淨），
+   底圖對應的位置已經擦成背景色。**支點在髖部**，所以接縫處位移＝0；
+   髖部上方還留了 6px 的毛當蓋子，轉的時候露出來的是身體不是背景。
+
+   ⛔ 這招能用是因為腿本來就懸空。樹枝那次同樣想切，失敗了 ——
+   那裡的切線得沿著波浪狀的樹枝上緣走，而且有爪子跨在上面。
+   **要切之前先問：這個東西的邊界是不是乾淨的。** */
+.bo-stage img.leg {
+  position: absolute; top: 72.204%;
+  pointer-events: none;
+}
+.bo-stage img.leg-l { left: 31.951%; width: 18.049%; transform-origin: 55.4% 3.6%;
+                      animation: legL 2.6s ease-in-out infinite; }
+.bo-stage img.leg-r { left: 50.000%; width: 19.024%; transform-origin: 43.6% 3.6%;
+                      animation: legR 2.6s ease-in-out infinite; }
+@keyframes legL { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(-7deg); } }
+@keyframes legR { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(7deg); } }
+
 /* 成對的關鍵影格＝瞬間切換，眨眼不該是淡入淡出的。閉著約 180ms */
 @keyframes blink {
-  0%, 94%      { opacity: 0; }
-  94.1%, 96.8% { opacity: 1; }
-  96.9%, 100%  { opacity: 0; }
+  0%, 89%      { opacity: 0; }
+  89.1%, 94%   { opacity: 1; }   /* 約 180ms */
+  94.1%, 100%  { opacity: 0; }
 }
 
 .bo-stage.drape { width: min(100%, 430px, 44vh); }    /* 820x608，比 1.349。vh 上限在矮螢幕才會咬到 */
@@ -725,7 +744,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '37';
+const ASSETS = '38';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1059,6 +1078,8 @@ const BO = {
   drape:   asset('assets/bo/hang_drape.webp'),       // 菜單頁那個 132px 的近景
   drapeTree: asset('assets/bo/hang_drape_tree.webp'),// 首頁：趴在有葉子的樹枝上
   blink:   asset('assets/bo/drape_blink.webp'),      // 上一張的眼睛那一帶，改成閉眼
+  legL:    asset('assets/bo/leg_l.webp'),            // 兩條腿切下來（透明底），各自繞髖部擺
+  legR:    asset('assets/bo/leg_r.webp'),
   cookA:   asset('assets/bo/cook_bowl.webp'),
   lie:     asset('assets/bo/lie_sleep.webp'),    // 菜單空的：牠趴著睡，旁邊一個空碗
   shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
@@ -1301,14 +1322,19 @@ function typeSeq(el, lines, last, onDone) {
    `ml` —— 泡泡的 margin-left，決定它往圖片壓多少（正值＝留空隙）。
       ⚠️ **尾巴現在是指著臉的，所以水平方向必須讓開，否則會從側面戳進臉裡。**
       （舊版尾巴固定在泡泡 58% 高、比臉低，所以壓上去也沒撞到，那是僥倖。）
-      ml ＝ 臉盤右緣px ＋ 8 ＋ 尾巴長 16 − 顯示寬度，夾在 [−34, +14]
-      端鍋是唯一要留空隙的（+10）—— 牠正面站著，臉幾乎佔滿畫面寬度
+      ml ＝ **頭部右緣**px ＋ 8 ＋ 尾巴長 16 − 顯示寬度，夾在 [−34, +14]
 
-   量臉盤：找 R>247 G>238 B>225 的白色區域，取列的中位數（中心）和最右欄（右緣）。 */
+   ⛔ **右緣要量「頭」不是量「臉盤」。** 2026-08-17 十七張全部算錯：
+   白色臉盤的右緣比頭的實際輪廓少 8–26%（毛在外面），
+   尾巴閃過了臉盤卻戳進毛裡，使用者的原話是「不要戳到人家的頭」。
+   修正後幾乎每張都從負值（壓在圖上）變成正值（留空隙）。
+
+   量法：`at` 用白色臉盤（R>247 G>238 B>225）的列中位數；
+   `ml` 用**那幾列裡整個非背景區域**的最右欄。 */
 const MURMUR_POSES = [
   //                          at      ml       臉盤中心 / 右緣
-  { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗  25% / 70%
-  { img: () => BO.glass, at: 40, ml:  -2 },   // 看沙漏    27% / 67%
+  { img: () => BO.cookA, at: 37, ml: +14 },   // 站著攪碗  25% / 70%
+  { img: () => BO.glass, at: 40, ml: +9 },   // 看沙漏    27% / 67%
 ];
 
 /* 抱著食材的姿勢，對應那道菜的主料 —— 牠抱著牛肉出現在銅盤烤肉那頁，
@@ -1318,22 +1344,22 @@ const MURMUR_POSES = [
    寧可比對不到掉回中性姿勢，也不要對應錯的食材。 */
 const HOLD_POSES = [
   //  比對詞               姿勢                              at   ml
-  [/泡菜/,        { img: () => BO.kimchi,  at: 39, ml:  -6 }],  // 必須排在任何含「菜」的規則前面
-  [/海帶/,        { img: () => BO.seaweed, at: 38, ml:  -9 }],
-  [/香蕉/,        { img: () => BO.banana,  at: 41, ml:  -7 }],
-  [/燉飯/,        { img: () => BO.stirpan, at: 44, ml:  -5 }],  // 要一直攪的，排在「飯」前面
-  [/炒/,          { img: () => BO.spatula, at: 41, ml:  -8 }],  // 炒＝鍋鏟
-  [/義大利麵|麵條/,{ img: () => BO.cookB,   at: 35, ml: +10 }],  // 平底鍋 —— 蒜片冷油慢香是在平底鍋裡
-  [/肉醬/,        { img: () => BO.lidpot,  at: 39, ml:  -5 }],  // 蓋著鍋蓋慢慢燉。⚠️ 要排在「牛」前面，
+  [/泡菜/,        { img: () => BO.kimchi, at: 39, ml: +9 }],  // 必須排在任何含「菜」的規則前面
+  [/海帶/,        { img: () => BO.seaweed, at: 38, ml: +7 }],
+  [/香蕉/,        { img: () => BO.banana, at: 41, ml: +8 }],
+  [/燉飯/,        { img: () => BO.stirpan, at: 44, ml: +8 }],  // 要一直攪的，排在「飯」前面
+  [/炒/,          { img: () => BO.spatula, at: 41, ml: +8 }],  // 炒＝鍋鏟
+  [/義大利麵|麵條/,{ img: () => BO.cookB, at: 35, ml: +10 }],  // 平底鍋 —— 蒜片冷油慢香是在平底鍋裡
+  [/肉醬/,        { img: () => BO.lidpot, at: 39, ml: +5 }],  // 蓋著鍋蓋慢慢燉。⚠️ 要排在「牛」前面，
                                                                //   否則番茄肉醬會被副標的「豬牛混合」攔走
-  [/雞/,          { img: () => BO.chicken, at: 43, ml:  -1 }],
-  [/牛/,          { img: () => BO.beef,    at: 41, ml:  -5 }],
-  [/醬醃/,        { img: () => BO.taste,   at: 45, ml:  -9 }],  // 醬汁類，牠試味道
-  [/馬鈴薯|洋蔥/,  { img: () => BO.root,    at: 39, ml:  -4 }],
-  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.basket, at: 40, ml: -4 }],
-  [/鍋/,          { img: () => BO.pot,     at: 42, ml:  -8 }],  // 燉煮類
-  [/飯/,          { img: () => BO.rice,    at: 45, ml:  -6 }],  // 排在「鍋」後面：辣醬鍋要的是鍋，不是那碗飯
-  [/蛋/,          { img: () => BO.egg,     at: 47, ml:  -6 }],  // 目前 12 道都比對不到，備給以後的蛋料理
+  [/雞/,          { img: () => BO.chicken, at: 43, ml: +12 }],
+  [/牛/,          { img: () => BO.beef, at: 41, ml: +2 }],
+  [/醬醃/,        { img: () => BO.taste, at: 45, ml: +9 }],  // 醬汁類，牠試味道
+  [/馬鈴薯|洋蔥/,  { img: () => BO.root, at: 39, ml: +3 }],
+  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.basket, at: 40, ml: +8 }],
+  [/鍋/,          { img: () => BO.pot, at: 42, ml: +8 }],  // 燉煮類
+  [/飯/,          { img: () => BO.rice, at: 45, ml: +14 }],  // 排在「鍋」後面：辣醬鍋要的是鍋，不是那碗飯
+  [/蛋/,          { img: () => BO.egg, at: 47, ml: +9 }],  // 目前 12 道都比對不到，備給以後的蛋料理
 ];
 
 function murmurPose(r) {
@@ -1512,6 +1538,8 @@ function paintHome(box) {
     ${say('', 'bottom', ' data-at="50%"')}
     <div class="bo-stage drape">
       <img src="${BO.drapeTree}" alt="慢寶">
+      <img class="leg leg-l" src="${BO.legL}" alt="" aria-hidden="true">
+      <img class="leg leg-r" src="${BO.legR}" alt="" aria-hidden="true">
       <img class="blink" src="${BO.blink}" alt="" aria-hidden="true">
     </div>
     <div class="gate">
