@@ -219,6 +219,15 @@ img { display: block; max-width: 100%; }
 
 /* 枝葉左右各一叢，各自繞**自己接到樹枝的那一點**轉。
 
+   ⚠️ **幅度要小。** 枝葉的莖跨過「葉子帶／樹枝帶」的切線，而旋轉只有支點那一點
+   位移＝0，切線上其他位置會上下錯開 —— 幅度一大，莖就在切線上斷開，
+   看起來像樹枝斷掉（她的原話：「樹枝都斷掉了」）。±1.4°／±1.8° 是實測的上限。
+
+   ⛔ **2026-08-17 有三輪加大幅度是白做的** —— 那時候 iOS 上根本沒在重繪
+   （clip-path 的問題，見上面）。我一路把慢寶從 ±1.4° 加到 ±3.2°，
+   換成 overflow:hidden 之後真的動了，她的反應是「幅度太大了有點好笑」。
+   **看不到動畫時先確認它有沒有在跑，不要急著加幅度。**
+
    ⛔ 原本用 skewX，動不起來 —— skew 的位移只跟「離原點的垂直距離」成正比，
    而葉子就擠在原點上方 120px 內，實測畫面上只動 0.9–1.5px。
    **skew 完全沒用到葉子離接合點的水平距離（264px），那才是真正的槓桿。**
@@ -236,16 +245,16 @@ img { display: block; max-width: 100%; }
 /* ⚠️ translateZ(0) 要寫進關鍵影格 —— 動畫跑的時候 transform 由影格決定，
    寫在靜態規則上的那一份會被覆寫掉。 */
 @keyframes sway {
-  0%, 100% { transform: rotate(-3.2deg) translateZ(0); }
-  50%      { transform: rotate(3.2deg) translateZ(0); }
+  0%, 100% { transform: rotate(-1.5deg) translateZ(0); }
+  50%      { transform: rotate(1.5deg) translateZ(0); }
 }
 @keyframes breeze-b {
-  0%, 100% { transform: rotate(-4deg) translateZ(0); }
-  50%      { transform: rotate(4deg) translateZ(0); }
+  0%, 100% { transform: rotate(-1.4deg) translateZ(0); }
+  50%      { transform: rotate(1.4deg) translateZ(0); }
 }
 @keyframes breeze-c {
-  0%, 100% { transform: rotate(-5deg) translateZ(0); }
-  50%      { transform: rotate(5deg) translateZ(0); }
+  0%, 100% { transform: rotate(-1.8deg) translateZ(0); }
+  50%      { transform: rotate(1.8deg) translateZ(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
