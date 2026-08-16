@@ -157,19 +157,23 @@ img { display: block; max-width: 100%; }
   color: var(--faint); margin-top: 6px;
 }
 
-/* ── 封面：一張圖切三層，三層各自動 ──
+/* ── 封面：一張圖切成好幾層，各層各自動 ──
 
-   同一張 hang_sleep_tree.webp 疊三次，用 clip-path 各露出一條橫帶：
+   同一張 hang_sleep_tree.webp 疊多次，用 clip-path 各露出一塊：
 
-     0 – 25.6%    葉子和小枝     skewX 擺動（原點在帶底，接合處位移＝0）
-     25.6 – 38.3% 光禿的主樹枝   不動
-     29.4% 以下   慢寶           rotate 擺動（支點在牠抓樹枝的地方）
+     縱向    0 – 25.6%    枝葉      橫向再切三片，只有兩片會動
+             25.4 – 40.4% 主樹枝    不動
+             38.6% 以下   慢寶      rotate 擺動
 
-   為什麼是這個順序：中間那條必須是「純樹枝、沒有東西跨過去」的乾淨帶，
-   上下兩層才能各自轉而看不出接縫。葉子那層用 skew 不用 rotate ——
-   rotate 會讓左右兩叢一上一下，樹枝接合處立刻脫節；
-   skew 只有水平位移，而且原點設在帶底，接合處完全不動。
-   慢寶那層的裁切上緣（29.4%）刻意藏在樹枝帶裡面，轉起來邊緣才不會露出來。 */
+   ⚠️ 兩條帶的重疊不是隨便抓的。慢寶那層一轉，它的裁切上緣也跟著轉 ——
+   離支點最遠的身體在 x=198／663（支點 x=52.8%），極限垂直位移 6.8px。
+   所以樹枝帶的下緣（40.4%）必須比慢寶層的上緣（38.6%）再低 10px 以上，
+   轉到極限時才不會在兩層之間裂出一條縫。
+   慢寶層的上緣也必須落在**主樹枝最低點以下**，否則會把樹枝末端一起轉下去，
+   從靜止樹枝的下緣露出來 —— 這就是 2026-08-16 那個左端斷枝的 bug。
+
+   枝葉用 skew 不用 rotate：rotate 會讓左右兩叢一上一下，跟樹枝的接合處立刻脫節；
+   skew 只有水平位移，原點設在接合線上，那條線位移＝0。 */
 .bo-stage { position: relative; }
 .bo-stage > img, .bo-stage > .bo-swing { display: block; }
 
@@ -177,31 +181,42 @@ img { display: block; max-width: 100%; }
   transform-origin: 52.8% 33.3%;     /* 四隻爪抓著樹枝的中點 */
   animation: sway 4.6s ease-in-out infinite;
 }
-.bo-swing > img { clip-path: inset(29.4% 0 0 0); }
+.bo-swing > img { clip-path: inset(38.6% 0 0 0); }
 
-.bo-branch, .bo-leaves {
+.bo-branch, .bo-leaf-a, .bo-leaf-b, .bo-leaf-c {
   position: absolute; inset: 0;
   width: 100%;
   pointer-events: none;
 }
-.bo-branch { clip-path: inset(25.4% 0 61.7% 0); }   /* 純樹枝，不動 */
-.bo-leaves {
-  clip-path: inset(0 0 74.4% 0);
-  transform-origin: 50% 25.6%;       /* 枝葉與樹枝的接合線 */
-  animation: breeze 3.7s ease-in-out infinite;      /* 跟 sway 不同週期，才不像機械 */
-}
+.bo-branch { clip-path: inset(25.4% 0 59.6% 0); }   /* 純樹枝，不動 */
+
+/* 枝葉橫切成三片，切線落在三叢之間的空白處（x=438 / 686 於 900 寬）。
+   每一片只畫一次，所以不會有「靜止的和會動的疊在一起」的殘影。
+
+   ⛔ 不要三片一起晃 —— 使用者的原話是「一起晃太機械了」。**只有右邊那兩根動。**
+   左邊那叢是一根分岔的枝（兩簇共用一根莖），整叢一起晃才對，但那樣看起來
+   會有三根在動；讓它整片不動，剛好剩右邊兩根獨立的枝在晃。
+   兩根的幅度和週期都不一樣，而且錯開相位，不然又變成整齊劃一。 */
+.bo-leaf-a { clip-path: inset(0 51.3% 74.4% 0); }                            /* 左邊那叉，不動 */
+.bo-leaf-b { clip-path: inset(0 23.8% 74.4% 48.7%); animation: breeze-b 5.6s ease-in-out infinite; }
+.bo-leaf-c { clip-path: inset(0 0 74.4% 76.2%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
+.bo-leaf-b, .bo-leaf-c { transform-origin: 50% 25.6%; }   /* 枝葉與樹枝的接合線 */
 
 @keyframes sway {
   0%, 100% { transform: rotate(-1.4deg); }
   50%      { transform: rotate(1.4deg); }
 }
-@keyframes breeze {
-  0%, 100% { transform: skewX(-3deg); }
-  50%      { transform: skewX(3deg); }
+@keyframes breeze-b {
+  0%, 100% { transform: skewX(-2deg); }
+  50%      { transform: skewX(2deg); }
+}
+@keyframes breeze-c {
+  0%, 100% { transform: skewX(-3.5deg); }
+  50%      { transform: skewX(3.5deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-swing, .bo-leaves { animation: none; }
+  .bo-swing, .bo-leaf-b, .bo-leaf-c { animation: none; }
 }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
@@ -557,7 +572,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=17"></script>
+<script src="recipes.js?v=19"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -565,7 +580,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '18';
+const ASSETS = '20';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -847,7 +862,9 @@ function paintHome(box) {
           <img src="${BO.sleep}" alt="慢寶">
         </div>
         <img class="bo-branch" src="${BO.sleep}" alt="" aria-hidden="true">
-        <img class="bo-leaves" src="${BO.sleep}" alt="" aria-hidden="true">
+        <img class="bo-leaf-a" src="${BO.sleep}" alt="" aria-hidden="true">
+        <img class="bo-leaf-b" src="${BO.sleep}" alt="" aria-hidden="true">
+        <img class="bo-leaf-c" src="${BO.sleep}" alt="" aria-hidden="true">
       </div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
@@ -1230,10 +1247,26 @@ function aggregate(sel) {
 }
 
 /* 一行的份量：能加的先加，加不起來的並列在後面 */
-const amountOf = row => [
-  ...Object.entries(row.sums).map(([u, n]) => fmt(n) + u),
-  ...row.fixed,
-].join(' ＋ ');
+/* 買菜清單上的份量 —— 顯示原則跟食譜頁不同。
+
+   你不可能買一湯匙的糖，一定是整包整罐拿，所以「匙、撮、滴、少許」這類
+   煮飯時才有意義的量，在買菜清單上一律不顯示。留下的是能決定「買幾個、
+   買多重」的量：g、ml、顆、根、包、瓣。
+
+   調味料整區再更進一步 —— 那些都是家裡常備、不會為一道菜特地買，
+   所以連 g/ml 也不顯示。只有下面兩樣例外：它們用量大到會影響買幾罐。 */
+const COOK_UNIT = /匙|撮|滴|少許|適量|份量|瓣/;
+const SHOW_IN_SEASON = /麵醬|高湯/;
+
+const amountOf = (row, bin) => {
+  if (bin === 'season' && !SHOW_IN_SEASON.test(row.name)) return '';
+  // row.fixed 是「數朵、一小撮、1 湯匙 + 2 茶匙」這類沒有數字的量 ——
+  // 全部是煮飯時的講法，沒有一個能拿去貨架上比對，買菜清單一律不顯示
+  return Object.entries(row.sums)
+    .map(([u, n]) => fmt(n) + u)
+    .filter(t => !COOK_UNIT.test(t))
+    .join(' ＋ ');
+};
 
 /* 還要買的（扣掉家裡已經有的） */
 function shoppingNames() {
@@ -1264,7 +1297,7 @@ function buyHTML(sel) {
     </div>`;
   };
 
-  const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x))).join('');
+  const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x, bin))).join('');
 
   const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','雜貨'],['season','調味料']];
   let html = secs.map(([k, label]) => {
