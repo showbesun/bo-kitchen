@@ -177,86 +177,64 @@ img { display: block; max-width: 100%; }
   color: var(--faint); margin-top: 6px;
 }
 
-/* ── 封面：一張圖切成好幾層，各層各自動 ──
+/* ── 封面：一張圖疊四層，各層各自動 ──
 
-   同一張 hang_sleep_tree.webp 疊多次，用 clip-path 各露出一塊：
+   同一張 hang_sleep_tree.webp 疊四次，每一層是一個 overflow:hidden 的窗，
+   裡面的圖用負位移推到該露出的位置：
 
-     縱向    0 – 25.6%    枝葉      橫向再切三片，只有兩片會動
-             25.4 – 40.4% 主樹枝    不動
-             38.6% 以下   慢寶      rotate 擺動
+     縱向 0 – 24.0%     枝葉    橫向再切兩片，各自繞接合點 rotate
+          24.0 – 39.7%  主樹枝  不動
+          36.7% 以下    慢寶    rotate 擺動
 
-   ⚠️ 兩條帶的重疊不是隨便抓的。慢寶那層一轉，它的裁切上緣也跟著轉 ——
-   離支點最遠的身體在 x=198／663（支點 x=52.8%），極限垂直位移 6.8px。
-   所以樹枝帶的下緣（40.4%）必須比慢寶層的上緣（38.6%）再低 10px 以上，
-   轉到極限時才不會在兩層之間裂出一條縫。
-   慢寶層的上緣也必須落在**主樹枝最低點以下**，否則會把樹枝末端一起轉下去，
-   從靜止樹枝的下緣露出來 —— 這就是 2026-08-16 那個左端斷枝的 bug。
+   ⛔ **不要用 clip-path 做這件事。** 原本四層都是 clip-path，
+   在 iOS Safari 上「被動畫的祖先底下、用 clip-path 裁切的內容」不會重繪 ——
+   動畫確實在跑（同一頁的「點一下」呼吸正常），但那幾層完全不動。
+   加 translateZ(0) 推上合成層也沒用。`overflow: hidden` 才是相容的裁法。
 
-   枝葉用 skew 不用 rotate：rotate 會讓左右兩叢一上一下，跟樹枝的接合處立刻脫節；
-   skew 只有水平位移，原點設在接合線上，那條線位移＝0。 */
+   ⚠️ 因為所有層都變成絕對定位，**舞台的高度沒有東西撐了**，
+   改用 aspect-ratio 900/675 給。換圖要一起改這個比例。
+
+   ⚠️ 兩條帶的重疊不是隨便抓的。慢寶那層一轉，它的窗口上緣也跟著轉，
+   離支點最遠的身體極限位移 7px —— 所以樹枝帶的下緣（39.7%）要比
+   慢寶層的上緣（36.7%）再低 10px 以上，轉到極限才不會裂出一條縫。
+   慢寶層的上緣也必須落在**主樹枝最低點以下**，否則會把樹枝末端一起轉下去。 */
 .bo-stage { position: relative; }
-.bo-stage > img, .bo-stage > .bo-swing { display: block; }
+.bo-stage.sleep { aspect-ratio: 900 / 675; }
 
-.bo-swing {
-  transform-origin: 54.7% 30.3%;     /* 四隻爪抓著樹枝的中點 */
-  animation: sway 3.4s ease-in-out infinite;
-}
-/* ⚠️ translateZ(0) 讓被裁切的那張圖自成一個合成層。
-   iOS Safari 對「被動畫的祖先底下、用 clip-path 裁切的內容」有重繪問題 ——
-   動畫在跑但畫面不更新，看起來就像完全沒動。
-   （同一類問題在對話框的 SVG 濾鏡上踩過，也是靠這一行解決的。） */
-.bo-swing > img { clip-path: inset(36.7% 0 0 0); transform: translateZ(0); }
-.bo-branch, .bo-leaf-a, .bo-leaf-b { transform: translateZ(0); }
+.cov { position: absolute; overflow: hidden; pointer-events: none; }
+/* ⚠️ 每一層的 img 都要用 `.bo-stage .cov-xxx > img` 這個層級 ——
+   `.bo-stage img { width: 100% }` 跟 `.cov-xxx > img` 優先度相同而且排在後面，
+   會把放大用的寬度蓋掉，葉子那兩層就縮成整張圖的縮圖。 */
+.bo-stage .cov > img { position: absolute; max-width: none; height: auto; }
 
-.bo-branch, .bo-leaf-a, .bo-leaf-b, .bo-leaf-c {
-  position: absolute; inset: 0;
-  width: 100%;
-  pointer-events: none;
-}
-.bo-branch { clip-path: inset(24.0% 0 60.3% 0); }   /* 純樹枝，不動。下緣跟著 sway 的角度走 */
+/* 慢寶：窗口 36.7% 以下。支點是四隻爪抓樹枝的中點（在窗口外面，所以 y 是負的） */
+.cov-body { left: 0; top: 36.7%; width: 100%; height: 63.3%;
+            transform-origin: 54.7% -10.11%;
+            animation: sway 3.4s ease-in-out infinite; }
+.bo-stage .cov-body > img { width: 100%; left: 0; top: -57.98%; }
 
-/* 枝葉橫切成三片，切線落在三叢之間的空白處（x=438 / 686 於 900 寬）。
-   每一片只畫一次，所以不會有「靜止的和會動的疊在一起」的殘影。
+/* 純樹枝，不動 */
+.cov-branch { left: 0; top: 24.0%; width: 100%; height: 15.7%; }
+.bo-stage .cov-branch > img { width: 100%; left: 0; top: -152.87%; }
 
-   ⛔ 不要三片一起晃 —— 使用者的原話是「一起晃太機械了」。**只有右邊那兩根動。**
-   左邊那叢是一根分岔的枝（兩簇共用一根莖），整叢一起晃才對，但那樣看起來
-   會有三根在動；讓它整片不動，剛好剩右邊兩根獨立的枝在晃。
-   兩根的幅度和週期都不一樣，而且錯開相位，不然又變成整齊劃一。 */
-.bo-leaf-a { clip-path: inset(0 48.2% 76.0% 0); transform-origin: 16.1% 24.0%;
+/* 枝葉左右各一叢，各自繞**自己接到樹枝的那一點**轉。
+
+   ⛔ 原本用 skewX，動不起來 —— skew 的位移只跟「離原點的垂直距離」成正比，
+   而葉子就擠在原點上方 120px 內，實測畫面上只動 0.9–1.5px。
+   **skew 完全沒用到葉子離接合點的水平距離（264px），那才是真正的槓桿。**
+   兩叢的幅度、週期、相位都不同，不然看起來像機械擺動。 */
+.cov-leaf-a { left: 0; top: 0; width: 51.8%; height: 24.0%;
+              transform-origin: 31.08% 100%;
               animation: breeze-b 5.6s ease-in-out infinite; }
-.bo-leaf-b { clip-path: inset(0 0 76.0% 51.8%); transform-origin: 73.7% 24.0%;
+.bo-stage .cov-leaf-a > img { width: 193.05%; left: 0; top: 0; }
+
+.cov-leaf-b { left: 51.8%; top: 0; width: 48.2%; height: 24.0%;
+              transform-origin: 45.44% 100%;
               animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
-.bo-leaf-c { display: none; }                        /* 這版左右各一叢 */
+.bo-stage .cov-leaf-b > img { width: 207.47%; left: -107.47%; top: 0; }
 
-/* ⚠️ 枝葉用 rotate，支點放在**那一叢自己接到樹枝的那一點**。
-
-   ⛔ 原本用 skewX，動不起來。skew 的位移只跟「離原點的垂直距離」成正比，
-   而原點在葉帶底部、葉子就擠在它上面 120px 內 —— 實測畫面上只動 0.9–1.5px，
-   使用者的原話是「完全沒感覺在動」。
-   **skew 完全沒用到葉子離接合點的水平距離，而那才是真正的槓桿**：
-   左叢的葉尖離接合點 264px，rotate ±4° 就有來回 15px。
-
-   rotate 之所以可行，是因為每一叢有自己的圖層和自己的支點。
-   （單一整條帶去 rotate 會讓左右兩端一上一下，接合處脫節 —— 那是另一回事。） */
-
-/* ⛔ 葉子帶的下緣要在**主樹枝上緣的最高點**之上，不是在它的中位數之上。
-   踩過：切在 21.2%（中位數附近），但樹枝在最左端比較粗、上緣高到 y=130，
-   於是有 25px 的樹枝被關進會 skew 的葉子層 —— 動起來就滑出一根獨立的柱子。
-   量法：逐欄取最長的深色連續段（長度 ≥30 才算主樹枝）。
-   ⚠️ 光這樣還不夠 —— **細枝匯入樹枝的那幾欄，細枝和樹枝會連成一整段**，
-   起點看起來會突然高 60px，把切線硬拉上去（那 32 欄會讓葉帶只剩 15%，
-   一半的葉子變成靜止的）。要再用移動中位數把那些欄剔掉，才是主樹枝真正的上緣。 */
-
-/* ⚠️ 幅度要看**身體最低點在畫面上移動幾 px**，不是看角度好不好聽。
-   ⚠️ **最早覺得「很明顯」的那一版，是整張圖連樹枝一起轉的** ——
-   一根橫貫畫面的直線在傾斜是極強的視覺訊號。樹枝固定住之後（她要求的），
-   只剩一團圓身體在轉，同樣的角度可讀性差很多，不能沿用舊的數字。
-
-   ±1.4° → 來回 9px（她以為壞了）→ ±2.4° 來回 16px（還是看不出來）
-   → 現在 ±3.2° ＋ 週期從 4.6s 縮到 3.4s，來回 21px、角速度是最初的三倍。
-   角度一改，下面樹枝帶的重疊也要跟著加大。 */
 /* ⚠️ translateZ(0) 要寫進關鍵影格 —— 動畫跑的時候 transform 由影格決定，
-   寫在靜態規則上的那一份會被覆寫掉，等於沒有合成層。 */
+   寫在靜態規則上的那一份會被覆寫掉。 */
 @keyframes sway {
   0%, 100% { transform: rotate(-3.2deg) translateZ(0); }
   50%      { transform: rotate(3.2deg) translateZ(0); }
@@ -271,7 +249,7 @@ img { display: block; max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-swing, .bo-leaf-a, .bo-leaf-b, .blink, .leg { animation: none; }
+  .cov, .blink, .leg { animation: none; }
 }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭。
@@ -759,7 +737,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '39';
+const ASSETS = '40';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1561,13 +1539,10 @@ function paintHome(box) {
         <div class="wm-sub">${t('U2')}</div>
       </div>
       <div class="bo-stage sleep">
-        <div class="bo-swing">
-          <img src="${BO.sleep}" alt="慢寶">
-        </div>
-        <img class="bo-branch" src="${BO.sleep}" alt="" aria-hidden="true">
-        <img class="bo-leaf-a" src="${BO.sleep}" alt="" aria-hidden="true">
-        <img class="bo-leaf-b" src="${BO.sleep}" alt="" aria-hidden="true">
-        <img class="bo-leaf-c" src="${BO.sleep}" alt="" aria-hidden="true">
+        <div class="cov cov-body"><img src="${BO.sleep}" alt="慢寶"></div>
+        <div class="cov cov-branch"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-a"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-b"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
       </div>
       <div class="tap-hint">${t('U3')}</div>
       ${langToggle('hero')}`;
