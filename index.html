@@ -982,7 +982,10 @@ const NOTE = {
   '切薄片，放在表面裝飾用；不放也可以': '송송 썰어 위에 올린다. 안 올려도 된다.',
 };
 const tr = x => (isKo() && TERM[x]) || x;
-const trNote = x => (isKo() && NOTE[x]) || x;
+/* note 是連著全形括號一起拆出來的，查表前脫掉、查到再包回去 ——
+   這樣 NOTE 的 key 就是乾淨的句子，跟 recipes.js 裡看到的一樣 */
+const bare = x => String(x).replace(/^（|）$/g, '');
+const trNote = x => (isKo() && NOTE[bare(x)] && '（' + NOTE[bare(x)] + '）') || x;
 
 /* 量詞不能全域替換 —— 韓文的量詞跟著名詞變。
    中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
@@ -1025,7 +1028,7 @@ function auditNotes() {
   const miss = new Set();
   RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
     (Array.isArray(item) ? [item] : item.items).forEach(([, , unit]) => {
-      const n = splitUnit(unit || '').note;
+      const n = bare(splitUnit(unit || '').note || '');
       if (n && !NOTE[n]) miss.add(n);
     });
   }));
