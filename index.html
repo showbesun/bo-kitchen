@@ -227,7 +227,7 @@ img { display: block; max-width: 100%; }
 }
 .bo-talk .bub {
   flex: 1;
-  margin-left: -14px;              /* 壓住鍋子邊緣就好 —— 壓太多會戳到臉 */
+  margin-left: -14px;              /* 預設值。碎碎念那塊會逐姿勢覆寫，見 MURMUR_POSES */
   padding: 13px 16px;
   font-size: 13.5px; line-height: 1.75; color: var(--muted);
 }
@@ -588,7 +588,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '25';
+const ASSETS = '26';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -748,20 +748,28 @@ function boGreeting() {
 
 /* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
 /* 食譜詳情裡牠碎碎念用的姿勢。一種圖撐不了一百道菜。
+   用食譜 id 取餘數，所以同一道菜每次進來都是同一張，不會每次重繪就換人。
 
-   `at` 是尾尖離泡泡頂端的絕對像素，不是百分比 —— 每個姿勢的臉高度不一樣，
-   用百分比的話尾巴會指到肚子上。數字是這樣算的：
-     圖片 margin-top 6px ＋ 顯示高度 × 臉盤中心在圖裡的相對位置
-   臉盤中心（實測）：cook_pan 24% · cook_bowl 25% · hang_drape 28%
-                     hang_u 47% · hang_think 56%
+   每個姿勢兩個數字，都是量出來的，不是調到好看為止：
 
-   用食譜 id 取餘數，所以同一道菜每次進來都是同一張，不會每次重繪就換人。 */
+   `at` —— 尾尖離泡泡頂端的絕對像素。不能用百分比：各姿勢的臉高度差很多
+      （端鍋 24%、倒吊思考 56%），百分比會讓尾巴指到肚子上。
+      at ＝ margin-top 6 ＋ 顯示高度 × 臉盤中心的相對位置
+
+   `ml` —— 泡泡的 margin-left，決定它往圖片壓多少（正值＝留空隙）。
+      ⚠️ **尾巴現在是指著臉的，所以水平方向必須讓開，否則會從側面戳進臉裡。**
+      （舊版尾巴固定在泡泡 58% 高、比臉低，所以壓上去也沒撞到，那是僥倖。）
+      ml ＝ 臉盤右緣px ＋ 8 ＋ 尾巴長 16 − 顯示寬度，夾在 [−34, +14]
+      端鍋是唯一要留空隙的（+10）—— 牠正面站著，臉幾乎佔滿畫面寬度
+
+   量臉盤：找 R>247 G>238 B>225 的白色區域，取列的中位數（中心）和最右欄（右緣）。 */
 const MURMUR_POSES = [
-  { img: () => BO.cookB,     at: 36 },   // 站著端鍋
-  { img: () => BO.hang,      at: 57 },   // U 型倒掛
-  { img: () => BO.cookA,     at: 37 },   // 站著攪碗
-  { img: () => BO.think,     at: 73 },   // 倒吊思考
-  { img: () => BO.drape,     at: 41 },   // 趴在橫桿上
+  //                          at      ml       臉盤中心 / 右緣（實測）
+  { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋    24% / 86%
+  { img: () => BO.hang,  at: 57, ml:   0 },   // U 型倒掛    47% / 82%
+  { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗    25% / 70%
+  { img: () => BO.think, at: 72, ml: -34 },   // 倒吊思考    56% / 52%
+  { img: () => BO.drape, at: 40, ml:  -9 },   // 趴在橫桿上  28% / 65%
 ];
 const murmurPose = id => MURMUR_POSES[id % MURMUR_POSES.length];
 
@@ -1037,7 +1045,7 @@ function renderRecipe(el, m) {
     ${r.note ? `
       <div class="bo-talk">
         <img src="${murmurPose(r.id).img()}" alt="慢寶">
-        ${say(r.note, 'left', ` data-at="${murmurPose(r.id).at}" data-len="16" data-half="7"`)}
+        ${say(r.note, 'left', ` data-at="${murmurPose(r.id).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r.id).ml}px"`)}
       </div>` : ''}
 
     <div class="r-tabs">
