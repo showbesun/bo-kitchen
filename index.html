@@ -213,9 +213,14 @@ img { display: block; max-width: 100%; }
             animation: sway 3.4s ease-in-out infinite; }
 .bo-stage .cov-body > img { width: 100%; left: 0; top: -57.98%; }
 
-/* 純樹枝，不動 */
-.cov-branch { left: 0; top: 24.0%; width: 100%; height: 15.7%; }
-.bo-stage .cov-branch > img { width: 100%; left: 0; top: -152.87%; }
+/* 純樹枝，不動。
+
+   ⚠️ **上緣要比葉子窗的下緣再高一點（墊到 22.8%），讓它鑽到葉子窗底下。**
+   兩個窗剛好貼齊在 24.0% 的話，次像素捨入會在那條線上露出一絲背景，
+   而且葉子窗一轉、它的下緣就斜掉，縫會更明顯 —— 使用者看到的是
+   「樹枝上緣有幾道亮線」。墊高之後，縫裡露出來的是原圖的莖，看起來是連著的。 */
+.cov-branch { left: 0; top: 22.8%; width: 100%; height: 16.9%; }
+.bo-stage .cov-branch > img { width: 100%; left: 0; top: -134.91%; }
 
 /* 枝葉四支，**一支一個窗**，支點就設在那一支自己的莖上。
 
