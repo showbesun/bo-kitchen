@@ -217,30 +217,32 @@ img { display: block; max-width: 100%; }
 .cov-branch { left: 0; top: 24.0%; width: 100%; height: 15.7%; }
 .bo-stage .cov-branch > img { width: 100%; left: 0; top: -152.87%; }
 
-/* 枝葉左右各一叢，各自繞**自己接到樹枝的那一點**轉。
+/* 枝葉四支，**一支一個窗**，支點就設在那一支自己的莖上。
 
-   ⚠️ **幅度要小。** 枝葉的莖跨過「葉子帶／樹枝帶」的切線，而旋轉只有支點那一點
-   位移＝0，切線上其他位置會上下錯開 —— 幅度一大，莖就在切線上斷開，
-   看起來像樹枝斷掉（她的原話：「樹枝都斷掉了」）。±1.4°／±1.8° 是實測的上限。
+   ⛔ 不要一個窗裝兩支。旋轉只有支點那一點位移＝0，
+   離支點遠的那一支，它的莖在切線（葉子帶／樹枝帶的交界）上會被上下錯開 ——
+   看起來就是樹枝斷掉（她的原話）。實測：左層支點在 x=145、第二支的莖在 270，
+   相距 125px，±1.4° 就錯開 3px，一眼看得到。
 
-   ⛔ **2026-08-17 有三輪加大幅度是白做的** —— 那時候 iOS 上根本沒在重繪
-   （clip-path 的問題，見上面）。我一路把慢寶從 ±1.4° 加到 ±3.2°，
-   換成 overflow:hidden 之後真的動了，她的反應是「幅度太大了有點好笑」。
-   **看不到動畫時先確認它有沒有在跑，不要急著加幅度。**
+   ⛔ 也不要四支一起晃 —— 太熱鬧。只有第 2、4 支會動，一邊一支。
 
-   ⛔ 原本用 skewX，動不起來 —— skew 的位移只跟「離原點的垂直距離」成正比，
-   而葉子就擠在原點上方 120px 內，實測畫面上只動 0.9–1.5px。
-   **skew 完全沒用到葉子離接合點的水平距離（264px），那才是真正的槓桿。**
-   兩叢的幅度、週期、相位都不同，不然看起來像機械擺動。 */
-.cov-leaf-a { left: 0; top: 0; width: 51.8%; height: 24.0%;
-              transform-origin: 31.08% 100%;
+   四支的莖穿過切線的位置（於 900 寬）：150 / 270 / 643 / 812。
+   窗口左右各多留 6px，旋轉時葉尖才不會被自己的窗切到。 */
+.cov-leaf-1 { left: 3.889%;  top: 0; width: 21.778%; height: 24.0%; }
+.bo-stage .cov-leaf-1 > img { width: 459.18%; left: -17.86%; top: 0; }
+
+.cov-leaf-2 { left: 26.444%; top: 0; width: 19.667%; height: 24.0%;
+              transform-origin: 18.08% 100%;
               animation: breeze-b 5.6s ease-in-out infinite; }
-.bo-stage .cov-leaf-a > img { width: 193.05%; left: 0; top: 0; }
+.bo-stage .cov-leaf-2 > img { width: 508.47%; left: -134.46%; top: 0; }
 
-.cov-leaf-b { left: 51.8%; top: 0; width: 48.2%; height: 24.0%;
-              transform-origin: 45.44% 100%;
+.cov-leaf-3 { left: 56.667%; top: 0; width: 19.889%; height: 24.0%; }
+.bo-stage .cov-leaf-3 > img { width: 502.79%; left: -284.92%; top: 0; }
+
+.cov-leaf-4 { left: 80.333%; top: 0; width: 19.333%; height: 24.0%;
+              transform-origin: 51.15% 100%;
               animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
-.bo-stage .cov-leaf-b > img { width: 207.47%; left: -107.47%; top: 0; }
+.bo-stage .cov-leaf-4 > img { width: 517.24%; left: -415.52%; top: 0; }
 
 /* ⚠️ translateZ(0) 要寫進關鍵影格 —— 動畫跑的時候 transform 由影格決定，
    寫在靜態規則上的那一份會被覆寫掉。 */
@@ -746,7 +748,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '40';
+const ASSETS = '41';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1550,8 +1552,10 @@ function paintHome(box) {
       <div class="bo-stage sleep">
         <div class="cov cov-body"><img src="${BO.sleep}" alt="慢寶"></div>
         <div class="cov cov-branch"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
-        <div class="cov cov-leaf-a"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
-        <div class="cov cov-leaf-b"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-1"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-2"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-3"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
+        <div class="cov cov-leaf-4"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
       </div>
       <div class="tap-hint">${t('U3')}</div>
       ${langToggle('hero')}`;
