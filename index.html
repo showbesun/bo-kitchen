@@ -251,7 +251,7 @@ img { display: block; max-width: 100%; }
    ⚠️ 不要用 position:absolute; inset:0 的圖層：在可捲動容器裡那只會撐到
    可視高度，往下滑就滑出木頭了（2026-08-16 踩過）。 */
 #wall-page {
-  background-image: url('bo/wood.webp');
+  background-image: url('assets/bg/wood.webp');
   background-repeat: repeat;
   background-size: 240px 240px;
 }
@@ -528,7 +528,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=12"></script>
+<script src="recipes.js?v=13"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -536,7 +536,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '12';
+const ASSETS = '13';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -551,17 +551,17 @@ let portions = 2;
 
 /* ── 慢寶 ── */
 const BO = {
-  hang:    asset('bo/hang_u.webp'),
-  sleep:   asset('bo/hang_sleep.webp'),   // 招呼頁：牠還在睡
-  drape:   asset('bo/hang_drape.webp'),
-  cookA:   asset('bo/cook_bowl.webp'),
-  cookB:   asset('bo/cook_pan.webp'),
-  sleepy:  asset('bo/face_sleepy.webp'),
-  satisfied:asset('bo/face_satisfied.webp'),
-  cheeky:  asset('bo/face_cheeky.webp'),
-  blank:   asset('bo/face_blank.webp'),
-  thinking:asset('bo/face_thinking.webp'),
-  surprised:asset('bo/face_surprised.webp'),
+  hang:    asset('assets/bo/hang_u.webp'),
+  sleep:   asset('assets/bo/hang_sleep.webp'),   // 招呼頁：牠還在睡
+  drape:   asset('assets/bo/hang_drape.webp'),
+  cookA:   asset('assets/bo/cook_bowl.webp'),
+  cookB:   asset('assets/bo/cook_pan.webp'),
+  sleepy:  asset('assets/bo/face_sleepy.webp'),
+  satisfied:asset('assets/bo/face_satisfied.webp'),
+  cheeky:  asset('assets/bo/face_cheeky.webp'),
+  blank:   asset('assets/bo/face_blank.webp'),
+  thinking:asset('assets/bo/face_thinking.webp'),
+  surprised:asset('assets/bo/face_surprised.webp'),
 };
 
 /* ══════════ 對話框 ══════════
@@ -718,7 +718,6 @@ function boLine(path) {
 const cardTime = t => String(t || '')
   .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
   .replace(/約\s*/g, '')            // 「約」拿掉，時間本來就是估的
-  .replace(/分鐘/g, '分')
   .replace(/\s+/g, '')
   .replace(/([\d.]+)/g, ' $1 ')     // 原始資料空格不一致，統一重排
   .replace(/\s+/g, ' ').trim();
