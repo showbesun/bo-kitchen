@@ -588,7 +588,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '26';
+const ASSETS = '27';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -750,6 +750,12 @@ function boGreeting() {
 /* 食譜詳情裡牠碎碎念用的姿勢。一種圖撐不了一百道菜。
    用食譜 id 取餘數，所以同一道菜每次進來都是同一張，不會每次重繪就換人。
 
+   ⛔ **這裡只能放「下來了」的姿勢（站著、繫圍裙）。**
+   掛著＝還沒決定，下來＝要煮了 —— 這是這個 app 的核心儀式。
+   食譜詳情是使用者已經在看怎麼煮，牠不該還吊在樹上。
+   （2026-08-16 一度放進 hang_u / hang_think / hang_drape，違反故事線，已撤。）
+   目前只有兩張合格，重複得很明顯 —— 抱著食材那批進來就會夠。
+
    每個姿勢兩個數字，都是量出來的，不是調到好看為止：
 
    `at` —— 尾尖離泡泡頂端的絕對像素。不能用百分比：各姿勢的臉高度差很多
@@ -765,11 +771,8 @@ function boGreeting() {
    量臉盤：找 R>247 G>238 B>225 的白色區域，取列的中位數（中心）和最右欄（右緣）。 */
 const MURMUR_POSES = [
   //                          at      ml       臉盤中心 / 右緣（實測）
-  { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋    24% / 86%
-  { img: () => BO.hang,  at: 57, ml:   0 },   // U 型倒掛    47% / 82%
-  { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗    25% / 70%
-  { img: () => BO.think, at: 72, ml: -34 },   // 倒吊思考    56% / 52%
-  { img: () => BO.drape, at: 40, ml:  -9 },   // 趴在橫桿上  28% / 65%
+  { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋  24% / 86%
+  { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗  25% / 70%
 ];
 const murmurPose = id => MURMUR_POSES[id % MURMUR_POSES.length];
 
