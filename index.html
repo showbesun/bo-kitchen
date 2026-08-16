@@ -264,7 +264,7 @@ img { display: block; max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-swing, .bo-leaf-a, .bo-leaf-b { animation: none; }
+  .bo-swing, .bo-leaf-a, .bo-leaf-b, .blink { animation: none; }
 }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭。
@@ -322,6 +322,29 @@ img { display: block; max-width: 100%; }
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
 .bo-stage.sleep { width: min(100%, 430px, 53vh); }    /* 900x675，比 1.333 */
+/* 眨眼：只疊「眼睛那一帶」的閉眼版，不是整張第二張圖。
+   兩張除了眼睛以外是同一批像素（閉眼版是拿原圖改的），所以疊上去不可能有殘影。
+
+   ⛔ 早先試過兩種都失敗：用 CSS 畫眼皮蓋不住眼球；重新生一張閉眼的圖，
+   五官會跟著重畫，交叉淡入會出現雙重鼻子和嘴巴。
+   **必須是同一張圖改出來的**，這是這件事唯一可行的做法。
+
+   定位是從裁切座標算的（原圖 820x608，裁 x318-496 y138-200），不要手調。 */
+/* ⚠️ 選擇器要寫成 .bo-stage img.blink —— `.bo-stage img { width: 100% }`
+   的優先度比單獨的 `.blink` 高，疊圖會被拉成整張寬。 */
+.bo-stage img.blink {
+  position: absolute;
+  left: 38.78%; top: 22.70%; width: 21.71%;
+  opacity: 0; pointer-events: none;
+  animation: blink 6.5s linear infinite;
+}
+/* 成對的關鍵影格＝瞬間切換，眨眼不該是淡入淡出的。閉著約 180ms */
+@keyframes blink {
+  0%, 94%      { opacity: 0; }
+  94.1%, 96.8% { opacity: 1; }
+  96.9%, 100%  { opacity: 0; }
+}
+
 .bo-stage.drape { width: min(100%, 430px, 44vh); }    /* 820x608，比 1.349。vh 上限在矮螢幕才會咬到 */
 
 .lang {
@@ -694,7 +717,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=45"></script>
+<script src="recipes.js?v=46"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -702,7 +725,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '36';
+const ASSETS = '37';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -847,7 +870,6 @@ const TERM = {
   '豬五花或梅花肉': '삼겹살 또는 목살',
   '豬五花肉': '삼겹살',
   '豬絞肉': '다진 돼지고기',
-  '辣椒': '고추',
   '義式乾辣椒': '페페론치노',
   '辣醬鍋醬汁': '고추장찌개 양념',
   '醋': '식초',
@@ -939,7 +961,28 @@ const TERM = {
   '西式': '양식',
   '韓式': '한식',
 };
+
+/* 買菜清單份量後面那個小括號。是「句」不是「詞」，所以跟 TERM 分開放 ——
+   兩者混在一起，生成語系總表時就分不出哪些該用詞彙的標準審，哪些該用句子的。
+   用中文原句當 key（不是編號）：位置會變，句子不會，重複的句子也自動共用一條。 */
+const NOTE = {
+  '也可用整隻雞切塊；本食譜採這個組合，因為我就愛': '통닭을 토막 내서 써도 된다. 이 조합인 건 그냥 내가 좋아해서.',
+  '推薦昆布魚乾或牛骨風味；高湯塊請依包裝比例調整': '다시마·멸치나 사골 육수를 추천. 육수 큐브는 포장 비율대로.',
+  '醃牛腩 1.5 茶匙、湯底 1 湯匙，試味再補': '양지 밑간 1.5작은술, 국물 1큰술. 맛보고 더 넣는다.',
+  '推薦 Spaghetti No.5，最剛好': '스파게티 5번이 딱 좋다.',
+  '切均勻薄片': '얇게 편 썬다',
+  '愛吃辣再加，不吃辣可省略': '매운 걸 좋아하면 넣고, 아니면 빼도 된다.',
+  '熄火後加，有就封神，沒有可省略': '불 끄고 넣는다. 있으면 격이 달라지고, 없어도 된다.',
+  '關火前': '불 끄기 직전에',
+  '蛋汁用': '달걀물용',
+  'Barilla 派在此小聲強推': '바릴라파가 여기서 조용히 추천.',
+  '越酸越香': '실수록 맛있다.',
+  '可省略；省略時水多補 1 湯匙': '빼도 된다. 뺄 땐 물을 1큰술 더.',
+  '只有使用無加糖 100% 天然梨汁時才加；韓國含糖水梨汁不用': '무가당 100% 배즙을 쓸 때만. 한국 가당 배즙이면 안 넣는다.',
+  '切薄片，放在表面裝飾用；不放也可以': '송송 썰어 위에 올린다. 안 올려도 된다.',
+};
 const tr = x => (isKo() && TERM[x]) || x;
+const trNote = x => (isKo() && NOTE[x]) || x;
 
 /* 量詞不能全域替換 —— 韓文的量詞跟著名詞變。
    中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
@@ -976,6 +1019,21 @@ function auditCounters() {
     '\n韓文的量詞跟著名詞變，用錯了畫面上看不出來 —— 逐個確認過再決定要不要補。');
 }
 
+/* 沒登記的括號註會整句露出中文。跟量詞不同，這個「看得出來」，但要先切到韓文才看得到，
+   所以照樣在啟動時講一聲 —— 新增食譜時最容易漏的就是這一格。 */
+function auditNotes() {
+  const miss = new Set();
+  RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
+    (Array.isArray(item) ? [item] : item.items).forEach(([, , unit]) => {
+      const n = splitUnit(unit || '').note;
+      if (n && !NOTE[n]) miss.add(n);
+    });
+  }));
+  if (miss.size) console.warn(
+    `[慢寶] ${miss.size} 個份量括號註沒有韓文，切到韓文會直接顯示中文：\n  ` +
+    [...miss].sort().join('\n  '));
+}
+
 /* 食譜欄位：先看 r.ko，沒有就回中文 */
 const L  = (r, f)    => (isKo() && r.ko && r.ko[f]) || r[f];
 const La = (r, f, i) => (isKo() && r.ko && r.ko[f] && r.ko[f][i]) || null;
@@ -997,6 +1055,7 @@ const BO = {
   sleep:   asset('assets/bo/hang_sleep_tree.webp'),  // 封面：牠睡在有葉子的樹枝上
   drape:   asset('assets/bo/hang_drape.webp'),       // 菜單頁那個 132px 的近景
   drapeTree: asset('assets/bo/hang_drape_tree.webp'),// 首頁：趴在有葉子的樹枝上
+  blink:   asset('assets/bo/drape_blink.webp'),      // 上一張的眼睛那一帶，改成閉眼
   cookA:   asset('assets/bo/cook_bowl.webp'),
   lie:     asset('assets/bo/lie_sleep.webp'),    // 菜單空的：牠趴著睡，旁邊一個空碗
   shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
@@ -1448,7 +1507,10 @@ function paintHome(box) {
   const intro = homeLine === BO_INTRO;
   box.innerHTML = `
     ${say('', 'bottom', ' data-at="50%"')}
-    <div class="bo-stage drape"><img src="${BO.drapeTree}" alt="慢寶"></div>
+    <div class="bo-stage drape">
+      <img src="${BO.drapeTree}" alt="慢寶">
+      <img class="blink" src="${BO.blink}" alt="" aria-hidden="true">
+    </div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
         <div class="g-t">${t('U4')}</div>
@@ -1653,7 +1715,7 @@ function paintIngs(el, r) {
     if (p) used.add(name);
     return `<div class="ing">
       <div class="ing-head">
-        <span>${esc(tr(name))}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
+        <span>${esc(tr(name))}${note ? `<span class="paren">${esc(trNote(note))}</span>` : ''}</span>
         <span class="amt">${esc(amountText(num, u, f, name))}</span>
       </div>
       ${p ? `<div class="ing-how">${esc(prepKo(r, p) || p.method)}</div>` : ''}
@@ -1950,6 +2012,7 @@ $('#tray-go').onclick = () => {
 };
 
 auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
+auditNotes();
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
