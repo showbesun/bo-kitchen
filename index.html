@@ -588,7 +588,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '27';
+const ASSETS = '28';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -611,6 +611,11 @@ const BO = {
   lie:     asset('assets/bo/lie_sleep.webp'),    // 菜單空的：牠趴著睡，旁邊一個空碗
   shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
   eat:     asset('assets/bo/eat_bowl.webp'),     // 捧著碗開動。**尚未使用** —— 留給「煮好了」那一刻
+  beef:    asset('assets/bo/hold_beef.webp'),
+  greens:  asset('assets/bo/hold_greens.webp'),
+  chicken: asset('assets/bo/hold_chicken.webp'),
+  pasta:   asset('assets/bo/hold_pasta.webp'),
+  root:    asset('assets/bo/hold_root.webp'),
   think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
@@ -770,11 +775,30 @@ function boGreeting() {
 
    量臉盤：找 R>247 G>238 B>225 的白色區域，取列的中位數（中心）和最右欄（右緣）。 */
 const MURMUR_POSES = [
-  //                          at      ml       臉盤中心 / 右緣（實測）
+  //                          at      ml       臉盤中心 / 右緣
   { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋  24% / 86%
   { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗  25% / 70%
 ];
-const murmurPose = id => MURMUR_POSES[id % MURMUR_POSES.length];
+
+/* 抱著食材的姿勢，對應那道菜的主料 —— 牠抱著牛肉出現在銅盤烤肉那頁，
+   比隨機輪到牛肉有意思得多。
+
+   ⚠️ 關鍵字要挑不會誤中的。用過「菜」，結果泡菜鍋被判成綠葉蔬菜。
+   寧可比對不到掉回中性姿勢，也不要對應錯的食材。 */
+const HOLD_POSES = [
+  [/雞/,                { img: () => BO.chicken, at: 40, ml:  0 }],
+  [/牛/,                { img: () => BO.beef,    at: 40, ml: -5 }],
+  [/義大利麵|炒麵|麵條/, { img: () => BO.pasta,   at: 42, ml: -2 }],
+  [/馬鈴薯|洋蔥/,        { img: () => BO.root,    at: 39, ml: -4 }],
+  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.greens,  at: 39, ml: -5 }],
+];
+
+function murmurPose(r) {
+  const hay = `${r.title} ${r.subtitle || ''}`;
+  const hit = HOLD_POSES.find(([re]) => re.test(hay));
+  // 比對不到就用中性姿勢輪替。取餘數不是隨機 —— 同一道菜每次都是同一張
+  return hit ? hit[1] : MURMUR_POSES[r.id % MURMUR_POSES.length];
+}
 
 function boLine(path) {
   const n = menu.size;
@@ -1047,8 +1071,8 @@ function renderRecipe(el, m) {
 
     ${r.note ? `
       <div class="bo-talk">
-        <img src="${murmurPose(r.id).img()}" alt="慢寶">
-        ${say(r.note, 'left', ` data-at="${murmurPose(r.id).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r.id).ml}px"`)}
+        <img src="${murmurPose(r).img()}" alt="慢寶">
+        ${say(r.note, 'left', ` data-at="${murmurPose(r).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r).ml}px"`)}
       </div>` : ''}
 
     <div class="r-tabs">
