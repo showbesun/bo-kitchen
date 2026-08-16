@@ -201,7 +201,12 @@ img { display: block; max-width: 100%; }
   transform-origin: 54.7% 30.3%;     /* 四隻爪抓著樹枝的中點 */
   animation: sway 3.4s ease-in-out infinite;
 }
-.bo-swing > img { clip-path: inset(36.7% 0 0 0); }
+/* ⚠️ translateZ(0) 讓被裁切的那張圖自成一個合成層。
+   iOS Safari 對「被動畫的祖先底下、用 clip-path 裁切的內容」有重繪問題 ——
+   動畫在跑但畫面不更新，看起來就像完全沒動。
+   （同一類問題在對話框的 SVG 濾鏡上踩過，也是靠這一行解決的。） */
+.bo-swing > img { clip-path: inset(36.7% 0 0 0); transform: translateZ(0); }
+.bo-branch, .bo-leaf-a, .bo-leaf-b { transform: translateZ(0); }
 
 .bo-branch, .bo-leaf-a, .bo-leaf-b, .bo-leaf-c {
   position: absolute; inset: 0;
@@ -250,17 +255,19 @@ img { display: block; max-width: 100%; }
    ±1.4° → 來回 9px（她以為壞了）→ ±2.4° 來回 16px（還是看不出來）
    → 現在 ±3.2° ＋ 週期從 4.6s 縮到 3.4s，來回 21px、角速度是最初的三倍。
    角度一改，下面樹枝帶的重疊也要跟著加大。 */
+/* ⚠️ translateZ(0) 要寫進關鍵影格 —— 動畫跑的時候 transform 由影格決定，
+   寫在靜態規則上的那一份會被覆寫掉，等於沒有合成層。 */
 @keyframes sway {
-  0%, 100% { transform: rotate(-3.2deg); }
-  50%      { transform: rotate(3.2deg); }
+  0%, 100% { transform: rotate(-3.2deg) translateZ(0); }
+  50%      { transform: rotate(3.2deg) translateZ(0); }
 }
 @keyframes breeze-b {
-  0%, 100% { transform: rotate(-4deg); }
-  50%      { transform: rotate(4deg); }
+  0%, 100% { transform: rotate(-4deg) translateZ(0); }
+  50%      { transform: rotate(4deg) translateZ(0); }
 }
 @keyframes breeze-c {
-  0%, 100% { transform: rotate(-5deg); }
-  50%      { transform: rotate(5deg); }
+  0%, 100% { transform: rotate(-5deg) translateZ(0); }
+  50%      { transform: rotate(5deg) translateZ(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -752,7 +759,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '38';
+const ASSETS = '39';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
