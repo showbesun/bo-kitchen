@@ -548,7 +548,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '14';
+const ASSETS = '15';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -815,6 +815,8 @@ function renderHome(el) {
   paintHome($('#home', el));
 }
 
+/* 葉子只掛在封面。醒來那頁最上面是對話框，對話框會依台詞長度撐開，
+   葉子放上去一定會被切掉一半 —— 讓不確定寬度的東西去撞裝飾，不划算。 */
 function paintHome(box) {
   const leaves = `<img class="leaf-l" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">
       <img class="leaf-r" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">`;
@@ -841,7 +843,6 @@ function paintHome(box) {
   document.body.classList.remove('no-tray');
   box.onclick = null;
   box.innerHTML = `
-    ${leaves}
     ${say(homeLine, 'bottom', ' data-at="50%"')}
     <div class="bo-stage drape"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
@@ -1240,7 +1241,7 @@ function buyHTML(sel) {
     ...fixed[bin].map(([n, u]) => row(n, u)),
   ].join('');
 
-  const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','常溫食材'],['season','調味料']];
+  const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','雜貨'],['season','調味料']];
   let html = secs.map(([k, label]) => {
     const r = rows(k);
     return r ? `<div class="grp-h">${label}</div>${r}` : '';
