@@ -291,12 +291,22 @@ img { display: block; max-width: 100%; }
 /* ⚠️ 下方要留得比尾巴長。尾巴預設 30px，只留 8px 的話會戳進插畫 22px ——
    而 hang_drape_tree 的頭頂離圖的上緣只有 3.8%（約 10px），正好戳在牠頭上。
    34px ＝ 尾尖停在圖的上緣再往上 4px，看起來是指著牠，不是插著牠。 */
-.home .bub { margin-bottom: 34px; max-width: min(100%, 430px); }
+/* ⚠️ 這裡的寬度和高度是綁在一起的。
+   `> span` 的 min-height 是**保留兩行**（打字動畫用的：句子換來換去泡泡都不長高，
+   慢寶才不會被推上推下）。泡泡一寬，短句只佔一行，保留的第二行就變成一大塊空白，
+   而且泡泡會長到右上角去壓住語言鍵。
+   **收窄到 280px：句子自然斷成兩行，保留的空間剛好被用滿，兩個問題一起消失。**
+   margin-top 讓它從語言鍵（top 14 + 高 29）下面開始。 */
+.home .bub { margin-top: 34px; margin-bottom: 30px; max-width: min(100%, 280px); }
 .home .bub > span {
   display: flex; align-items: center; justify-content: center;
-  min-height: 3.2em; text-align: center;
+  text-align: center;
   transition: opacity .24s ease;
 }
+/* 保留兩行的高度**只在第一次的自我介紹時**上場 —— 那段有六句、長短不一，
+   不固定高度的話慢寶會被推上推下（她的原話：「看起來真的超級怪」）。
+   平常只有一句招呼語，保留第二行就變成一大塊空白，所以回訪時不加這個 class。 */
+.home .bub.reserve > span { min-height: 3.2em; }
 
 /* 插畫要依畫面高度收斂 —— 手機上不設上限的話，內容會超過視窗，
    而 flex 置中時上方溢出的部分是捲不到的（對話框就這樣消失了）。
@@ -676,7 +686,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=43"></script>
+<script src="recipes.js?v=44"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -929,7 +939,8 @@ const tr = x => (isKo() && TERM[x]) || x;
 const COUNTER_OVERRIDES = {
   '大蔥|根': '대',   /* 大蔥 1根 → 대파 1대 */
   '西洋芹|支': '대',   /* 西洋芹 1支 → 셀러리 1대 */
-  '秀珍菇|數朵': '가닥',   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
+  '秀珍菇|數朵': '가닥',
+  '板豆腐|盒': '모',      /* 豆腐 0.5盒 → 찌개용 두부 0.5모。「盒」的一般翻譯 팩 是包裝單位，不是豆腐的量詞 */   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
 };
 const counterOf = (name, unit) =>
   (isKo() && (COUNTER_OVERRIDES[name + '|' + unit] || TERM[unit])) || unit;
@@ -1280,7 +1291,9 @@ function boLine(path) {
     if (n <= 3)  return [BO.satisfied, t('D2').replace('{n}', n)];
     return [BO.cheeky, t('D3').replace('{n}', n)];
   }
-  return [n ? BO.satisfied : BO.sleepy, n ? t('D7').replace('{n}', n) : ''];
+  /* 首頁（兩個入口）底部不講話 —— 牠已經在上面的對話框裡講過了，
+     底下再講一次是同一隻在同一個畫面說兩次。菜單數量留在按鈕的角標上。 */
+  return [n ? BO.satisfied : BO.sleepy, ''];
 }
 
 /* ── 小工具 ── */
@@ -1438,6 +1451,7 @@ function paintHome(box) {
     ${langToggle()}`;
 
   const span = $('.bub span', box);
+  if (intro) $('.bub', box).classList.add('reserve');   // 只有自我介紹要鎖高度
   const stay = intro ? t('AEND') : homeLine;
   // 每次進來那句都用打字跑出來，跑完就留著
   const skip = intro
