@@ -261,7 +261,7 @@ img { display: block; max-width: 100%; }
 
 .card {
   position: relative;
-  padding: 9px 9px 12px;
+  padding: 24px 9px 12px;          /* 上方多留白，圖釘才像釘在紙上而不是卡在邊上 */
   transition: transform .12s;
 }
 .card:active { transform: scale(.97); }
@@ -280,8 +280,8 @@ img { display: block; max-width: 100%; }
 /* 圖釘 */
 .card::after {
   content: ''; position: absolute; z-index: 2;
-  left: 50%; top: -5px; margin-left: -5px;
-  width: 10px; height: 10px; border-radius: 50%;
+  left: 50%; top: 8px; margin-left: -5.5px;
+  width: 11px; height: 11px; border-radius: 50%;
   background: var(--brand);
   box-shadow: 0 1px 3px rgba(120,90,60,.35), inset -1px -1px 0 rgba(0,0,0,.12);
 }
@@ -538,7 +538,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '9';
+const ASSETS = '10';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
