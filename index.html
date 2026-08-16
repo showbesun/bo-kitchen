@@ -89,6 +89,10 @@ img { display: block; max-width: 100%; }
   padding: 14px 20px 12px;
   background: linear-gradient(var(--bg) 86%, transparent);
 }
+/* 食譜牆的頂端列襯在木頭上，不能用米色漸層 —— 會變成一塊淺色汙漬 */
+#wall-page .topbar { background: none; }
+#wall-page .topbar h1,
+#wall-page .topbar .sub { text-shadow: 0 1px 3px rgba(249,230,209,.9); }
 .back-btn {
   width: 36px; height: 36px; flex: none;
   display: grid; place-items: center;
@@ -223,7 +227,8 @@ img { display: block; max-width: 100%; }
 /* ─────────── 食譜牆 ─────────── */
 
 .search {
-  position: relative; margin: 0 14px 14px;
+  position: relative; z-index: 1;   /* 木紋層是絕對定位，不抬起來會被蓋住 */
+  margin: 0 14px 14px;
 }
 .search input {
   width: 100%;
@@ -245,16 +250,13 @@ img { display: block; max-width: 100%; }
 
 /* 兩欄的紙片牆 —— 一次看得到四張，一百道也滑得完。
    新的插畫是平塗簡化的，縮小後照樣認得出來（舊的照片就不行）。 */
-/* 木紋暗示 —— 淡到幾乎只是質感，圖的米色底才不會浮出方框 */
+/* 木牆 —— 無縫貼圖，紙釘在上面。
+   ⚠️ 這裡不受「背景不能太深」那條約束：卡片是不透明的紙，菜色圖貼在紙上，
+   木頭只出現在卡片之間。那條規則只適用於圖直接貼在頁面底色上的地方（詳情頁封面）。 */
 #wall-bg {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    repeating-linear-gradient(90deg,
-      rgba(176,114,79,.030) 0px, rgba(176,114,79,.030) 2px,
-      transparent 2px, transparent 9px),
-    repeating-linear-gradient(90deg,
-      rgba(176,114,79,.018) 0px, rgba(176,114,79,.018) 1px,
-      transparent 1px, transparent 23px);
+  background: url('bo/wood.webp') repeat;
+  background-size: 240px 240px;
 }
 .grid { display: grid; gap: 16px 12px; grid-template-columns: 1fr 1fr; }
 @media (min-width: 620px) { .grid { grid-template-columns: repeat(3, 1fr); } }
@@ -530,7 +532,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=9"></script>
+<script src="recipes.js?v=11"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -538,7 +540,7 @@ ol.steps strong { color: var(--brand); font-weight: 700; }
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '10';
+const ASSETS = '11';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -849,6 +851,7 @@ function paintHome(box) {
 let wallQuery = '';
 
 function renderWall(el) {
+  el.id = 'wall-page';
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
