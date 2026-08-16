@@ -581,7 +581,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=22"></script>
+<script src="recipes.js?v=26"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -589,7 +589,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '29';
+const ASSETS = '30';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -613,9 +613,7 @@ const BO = {
   shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
   eat:     asset('assets/bo/eat_bowl.webp'),     // 捧著碗開動。**尚未使用** —— 留給「煮好了」那一刻
   beef:    asset('assets/bo/hold_beef.webp'),
-  greens:  asset('assets/bo/hold_greens.webp'),
   chicken: asset('assets/bo/hold_chicken.webp'),
-  pasta:   asset('assets/bo/hold_pasta.webp'),
   root:    asset('assets/bo/hold_root.webp'),
   banana:  asset('assets/bo/hold_banana.webp'),
   pot:     asset('assets/bo/hold_pot.webp'),
@@ -623,6 +621,12 @@ const BO = {
   seaweed: asset('assets/bo/hold_seaweed.webp'),
   kimchi:  asset('assets/bo/hold_kimchi.webp'),
   taste:   asset('assets/bo/taste_spoon.webp'),
+  basket:  asset('assets/bo/hold_basket.webp'),
+  lidpot:  asset('assets/bo/hold_lidpot.webp'),
+  stirpan: asset('assets/bo/stir_pan.webp'),
+  glass:   asset('assets/bo/hourglass.webp'),
+  egg:     asset('assets/bo/crack_egg.webp'),
+  rice:    asset('assets/bo/hold_rice.webp'),
   think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
@@ -748,14 +752,38 @@ function daysSinceSeen() {
 const markSeen = () => localStorage.setItem(SEEN, Date.now());
 
 /* 招呼（進 app 第一眼，慢寶趴著） */
+/* 第一次打開時的自我介紹 —— 只出現這一次，用打字效果慢慢跑完，
+   跑完之後泡泡換成平常那句。長度是刻意的：它要把人設一次講清楚。 */
+const BO_INTRO = '喔……新室友啊。嗨，我是慢寶。平常你大概會看到我掛在那裡，不是在睡，就是懶得動。不過對吃，我很認真。火候、香氣、哪一步不能省，我都會告訴你。你負責煮，我負責讓它好吃。住一起嘛，至少飯要吃好一點。';
+const BO_INTRO_END = '那，今天吃什麼？';
+
 function boGreeting() {
   const d = daysSinceSeen();
   const h = new Date().getHours();
-  if (d === null)          return '喔，新的人。……好，先看看吃什麼。';
+  if (d === null)          return BO_INTRO;
   if (d >= 3)              return `${d} 天沒來。……好吧，今天吃什麼？`;
   if (h >= 22 || h < 5)    return '這個時間還要煮？……好吧。';
   if (d === 0)             return '又是你。……今天也要吃好的？';
   return '回來啦。今天想吃什麼？';
+}
+
+/* 一個字一個字跑出來。泡泡的 SVG 外框有 ResizeObserver 盯著，會跟著長。
+
+   點畫面可以跳過 —— 長句子不能綁架第一次打開 app 的人。
+   跑完停一下再換成短句，不然剛讀完就消失，會像沒看到。 */
+function typeOut(el, text, done) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; done(); return; }
+  let i = 0, stopped = false;
+  const finish = () => { if (stopped) return; stopped = true; el.textContent = text; setTimeout(done, 1400); };
+  const tick = () => {
+    if (stopped) return;
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) return finish();
+    // 標點後多停一下，唸起來才有呼吸
+    setTimeout(tick, /[。，、？！…]/.test(text[i - 1]) ? 260 : 52);
+  };
+  setTimeout(tick, 420);
+  return finish;
 }
 
 /* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
@@ -785,6 +813,7 @@ const MURMUR_POSES = [
   //                          at      ml       臉盤中心 / 右緣
   { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋  24% / 86%
   { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗  25% / 70%
+  { img: () => BO.glass, at: 40, ml:  -2 },   // 看沙漏    27% / 67%
 ];
 
 /* 抱著食材的姿勢，對應那道菜的主料 —— 牠抱著牛肉出現在銅盤烤肉那頁，
@@ -797,14 +826,17 @@ const HOLD_POSES = [
   [/泡菜/,        { img: () => BO.kimchi,  at: 39, ml:  -6 }],  // 必須排在任何含「菜」的規則前面
   [/海帶/,        { img: () => BO.seaweed, at: 38, ml:  -9 }],
   [/香蕉/,        { img: () => BO.banana,  at: 41, ml:  -7 }],
+  [/燉飯/,        { img: () => BO.stirpan, at: 44, ml:  -5 }],  // 要一直攪的，排在「飯」前面
   [/炒/,          { img: () => BO.spatula, at: 41, ml:  -8 }],  // 炒＝鍋鏟
   [/雞/,          { img: () => BO.chicken, at: 43, ml:  -1 }],
   [/牛/,          { img: () => BO.beef,    at: 41, ml:  -5 }],
-  [/義大利麵|麵條/,{ img: () => BO.pasta,   at: 39, ml:  -2 }],
+  [/義大利麵|麵條/,{ img: () => BO.lidpot,  at: 39, ml:  -5 }],  // 要煮一鍋水的
   [/醬醃/,        { img: () => BO.taste,   at: 45, ml:  -9 }],  // 醬汁類，牠試味道
   [/馬鈴薯|洋蔥/,  { img: () => BO.root,    at: 39, ml:  -4 }],
-  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.greens, at: 41, ml: -5 }],
-  [/鍋/,          { img: () => BO.pot,     at: 42, ml:  -8 }],  // 燉煮類，放最後當廣義兜底
+  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.basket, at: 40, ml: -4 }],
+  [/鍋/,          { img: () => BO.pot,     at: 42, ml:  -8 }],  // 燉煮類
+  [/飯/,          { img: () => BO.rice,    at: 45, ml:  -6 }],  // 排在「鍋」後面：辣醬鍋要的是鍋，不是那碗飯
+  [/蛋/,          { img: () => BO.egg,     at: 47, ml:  -6 }],  // 目前 12 道都比對不到，備給以後的蛋料理
 ];
 
 function murmurPose(r) {
@@ -817,20 +849,17 @@ function murmurPose(r) {
 function boLine(path) {
   const n = menu.size;
   if (path.startsWith('/menu')) {
-    if (n === 0) return [BO.sleepy, '空的。……那我先不忙。'];
+    if (n === 0) return [BO.sleepy, '還沒選。……慢慢來。'];
     if (shoppingDone()) return [BO.satisfied, '都買齊了，回來吧。'];
     return path.endsWith('prep')
       ? [BO.cheeky, '要泡要醃的先處理。你可以拖，食材不會配合。']
-      : [BO.satisfied, `這些買齊就夠了，${n} 道份。別把冰箱塞滿。`];
+      : [BO.satisfied, '這些買齊就夠了。別把冰箱塞滿。'];
   }
   if (path.startsWith('/recipe/')) {
     const r = byId(+path.split('/')[2]);
     if (!r) return [BO.blank, ''];
     // 每道自己的碎碎念。有 urgentNote 的那幾則已經把提醒寫進去了，不必再靠下面那句罐頭
-    if (r.murmur)      return [r.urgentNote ? BO.cheeky : BO.sleepy, r.murmur];
-    if (r.urgentNote)  return [BO.cheeky, '這道有東西要先做。先往下看，省得等等卡住。'];
-    if (r.stars >= 3)  return [BO.surprised, '這道你確定？……好啦，我信你。'];
-    return [BO.sleepy, '這道我熟。照著來就好。'];
+    return [r.urgentNote ? BO.cheeky : BO.sleepy, r.murmur || ''];
   }
   if (path === '/wall') {
     if (n === 0) return [BO.sleepy, '慢慢看。挑吃的，本來就不能催。'];
@@ -954,8 +983,9 @@ function paintHome(box) {
   }
   document.body.classList.remove('no-tray');
   box.onclick = null;
+  const intro = homeLine === BO_INTRO;
   box.innerHTML = `
-    ${say(homeLine, 'bottom', ' data-at="50%"')}
+    ${say(intro ? '' : homeLine, 'bottom', ' data-at="50%"')}
     <div class="bo-stage drape"><img src="${BO.drapeTree}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
@@ -967,6 +997,16 @@ function paintHome(box) {
         <div class="g-s">回答三個問題，慢寶幫你挑</div>
       </button>
     </div>`;
+
+  if (intro) {
+    const span = $('.bub span', box);
+    const skip = typeOut(span, BO_INTRO, () => {
+      homeLine = BO_INTRO_END;
+      span.textContent = BO_INTRO_END;
+      layoutBubbles(box);
+    });
+    box.onclick = skip;          // 點一下直接看完，不用等打完
+  }
   layoutBubbles(box);
 }
 
@@ -1003,6 +1043,7 @@ function paintGrid(el) {
     ? list.map(cardHTML).join('')
     : `<div class="empty"><img class="empty-bo" src="${BO.shrug}" alt="慢寶">
          找不到這道菜。<br>我也沒聽過。</div>`;
+
 }
 
 function cardHTML(r) {
@@ -1234,7 +1275,7 @@ function renderMenu(el) {
     <div class="wrap">${
       sel.length === 0
         ? `<div class="empty"><img class="empty-bo wide" src="${BO.lie}" alt="慢寶">
-             菜單是空的。<br>那我先睡。</div>`
+             今天的菜單還沒定。<br>那我先睡。</div>`
         : `<div class="sect" style="margin:14px 0 0">
              <div class="sect-t">買菜清單</div>
              ${buyHTML(sel)}
