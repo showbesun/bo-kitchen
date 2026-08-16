@@ -431,11 +431,12 @@ img { display: block; max-width: 100%; }
   padding: 2px 2px 14px;
 }
 /* 醬汁／醃料：一組有名字的東西，不是一堆散落的調味料 */
+/* ⚠️ 醬汁組不要做成有底色有外框的卡片 —— 它會跟上面那張「先做，不然會卡住」
+   長得像兄弟，兩個疊在一起看不出誰是誰。那張是**通知**，這個是**清單的一段**。
+   改成往內縮＋左邊一條金色軸線：屬於清單，但自成一組。 */
 .ing-set {
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-md);
-  padding: 12px 14px 6px;
+  border-left: 3px solid var(--gold);
+  padding: 8px 0 2px 14px;
   margin: 12px 0;
 }
 .ing-set-name {
@@ -1158,9 +1159,16 @@ function paintIngs(el, r) {
     </div>`;
   };
 
-  let html = (r.shoppingList || []).map(item =>
-    Array.isArray(item) ? line(item) : group(item)
-  ).join('');
+  /* 要先動手調的東西排最前面 —— 醬先調好，肉才放得進去，這是實際的順序。
+
+     判斷用「這一組有沒有 prepNote」，不是「是不是群組」。
+     r4 的「糖」也是群組，但它只是把黑糖白糖放在一起、沒有要先做的動作，
+     排到最前面反而怪。有 prepNote＝真的要先動手，那才該提前。 */
+  const items = r.shoppingList || [];
+  const madeFirst = it => !Array.isArray(it) && notes.has(it.label);
+  const render = it => Array.isArray(it) ? line(it) : group(it);
+  let html = [...items.filter(madeFirst), ...items.filter(it => !madeFirst(it))]
+    .map(render).join('');
 
   // prepNotes 裡有、但不是單一食材的（醬汁、醃料那類），補在後面
   const extra = (r.prepNotes || []).filter(p => !used.has(p.name));
