@@ -242,6 +242,7 @@ img { display: block; max-width: 100%; }
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
 .bo-stage.sleep { width: min(100%, 430px, 64vh); }    /* 900x559，比 1.610 */
+.bo-stage.eat   { width: min(100%, 260px, 34vh); }    /* 446x560，比 0.796 */
 .bo-stage.drape { width: min(100%, 430px, 55vh); }    /* 820x608，比 1.349 —— 樹枝要通到兩邊 */
 
 .tap-hint {
@@ -249,6 +250,15 @@ img { display: block; max-width: 100%; }
   margin-top: 18px; animation: breathe 2.4s ease-in-out infinite;
 }
 @keyframes breathe { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+
+.done-ok {
+  margin-top: 24px; padding: 12px 40px;
+  border-radius: 999px;
+  background: var(--brand); color: #fff;
+  font-size: 14.5px; font-weight: 700; letter-spacing: 2px;
+  box-shadow: var(--shadow);
+}
+.done-ok:active { transform: scale(.96); }
 
 .gate { display: grid; gap: 12px; width: 100%; max-width: 330px; margin-top: 20px; }
 .gate button {
@@ -355,6 +365,12 @@ img { display: block; max-width: 100%; }
 .add-btn.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 
 .empty { text-align: center; color: var(--faint); font-size: 13.5px; padding: 40px 20px; }
+/* 空狀態的慢寶。趴著那張是橫的，要放大一點才看得出牠旁邊那個空碗 */
+.empty-bo { width: 150px; margin: 0 auto 14px; }
+/* 食譜牆的底是木紋不是米色 —— 那裡的慢寶必須是去背的，
+   不然圖的米色底會在木頭上浮出一個方塊。 */
+.grid .empty { grid-column: 1 / -1; }
+.empty-bo.wide { width: 230px; }
 
 /* ─────────── 食譜詳情 ─────────── */
 
@@ -579,7 +595,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '20';
+const ASSETS = '24';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -599,6 +615,10 @@ const BO = {
   drape:   asset('assets/bo/hang_drape.webp'),       // 菜單頁那個 132px 的近景
   drapeTree: asset('assets/bo/hang_drape_tree.webp'),// 首頁：趴在有葉子的樹枝上
   cookA:   asset('assets/bo/cook_bowl.webp'),
+  lie:     asset('assets/bo/lie_sleep.webp'),    // 菜單空的：牠趴著睡，旁邊一個空碗
+  shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
+  eat:     asset('assets/bo/eat_bowl.webp'),     // 買完收工：牠捧著碗開動
+  think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
   satisfied:asset('assets/bo/face_satisfied.webp'),
@@ -792,6 +812,7 @@ const routes = [
   [/^\/wall$/,             renderWall],
   [/^\/recipe\/(\d+)$/,    renderRecipe],
   [/^\/menu$/,            renderMenu],
+  [/^\/done$/,            renderDone],
 ];
 
 let stack = [];            // 走過的路徑，用來判斷前進還是後退
@@ -919,7 +940,8 @@ function paintGrid(el) {
   const g = $('#grid', el);
   g.innerHTML = list.length
     ? list.map(cardHTML).join('')
-    : '<div class="empty">找不到這道菜。<br>我也沒聽過。</div>';
+    : `<div class="empty"><img class="empty-bo" src="${BO.shrug}" alt="慢寶">
+         找不到這道菜。<br>我也沒聽過。</div>`;
 }
 
 function cardHTML(r) {
@@ -1143,7 +1165,8 @@ function renderMenu(el) {
       </div>` : ''}
     <div class="wrap">${
       sel.length === 0
-        ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>那我先睡。</div>`
+        ? `<div class="empty"><img class="empty-bo wide" src="${BO.lie}" alt="慢寶">
+             菜單是空的。<br>那我先睡。</div>`
         : `<div class="sect" style="margin:14px 0 0">
              <div class="sect-t">買菜清單</div>
              ${buyHTML(sel)}
@@ -1183,7 +1206,19 @@ function haveIt(name) {
 function finishShopping() {
   bought.clear(); haveAtHome.clear();
   saveBuy();
-  back();                            // 收工就離開清單頁；paintTray 會在換頁時跑
+  go('/done');                       // 買完是整個流程唯一有回報的一刻，不要直接跳走
+}
+
+/* 買完收工。刻意做成一條真正的路由而不是彈窗 —— 上一頁手勢要能用。
+   沒有底部條，跟招呼畫面同一個理由：那一刻只有牠和使用者。 */
+function renderDone(el) {
+  document.body.classList.add('no-tray');
+  el.innerHTML = `
+    <div class="home">
+      ${say('都買齊了。……剩下的交給你，我把碗顧好。', 'bottom', ' data-at="50%"')}
+      <div class="bo-stage eat"><img src="${BO.eat}" alt="慢寶"></div>
+      <button class="done-ok" onclick="go('/menu')">好</button>
+    </div>`;
 }
 
 /* 買菜分類：照「在店裡走到哪一區」分，不是照食物學分類。
