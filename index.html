@@ -142,16 +142,8 @@ img { display: block; max-width: 100%; }
 }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
 
-/* 從畫面外垂下來的葉子 —— 暗示上面有一棵樹，但不畫出第二根樹枝。
-   （試過在頂端放整根樹枝：會跟慢寶掛的橫桿打架，變成畫面裡有兩根樹枝。） */
-.leaf-l, .leaf-r {
-  position: absolute; top: 0; z-index: 0;
-  width: min(30vw, 130px);
-  pointer-events: none;
-}
-.leaf-l { left: 2px; }
-.leaf-r { right: 2px; transform: scaleX(-1); }
-.home > *:not(.leaf-l):not(.leaf-r) { position: relative; z-index: 1; }
+/* ⛔ 首頁不要用 CSS 疊裝飾元素（葉子、樹枝）。試過，看起來就是三個東西拼在一起，
+   沒有一棵樹的感覺。樹要有樹感，就得跟慢寶畫在同一張圖裡。 */
 
 /* 招呼頁的標題 —— 牠在睡，不該講話，所以這裡放的是 app 的名字 */
 .wordmark { margin-bottom: 18px; animation: pop .4s cubic-bezier(.34,1.5,.64,1) both; }
@@ -540,7 +532,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=13"></script>
+<script src="recipes.js?v=14"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -548,7 +540,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '15';
+const ASSETS = '16';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -815,16 +807,11 @@ function renderHome(el) {
   paintHome($('#home', el));
 }
 
-/* 葉子只掛在封面。醒來那頁最上面是對話框，對話框會依台詞長度撐開，
-   葉子放上去一定會被切掉一半 —— 讓不確定寬度的東西去撞裝飾，不划算。 */
 function paintHome(box) {
-  const leaves = `<img class="leaf-l" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">
-      <img class="leaf-r" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">`;
   if (!homeGreeted) {
     // 招呼：倒掛，慢慢晃，不要底部菜單條來打擾
     document.body.classList.add('no-tray');
     box.innerHTML = `
-      ${leaves}
       <div class="wordmark">
         <div class="wm-name">慢寶</div>
         <div class="wm-sub">今天也要好好吃飯</div>
@@ -1176,12 +1163,18 @@ const CATS = [
 /* groc 是 fallback，要保持籠統 —— 它接的是所有沒被認出來的東西 */
 const catOf = n => (CATS.find(([, ws]) => ws.some(w => n.includes(w))) || ['groc'])[0];
 
+/* 食譜寫的是料理時的形態，買菜清單要換成貨架上的形態 */
+const BUY_AS = { '蒜末': '大蒜' };
+
 /* 彙總這份菜單要買的東西。買菜清單和底部橫條都靠它，兩邊才不會各算各的 */
 function aggregate(sel) {
   const bins = { meat: {}, veg: {}, chill: {}, groc: {}, season: {} };
   const fixed = { meat: [], veg: [], chill: [], groc: [], season: [] };
 
-  const put = (bin, name, num, unit) => {
+  /* 買菜買的是原型，不是備料後的樣子 —— 食譜要蒜末，你在店裡拿的是一整顆大蒜 */
+  const put = (name, num, unit) => {
+    name = BUY_AS[name] || name;
+    const bin = catOf(name);
     const u = splitUnit(unit || '').u;
     if (num === null || num === undefined) {
       if (!fixed[bin].some(x => x[0] === name)) fixed[bin].push([name, u || unit]);
@@ -1195,10 +1188,9 @@ function aggregate(sel) {
     if (Array.isArray(item)) {
       const [name, num, unit] = item;
       if (name === '水') return;
-      const bin = catOf(name);
-      put(bin, name, num, unit);
+      put(name, num, unit);
     } else {
-      item.items.forEach(([name, num, unit]) => name !== '水' && put('season', name, num, unit));
+      item.items.forEach(([name, num, unit]) => name !== '水' && put(name, num, unit));
     }
   }));
 
