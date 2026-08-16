@@ -51,7 +51,6 @@ const RECIPES = [
       ],
       {
         "label": "靈魂黑金醬汁",
-        "note": "碗裡先調好",
         "items": [
           [
             "醬油",
