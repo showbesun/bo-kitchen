@@ -738,7 +738,7 @@ ol.steps li::before {
 <div id="viewport"></div>
 
 <div class="tray">
-  <img class="tray-face" id="tray-face" src="bo/face_sleepy.webp" alt="慢寶">
+  <img class="tray-face" id="tray-face" src="assets/bo/face_sleepy.webp" alt="慢寶">
   <div class="tray-txt" id="tray-txt"></div>
   <button class="tray-go" id="tray-go">今日菜單<span class="tray-badge" id="tray-badge" hidden></span></button>
 </div>
@@ -929,7 +929,7 @@ const TERM = {
   '先醃': '미리 재우기',
   '切塊': '큼직하게 썰기',
   '切末': '다지기',
-  '切段': '토막 내기',
+  '切段': '어슷썰기',
   '切片': '얇게 썰기',
   '切絲': '채 썰기',
   '糖': '설탕',
@@ -1061,6 +1061,36 @@ function auditNotes() {
   if (miss.size) console.warn(
     `[慢寶] ${miss.size} 個份量括號註沒有韓文，切到韓文會直接顯示中文：\n  ` +
     [...miss].sort().join('\n  '));
+}
+
+/* 韓文用語 lint。這些不是文法錯 —— 是「韓國食譜不會這樣寫」，
+   翻起來通順、只有母語者看得出來哪裡怪，所以每輪校對都要重抓一次。
+   讓它自己喊，就不必再靠人眼一個一個看。
+   第三欄是例外食材：편 對大蒜是對的，對別的食材才是硬貼刀工術語。 */
+const KO_LINT = [
+  [/코팅/,          '家常食譜不講「塗層」 —— 用 묻히다'],
+  [/토막/,          '太硬 —— 依實際形狀改 어슷／송송／길이로'],
+  [/작은 깍둑썰기/, '名詞硬貼 —— 用 작게 깍둑썬다'],
+  [/물기를 세게/,   '固定搭配是 물기를 꼭 짜다'],
+  [/편으로|편 썬/,  '편 是大蒜專用 —— 其他食材用 얇게 썬다', ['大蒜']],
+];
+
+function auditKorean() {
+  const hits = [];
+  const scan = (where, text, name) => KO_LINT.forEach(([re, why, only]) => {
+    if (!re.test(text) || (only && only.includes(name))) return;
+    hits.push(`${where}｜${text}\n      ⟵ ${why}`);
+  });
+  RECIPES.forEach(r => {
+    const ko = r.ko || {};
+    (ko.prep || []).forEach((x, i) =>
+      scan(`r${r.id} 備料 ${(r.prepNotes[i] || {}).name || ''}`, x, (r.prepNotes[i] || {}).name));
+    ['steps', 'tips', 'stages'].forEach(f =>
+      (ko[f] || []).forEach((x, i) => scan(`r${r.id} ${f}.${i + 1}`, x)));
+  });
+  Object.entries(TERM).forEach(([k, v]) => scan(`TERM.${k}`, v));
+  if (hits.length) console.warn(
+    `[慢寶] ${hits.length} 處韓文用語要人工看一眼：\n  ` + hits.join('\n  '));
 }
 
 /* 食譜欄位：先看 r.ko，沒有就回中文 */
@@ -2051,6 +2081,7 @@ $('#tray-go').onclick = () => {
 
 auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
 auditNotes();
+auditKorean();
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
