@@ -500,7 +500,10 @@ img { display: block; max-width: 100%; }
 
 .phase { font-size: 13px; letter-spacing: 2px; color: var(--brand-dim); font-weight: 700; margin: 18px 0 8px; }
 .phase:first-child { margin-top: 0; }
-ol.steps { list-style: none; counter-reset: s; }
+/* 計數器 reset 放在整份步驟的外層，不放在每個 <ol> 上 ——
+   放在 <ol> 上的話每換一個階段就從 1 重來。 */
+.steps-wrap { counter-reset: s; }
+ol.steps { list-style: none; }
 ol.steps li {
   counter-increment: s; position: relative;
   padding: 10px 0 10px 34px; font-size: 16.5px; line-height: 1.85;
@@ -512,8 +515,16 @@ ol.steps li::before {
   font-size: 11px; font-weight: 700;
   display: grid; place-items: center;
 }
-.tips li { font-size: 14.5px; color: var(--muted); padding: 6px 0 6px 16px; position: relative; list-style: none; }
-.tips li::before { content: '·'; position: absolute; left: 4px; color: var(--gold); font-weight: 700; }
+/* 項目符號用一片葉子 —— 來自慢寶掛的那棵樹，形狀跟封面的葉子一樣（橢圓、沒有葉脈）。
+   ⛔ 先試過三爪（牠抓樹枝那三根）。14px 下三根一樣的細弧讀起來是「(((」，
+   認不出是爪子 —— 小尺寸的符號要靠單一輪廓，不能靠重複的細線。 */
+.tips li { font-size: 14.5px; color: var(--muted); padding: 6px 0 6px 26px; position: relative; list-style: none; }
+.tips li::before {
+  content: ''; position: absolute; left: 3px; top: 11px;
+  width: 15px; height: 15px;
+  background: no-repeat center/contain
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1.5C16.5 5.5 16.5 14.5 10 18.5 3.5 14.5 3.5 5.5 10 1.5Z' fill='%23A9A47C' transform='rotate(-38 10 10)'/%3E%3C/svg%3E");
+}
 
 /* ─────────── 今日菜單 ─────────── */
 
@@ -1629,6 +1640,7 @@ function stepsHTML(r) {
     }
   });
   out += open ? '</ol>' : '';
+  out = `<div class="steps-wrap">${out}</div>`;      // 計數器只在這裡 reset 一次
   if (skipped) out = `<div class="from-prep">${t('U16')}</div>` + out;
   return out;
 }
