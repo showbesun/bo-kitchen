@@ -221,7 +221,10 @@ img { display: block; max-width: 100%; }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
 .bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
-.bo-talk > img { width: 104px; flex: none; margin-top: 6px; }
+.bo-talk > img {
+  height: 124px; width: auto; max-width: 130px;   /* 姿勢的寬高比差很多，鎖高度視覺份量才一致 */
+  object-fit: contain; flex: none; margin-top: 6px;
+}
 .bo-talk .bub {
   flex: 1;
   margin-left: -14px;              /* 壓住鍋子邊緣就好 —— 壓太多會戳到臉 */
@@ -242,7 +245,6 @@ img { display: block; max-width: 100%; }
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
 .bo-stage.sleep { width: min(100%, 430px, 64vh); }    /* 900x559，比 1.610 */
-.bo-stage.eat   { width: min(100%, 260px, 34vh); }    /* 446x560，比 0.796 */
 .bo-stage.drape { width: min(100%, 430px, 55vh); }    /* 820x608，比 1.349 —— 樹枝要通到兩邊 */
 
 .tap-hint {
@@ -250,15 +252,6 @@ img { display: block; max-width: 100%; }
   margin-top: 18px; animation: breathe 2.4s ease-in-out infinite;
 }
 @keyframes breathe { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
-
-.done-ok {
-  margin-top: 24px; padding: 12px 40px;
-  border-radius: 999px;
-  background: var(--brand); color: #fff;
-  font-size: 14.5px; font-weight: 700; letter-spacing: 2px;
-  box-shadow: var(--shadow);
-}
-.done-ok:active { transform: scale(.96); }
 
 .gate { display: grid; gap: 12px; width: 100%; max-width: 330px; margin-top: 20px; }
 .gate button {
@@ -595,7 +588,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '24';
+const ASSETS = '25';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -617,7 +610,7 @@ const BO = {
   cookA:   asset('assets/bo/cook_bowl.webp'),
   lie:     asset('assets/bo/lie_sleep.webp'),    // 菜單空的：牠趴著睡，旁邊一個空碗
   shrug:   asset('assets/bo/shrug.webp'),        // 搜尋沒結果：攤手（去背，要站在木紋上）
-  eat:     asset('assets/bo/eat_bowl.webp'),     // 買完收工：牠捧著碗開動
+  eat:     asset('assets/bo/eat_bowl.webp'),     // 捧著碗開動。**尚未使用** —— 留給「煮好了」那一刻
   think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
@@ -696,10 +689,12 @@ function drawBubble(el) {
   // at：尾尖沿著那條邊的位置。可寫百分比（"30%"）讓它跟著泡泡寬度走
   const raw = el.dataset.at;
   const span = side === 'bottom' ? w : h;
-  const at = raw
+  let at = raw
     ? (raw.endsWith('%') ? span * parseFloat(raw) / 100 : +raw)
     : (side === 'bottom' ? w / 2 : Math.min(32, h / 2));
   const tail = { side, at, len: +(el.dataset.len || 30), half: +(el.dataset.half || 15) };
+  // 台詞短的時候泡泡很矮，寫死的尾尖位置會掉到形狀外面 —— 夾回邊界內
+  tail.at = Math.max(tail.half + 4, Math.min(span - tail.half - 4, at));
   const p = bubPad(tail);
   const d = bubblePath(w, h, tail);
   let svg = el.querySelector(':scope > svg');
@@ -752,6 +747,24 @@ function boGreeting() {
 }
 
 /* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
+/* 食譜詳情裡牠碎碎念用的姿勢。一種圖撐不了一百道菜。
+
+   `at` 是尾尖離泡泡頂端的絕對像素，不是百分比 —— 每個姿勢的臉高度不一樣，
+   用百分比的話尾巴會指到肚子上。數字是這樣算的：
+     圖片 margin-top 6px ＋ 顯示高度 × 臉盤中心在圖裡的相對位置
+   臉盤中心（實測）：cook_pan 24% · cook_bowl 25% · hang_drape 28%
+                     hang_u 47% · hang_think 56%
+
+   用食譜 id 取餘數，所以同一道菜每次進來都是同一張，不會每次重繪就換人。 */
+const MURMUR_POSES = [
+  { img: () => BO.cookB,     at: 36 },   // 站著端鍋
+  { img: () => BO.hang,      at: 57 },   // U 型倒掛
+  { img: () => BO.cookA,     at: 37 },   // 站著攪碗
+  { img: () => BO.think,     at: 73 },   // 倒吊思考
+  { img: () => BO.drape,     at: 41 },   // 趴在橫桿上
+];
+const murmurPose = id => MURMUR_POSES[id % MURMUR_POSES.length];
+
 function boLine(path) {
   const n = menu.size;
   if (path.startsWith('/menu')) {
@@ -812,7 +825,6 @@ const routes = [
   [/^\/wall$/,             renderWall],
   [/^\/recipe\/(\d+)$/,    renderRecipe],
   [/^\/menu$/,            renderMenu],
-  [/^\/done$/,            renderDone],
 ];
 
 let stack = [];            // 走過的路徑，用來判斷前進還是後退
@@ -1024,8 +1036,8 @@ function renderRecipe(el, m) {
 
     ${r.note ? `
       <div class="bo-talk">
-        <img src="${BO.cookB}" alt="慢寶">
-        ${say(r.note, 'left', ' data-at="58%" data-len="16" data-half="7"')}
+        <img src="${murmurPose(r.id).img()}" alt="慢寶">
+        ${say(r.note, 'left', ` data-at="${murmurPose(r.id).at}" data-len="16" data-half="7"`)}
       </div>` : ''}
 
     <div class="r-tabs">
@@ -1206,19 +1218,7 @@ function haveIt(name) {
 function finishShopping() {
   bought.clear(); haveAtHome.clear();
   saveBuy();
-  go('/done');                       // 買完是整個流程唯一有回報的一刻，不要直接跳走
-}
-
-/* 買完收工。刻意做成一條真正的路由而不是彈窗 —— 上一頁手勢要能用。
-   沒有底部條，跟招呼畫面同一個理由：那一刻只有牠和使用者。 */
-function renderDone(el) {
-  document.body.classList.add('no-tray');
-  el.innerHTML = `
-    <div class="home">
-      ${say('都買齊了。……剩下的交給你，我把碗顧好。', 'bottom', ' data-at="50%"')}
-      <div class="bo-stage eat"><img src="${BO.eat}" alt="慢寶"></div>
-      <button class="done-ok" onclick="go('/menu')">好</button>
-    </div>`;
+  back();                            // 直接退回她進來的那一頁，不要多插一個畫面
 }
 
 /* 買菜分類：照「在店裡走到哪一區」分，不是照食物學分類。
