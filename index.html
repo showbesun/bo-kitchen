@@ -188,7 +188,7 @@ img { display: block; max-width: 100%; }
   width: 100%;
   pointer-events: none;
 }
-.bo-branch { clip-path: inset(21.0% 0 64.7% 0); }   /* 純樹枝，不動 */
+.bo-branch { clip-path: inset(17.0% 0 64.7% 0); }   /* 純樹枝，不動 */
 
 /* 枝葉橫切成三片，切線落在三叢之間的空白處（x=438 / 686 於 900 寬）。
    每一片只畫一次，所以不會有「靜止的和會動的疊在一起」的殘影。
@@ -197,10 +197,15 @@ img { display: block; max-width: 100%; }
    左邊那叢是一根分岔的枝（兩簇共用一根莖），整叢一起晃才對，但那樣看起來
    會有三根在動；讓它整片不動，剛好剩右邊兩根獨立的枝在晃。
    兩根的幅度和週期都不一樣，而且錯開相位，不然又變成整齊劃一。 */
-.bo-leaf-a { clip-path: inset(0 51.7% 78.8% 0);      animation: breeze-b 5.6s ease-in-out infinite; }
-.bo-leaf-b { clip-path: inset(0 0 78.8% 51.7%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
+.bo-leaf-a { clip-path: inset(0 51.7% 83.0% 0);      animation: breeze-b 5.6s ease-in-out infinite; }
+.bo-leaf-b { clip-path: inset(0 0 83.0% 51.7%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
 .bo-leaf-c { display: none; }                        /* 這版只有兩叢枝葉 */
-.bo-leaf-a, .bo-leaf-b { transform-origin: 50% 21.2%; }   /* 枝葉與樹枝的接合線 */
+.bo-leaf-a, .bo-leaf-b { transform-origin: 50% 17.0%; }   /* 枝葉與樹枝的接合線 */
+
+/* ⛔ 葉子帶的下緣要在**主樹枝上緣的最高點**之上，不是在它的中位數之上。
+   踩過：切在 21.2%（中位數附近），但樹枝在最左端比較粗、上緣高到 y=130，
+   於是有 25px 的樹枝被關進會 skew 的葉子層 —— 動起來就滑出一根獨立的柱子。
+   量法：逐欄取最長的深色連續段（長度 ≥30 才算主樹枝，排除細枝），取最小值再往上留 3px。 */
 
 @keyframes sway {
   0%, 100% { transform: rotate(-1.4deg); }
@@ -630,7 +635,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '34';
+const ASSETS = '35';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
