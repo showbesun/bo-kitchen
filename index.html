@@ -197,10 +197,22 @@ img { display: block; max-width: 100%; }
    左邊那叢是一根分岔的枝（兩簇共用一根莖），整叢一起晃才對，但那樣看起來
    會有三根在動；讓它整片不動，剛好剩右邊兩根獨立的枝在晃。
    兩根的幅度和週期都不一樣，而且錯開相位，不然又變成整齊劃一。 */
-.bo-leaf-a { clip-path: inset(0 48.2% 76.0% 0);      animation: breeze-b 5.6s ease-in-out infinite; }
-.bo-leaf-b { clip-path: inset(0 0 76.0% 51.8%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
+.bo-leaf-a { clip-path: inset(0 48.2% 76.0% 0); transform-origin: 16.1% 24.0%;
+              animation: breeze-b 5.6s ease-in-out infinite; }
+.bo-leaf-b { clip-path: inset(0 0 76.0% 51.8%); transform-origin: 73.7% 24.0%;
+              animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
 .bo-leaf-c { display: none; }                        /* 這版左右各一叢 */
-.bo-leaf-a, .bo-leaf-b { transform-origin: 50% 24.0%; }   /* 枝葉與樹枝的接合線 */
+
+/* ⚠️ 枝葉用 rotate，支點放在**那一叢自己接到樹枝的那一點**。
+
+   ⛔ 原本用 skewX，動不起來。skew 的位移只跟「離原點的垂直距離」成正比，
+   而原點在葉帶底部、葉子就擠在它上面 120px 內 —— 實測畫面上只動 0.9–1.5px，
+   使用者的原話是「完全沒感覺在動」。
+   **skew 完全沒用到葉子離接合點的水平距離，而那才是真正的槓桿**：
+   左叢的葉尖離接合點 264px，rotate ±4° 就有來回 15px。
+
+   rotate 之所以可行，是因為每一叢有自己的圖層和自己的支點。
+   （單一整條帶去 rotate 會讓左右兩端一上一下，接合處脫節 —— 那是另一回事。） */
 
 /* ⛔ 葉子帶的下緣要在**主樹枝上緣的最高點**之上，不是在它的中位數之上。
    踩過：切在 21.2%（中位數附近），但樹枝在最左端比較粗、上緣高到 y=130，
@@ -219,12 +231,12 @@ img { display: block; max-width: 100%; }
   50%      { transform: rotate(2.4deg); }
 }
 @keyframes breeze-b {
-  0%, 100% { transform: skewX(-2deg); }
-  50%      { transform: skewX(2deg); }
+  0%, 100% { transform: rotate(-4deg); }
+  50%      { transform: rotate(4deg); }
 }
 @keyframes breeze-c {
-  0%, 100% { transform: skewX(-3.5deg); }
-  50%      { transform: skewX(3.5deg); }
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -260,7 +272,10 @@ img { display: block; max-width: 100%; }
 /* 高度固定成兩行 —— 句子換來換去，泡泡都不長高，慢寶就不會被推上推下。
    寬度讓它照文字收（只有上限），泡泡才還像泡泡不像看板；
    寬度變化發生在淡出的那 240ms 裡，看不到。 */
-.home .bub { margin-bottom: 8px; max-width: min(100%, 430px); }
+/* ⚠️ 下方要留得比尾巴長。尾巴預設 30px，只留 8px 的話會戳進插畫 22px ——
+   而 hang_drape_tree 的頭頂離圖的上緣只有 3.8%（約 10px），正好戳在牠頭上。
+   34px ＝ 尾尖停在圖的上緣再往上 4px，看起來是指著牠，不是插著牠。 */
+.home .bub { margin-bottom: 34px; max-width: min(100%, 430px); }
 .home .bub > span {
   display: flex; align-items: center; justify-content: center;
   min-height: 3.2em; text-align: center;
