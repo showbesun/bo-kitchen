@@ -105,6 +105,7 @@ img { display: block; max-width: 100%; }
 /* ─────────── 首頁 ─────────── */
 
 .home {
+  position: relative;
   min-height: 100%;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -140,6 +141,17 @@ img { display: block; max-width: 100%; }
   stroke-linejoin: round;
 }
 @keyframes pop { from { opacity: 0; transform: translateY(7px) scale(.95); } to { opacity: 1; transform: none; } }
+
+/* 從畫面外垂下來的葉子 —— 暗示上面有一棵樹，但不畫出第二根樹枝。
+   （試過在頂端放整根樹枝：會跟慢寶掛的橫桿打架，變成畫面裡有兩根樹枝。） */
+.leaf-l, .leaf-r {
+  position: absolute; top: 0; z-index: 0;
+  width: min(30vw, 130px);
+  pointer-events: none;
+}
+.leaf-l { left: 2px; }
+.leaf-r { right: 2px; transform: scaleX(-1); }
+.home > *:not(.leaf-l):not(.leaf-r) { position: relative; z-index: 1; }
 
 /* 招呼頁的標題 —— 牠在睡，不該講話，所以這裡放的是 app 的名字 */
 .wordmark { margin-bottom: 18px; animation: pop .4s cubic-bezier(.34,1.5,.64,1) both; }
@@ -536,7 +548,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '13';
+const ASSETS = '14';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -804,10 +816,13 @@ function renderHome(el) {
 }
 
 function paintHome(box) {
+  const leaves = `<img class="leaf-l" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">
+      <img class="leaf-r" src="${asset('assets/bg/sprig.webp')}" alt="" aria-hidden="true">`;
   if (!homeGreeted) {
     // 招呼：倒掛，慢慢晃，不要底部菜單條來打擾
     document.body.classList.add('no-tray');
     box.innerHTML = `
+      ${leaves}
       <div class="wordmark">
         <div class="wm-name">慢寶</div>
         <div class="wm-sub">今天也要好好吃飯</div>
@@ -826,6 +841,7 @@ function paintHome(box) {
   document.body.classList.remove('no-tray');
   box.onclick = null;
   box.innerHTML = `
+    ${leaves}
     ${say(homeLine, 'bottom', ' data-at="50%"')}
     <div class="bo-stage drape"><img src="${BO.drape}" alt="慢寶"></div>
     <div class="gate">
@@ -1088,7 +1104,7 @@ function renderMenu(el) {
     </div>
     <div class="chips">${sel.map(r => `
       <span class="chip">${esc(r.title)}
-        <button onclick="toggle(${r.id});renderMenu(current)" aria-label="移出">✕</button>
+        <button onclick="toggle(${r.id});renderMenu(current)" aria-label="移出今日菜單">✕</button>
       </span>`).join('')}</div>
     ${sel.length ? `
       <div class="bo-talk wait">
@@ -1099,7 +1115,7 @@ function renderMenu(el) {
       sel.length === 0
         ? `<div class="empty"><img src="${BO.sleepy}" style="width:110px;margin:0 auto 12px">菜單是空的。<br>那我先睡。</div>`
         : `<div class="sect" style="margin:14px 0 0">
-             <div class="sect-t">購物清單</div>
+             <div class="sect-t">買菜清單</div>
              ${buyHTML(sel)}
            </div>`
     }</div>`;
@@ -1140,12 +1156,24 @@ function finishShopping() {
   back();                            // 收工就離開清單頁；paintTray 會在換頁時跑
 }
 
-const FRESH = {
-  meat: ['雞','棒棒腿','豬','牛','肉','魚','蝦','鴨','羊'],
-  veg:  ['蘿蔔','洋蔥','大蔥','蔥','辣椒','蒜','瓜','薯','栗','海帶','香蕉','菇','菜','韭','番茄','青椒','高麗','豆','芹'],
-  chill:['蛋','奶油','優格','牛奶','起司','乳酪','鮮奶油'],
-};
-const catOf = n => Object.keys(FRESH).find(k => FRESH[k].some(w => n.includes(w))) || 'groc';
+/* 買菜分類：照「在店裡走到哪一區」分，不是照食物學分類。
+
+   由上往下比，第一個中的就是 —— 順序不是隨便排的，是照加工程度由高到低。
+   加工品的名字會包含原料的名字（辣椒醬 ⊃ 辣椒、蝦醬 ⊃ 蝦、番茄麵醬 ⊃ 番茄），
+   反過來永遠不會。所以這個順序讓碰撞結構性地消失，不必靠補關鍵字去補破網。
+
+   踩過的實例：舊版用 Object.keys() 的隱形順序，雞蛋被「雞」抓進肉類、
+   醃蝦醬被「蝦」抓進海鮮、昆布魚乾高湯被「魚」抓進海鮮。 */
+const CATS = [
+  ['season', ['醬油','蠔油','魚露','蝦醬','辣椒醬','辣椒粉','麵醬','番茄醬','味噌',
+              '醋','酒','糖','鹽','胡椒','芝麻油','香油','橄欖油','食用油','香草精','高湯']],
+  ['chill',  ['蛋','奶油','優格','牛奶','起司','乳酪','鮮奶油','豆腐','泡菜']],
+  ['meat',   ['雞','棒棒腿','豬','牛','羊','鴨','魚','蝦','絞肉','五花','梅花']],
+  ['veg',    ['蘿蔔','洋蔥','蔥','辣椒','蒜','瓜','薯','栗','海帶','香蕉','菇','菜','韭',
+              '番茄','青椒','甜椒','高麗','芹','豆']],
+];
+/* groc 是 fallback，要保持籠統 —— 它接的是所有沒被認出來的東西 */
+const catOf = n => (CATS.find(([, ws]) => ws.some(w => n.includes(w))) || ['groc'])[0];
 
 /* 彙總這份菜單要買的東西。買菜清單和底部橫條都靠它，兩邊才不會各算各的 */
 function aggregate(sel) {
@@ -1166,7 +1194,7 @@ function aggregate(sel) {
     if (Array.isArray(item)) {
       const [name, num, unit] = item;
       if (name === '水') return;
-      const bin = /鹽|酒|香草精/.test(name) ? 'season' : catOf(name);
+      const bin = catOf(name);
       put(bin, name, num, unit);
     } else {
       item.items.forEach(([name, num, unit]) => name !== '水' && put('season', name, num, unit));
@@ -1199,11 +1227,11 @@ function buyHTML(sel) {
     const on = bought.has(name);
     return `<div class="row buy ${on ? 'got' : ''}">
       <button class="tick" onclick="toggleBought('${esc(name).replace(/'/g, "\\'")}')"
-              aria-label="${on ? '取消勾選' : '買到了'}">${on ? '✓' : ''}</button>
+              aria-label="${on ? '標記為未買' : '標記為已買到'}">${on ? '✓' : ''}</button>
       <span class="r-name">${esc(name)}</span>
       <span class="r-amt">${esc(amt)}</span>
       <button class="rm" onclick="haveIt('${esc(name).replace(/'/g, "\\'")}')"
-              aria-label="家裡已經有">✕</button>
+              aria-label="標記為家裡已有">✕</button>
     </div>`;
   };
 
@@ -1212,7 +1240,7 @@ function buyHTML(sel) {
     ...fixed[bin].map(([n, u]) => row(n, u)),
   ].join('');
 
-  const secs = [['meat','肉類海鮮'],['veg','蔬菜水果'],['chill','冷藏'],['groc','雜貨'],['season','調味料']];
+  const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','常溫食材'],['season','調味料']];
   let html = secs.map(([k, label]) => {
     const r = rows(k);
     return r ? `<div class="grp-h">${label}</div>${r}` : '';
@@ -1222,7 +1250,7 @@ function buyHTML(sel) {
   const home = [...haveAtHome];
   if (home.length) {
     html += `<div class="have-box">
-      <div class="have-t">家裡已經有 ${home.length} 樣</div>
+      <div class="have-t">家裡已有 ${home.length} 樣</div>
       ${home.map(n => `<button class="have-chip" onclick="haveIt('${esc(n).replace(/'/g, "\\'")}')">${esc(n)} ↩</button>`).join('')}
     </div>`;
   }
