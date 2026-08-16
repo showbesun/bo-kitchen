@@ -82,8 +82,16 @@ img { display: block; max-width: 100%; }
 .page.out-fwd { animation: slideOutLeft .26s cubic-bezier(.32,.72,0,1) both; }
 .page.out-back{ animation: slideOutRight .26s cubic-bezier(.32,.72,0,1) both; }
 
+/* 原地重繪（切語言）用交叉淡入淡出。
+   走一般的左右滑會變成「整頁刷一下」，像換了一頁 —— 但其實是同一頁換個語言。 */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+.page.in-fade  { animation: fadeIn  .3s ease both; }
+.page.out-fade { animation: fadeOut .3s ease both; }
+
 @media (prefers-reduced-motion: reduce) {
-  .page.in-fwd, .page.in-back, .page.out-fwd, .page.out-back { animation-duration: .01s; }
+  .page.in-fwd, .page.in-back, .page.out-fwd, .page.out-back,
+  .page.in-fade, .page.out-fade { animation-duration: .01s; }
 }
 
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 14px; }
@@ -686,7 +694,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=44"></script>
+<script src="recipes.js?v=45"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -721,6 +729,7 @@ const isKo = () => lang === 'ko';
 function setLang(v) {
   if (v === lang) return;
   lang = v; localStorage.setItem('bo_lang', v);
+  fadeNext = true;                 // 同一頁換語言，用淡的，不要左右滑
   route();                         // homeGreeted 維持原樣：在封面就留在封面
 }
 
@@ -940,6 +949,7 @@ const COUNTER_OVERRIDES = {
   '大蔥|根': '대',   /* 大蔥 1根 → 대파 1대 */
   '西洋芹|支': '대',   /* 西洋芹 1支 → 셀러리 1대 */
   '秀珍菇|數朵': '가닥',
+  '秀珍菇|朵': '가닥',    /* 蠔菇是撕成條的（備料就寫「撕成細條」），數它用 가닥 不是 개 */
   '板豆腐|盒': '모',      /* 豆腐 0.5盒 → 찌개용 두부 0.5모。「盒」的一般翻譯 팩 是包裝單位，不是豆腐的量詞 */   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
 };
 const counterOf = (name, unit) =>
@@ -1291,8 +1301,7 @@ function boLine(path) {
     if (n <= 3)  return [BO.satisfied, t('D2').replace('{n}', n)];
     return [BO.cheeky, t('D3').replace('{n}', n)];
   }
-  /* 首頁（兩個入口）底部不講話 —— 牠已經在上面的對話框裡講過了，
-     底下再講一次是同一隻在同一個畫面說兩次。菜單數量留在按鈕的角標上。 */
+  // 首頁兩段都沒有底部條（body.no-tray），這裡回什麼都不會顯示
   return [n ? BO.satisfied : BO.sleepy, ''];
 }
 
@@ -1350,6 +1359,7 @@ const routes = [
 
 let stack = [];            // 走過的路徑，用來判斷前進還是後退
 let current = null;
+let fadeNext = false;      // 下一次 route() 用淡入淡出（原地重繪，不是換頁）
 
 function go(path)      { location.hash = '#' + path; }
 function back()        { history.back(); }
@@ -1370,14 +1380,15 @@ function route() {
 
   const vp = $('#viewport');
   const old = current;
+  const fade = fadeNext; fadeNext = false;
   const page = document.createElement('div');
-  page.className = 'page ' + (old ? (isBack ? 'in-back' : 'in-fwd') : '');
+  page.className = 'page ' + (old ? (fade ? 'in-fade' : isBack ? 'in-back' : 'in-fwd') : '');
   fn(page, m);
   vp.appendChild(page);
   current = page;
 
   if (old) {
-    old.className = 'page ' + (isBack ? 'out-back' : 'out-fwd');
+    old.className = 'page ' + (fade ? 'out-fade' : isBack ? 'out-back' : 'out-fwd');
     old.addEventListener('animationend', () => old.remove(), { once: true });
     setTimeout(() => old.isConnected && old.remove(), 400);
   }
@@ -1432,7 +1443,7 @@ function paintHome(box) {
     layoutBubbles(box);
     return;
   }
-  document.body.classList.remove('no-tray');
+  document.body.classList.add('no-tray');   // 首頁兩段都不要底部條
   box.onclick = null;
   const intro = homeLine === BO_INTRO;
   box.innerHTML = `
