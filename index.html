@@ -157,27 +157,52 @@ img { display: block; max-width: 100%; }
   color: var(--faint); margin-top: 6px;
 }
 
-/* 首頁慢寶前後晃。
-   整張圖一起轉的話樹枝也會歪 —— 所以同一張圖疊兩層：
-   下層是會晃的身體，上層只露出樹枝那一段、靜止不動，順便蓋住接縫。 */
+/* ── 封面：一張圖切三層，三層各自動 ──
+
+   同一張 hang_sleep_tree.webp 疊三次，用 clip-path 各露出一條橫帶：
+
+     0 – 25.6%    葉子和小枝     skewX 擺動（原點在帶底，接合處位移＝0）
+     25.6 – 38.3% 光禿的主樹枝   不動
+     29.4% 以下   慢寶           rotate 擺動（支點在牠抓樹枝的地方）
+
+   為什麼是這個順序：中間那條必須是「純樹枝、沒有東西跨過去」的乾淨帶，
+   上下兩層才能各自轉而看不出接縫。葉子那層用 skew 不用 rotate ——
+   rotate 會讓左右兩叢一上一下，樹枝接合處立刻脫節；
+   skew 只有水平位移，而且原點設在帶底，接合處完全不動。
+   慢寶那層的裁切上緣（29.4%）刻意藏在樹枝帶裡面，轉起來邊緣才不會露出來。 */
 .bo-stage { position: relative; }
+.bo-stage > img, .bo-stage > .bo-swing { display: block; }
+
 .bo-swing {
-  transform-origin: 50% 14%;         /* 支點在牠抓著樹枝的地方 */
+  transform-origin: 52.8% 33.3%;     /* 四隻爪抓著樹枝的中點 */
   animation: sway 4.6s ease-in-out infinite;
 }
-.bo-branch {
+.bo-swing > img { clip-path: inset(29.4% 0 0 0); }
+
+.bo-branch, .bo-leaves {
   position: absolute; inset: 0;
   width: 100%;
-  clip-path: inset(0 0 83% 0);       /* 樹枝在 6%–15%，多留一點蓋住接縫 */
   pointer-events: none;
 }
+.bo-branch { clip-path: inset(25.4% 0 61.7% 0); }   /* 純樹枝，不動 */
+.bo-leaves {
+  clip-path: inset(0 0 74.4% 0);
+  transform-origin: 50% 25.6%;       /* 枝葉與樹枝的接合線 */
+  animation: breeze 3.7s ease-in-out infinite;      /* 跟 sway 不同週期，才不像機械 */
+}
+
 @keyframes sway {
   0%, 100% { transform: rotate(-1.4deg); }
   50%      { transform: rotate(1.4deg); }
 }
+@keyframes breeze {
+  0%, 100% { transform: skewX(-3deg); }
+  50%      { transform: skewX(3deg); }
+}
 
-
-@media (prefers-reduced-motion: reduce) { .bo-swing { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .bo-swing, .bo-leaves { animation: none; }
+}
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
 .bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
@@ -201,8 +226,8 @@ img { display: block; max-width: 100%; }
    用寬高比換算成寬度上限，樹枝那層才會跟著一起縮。 */
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
-.bo-stage.sleep { width: min(100%, 400px, 54vh); }    /* 640x505，比 1.267 */
-.bo-stage.drape { width: min(100%, 240px, 25vh); }    /* 560x721，比 0.777 —— 要留位置給兩個入口 */
+.bo-stage.sleep { width: min(100%, 430px, 64vh); }    /* 900x559，比 1.610 */
+.bo-stage.drape { width: min(100%, 430px, 55vh); }    /* 820x608，比 1.349 —— 樹枝要通到兩邊 */
 
 .tap-hint {
   font-size: 12px; color: var(--faint); letter-spacing: 2px;
@@ -532,7 +557,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=14"></script>
+<script src="recipes.js?v=17"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -540,7 +565,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '16';
+const ASSETS = '18';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -556,8 +581,9 @@ let portions = 2;
 /* ── 慢寶 ── */
 const BO = {
   hang:    asset('assets/bo/hang_u.webp'),
-  sleep:   asset('assets/bo/hang_sleep.webp'),   // 招呼頁：牠還在睡
-  drape:   asset('assets/bo/hang_drape.webp'),
+  sleep:   asset('assets/bo/hang_sleep_tree.webp'),  // 封面：牠睡在有葉子的樹枝上
+  drape:   asset('assets/bo/hang_drape.webp'),       // 菜單頁那個 132px 的近景
+  drapeTree: asset('assets/bo/hang_drape_tree.webp'),// 首頁：趴在有葉子的樹枝上
   cookA:   asset('assets/bo/cook_bowl.webp'),
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
@@ -821,6 +847,7 @@ function paintHome(box) {
           <img src="${BO.sleep}" alt="慢寶">
         </div>
         <img class="bo-branch" src="${BO.sleep}" alt="" aria-hidden="true">
+        <img class="bo-leaves" src="${BO.sleep}" alt="" aria-hidden="true">
       </div>
       <div class="tap-hint">點一下</div>`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
@@ -831,7 +858,7 @@ function paintHome(box) {
   box.onclick = null;
   box.innerHTML = `
     ${say(homeLine, 'bottom', ' data-at="50%"')}
-    <div class="bo-stage drape"><img src="${BO.drape}" alt="慢寶"></div>
+    <div class="bo-stage drape"><img src="${BO.drapeTree}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
         <div class="g-t">我知道要吃什麼</div>
@@ -1167,21 +1194,26 @@ const catOf = n => (CATS.find(([, ws]) => ws.some(w => n.includes(w))) || ['groc
 const BUY_AS = { '蒜末': '大蒜' };
 
 /* 彙總這份菜單要買的東西。買菜清單和底部橫條都靠它，兩邊才不會各算各的 */
+/* 一個名字一行。單位不同就並列，不要拆成兩行。
+
+   買菜清單回答的是「我要買什麼」，不是「總共幾匙」—— 黑糖在三道菜裡分別用
+   茶匙、克、湯匙，你走到貨架前拿的還是一包黑糖。舊版的合併鍵是「名字＋單位」，
+   那是把程式好算擺在買菜好用前面，結果同一樣東西被拆成三行。 */
 function aggregate(sel) {
   const bins = { meat: {}, veg: {}, chill: {}, groc: {}, season: {} };
-  const fixed = { meat: [], veg: [], chill: [], groc: [], season: [] };
 
   /* 買菜買的是原型，不是備料後的樣子 —— 食譜要蒜末，你在店裡拿的是一整顆大蒜 */
   const put = (name, num, unit) => {
     name = BUY_AS[name] || name;
     const bin = catOf(name);
     const u = splitUnit(unit || '').u;
+    const row = bins[bin][name] || (bins[bin][name] = { name, sums: {}, fixed: [] });
     if (num === null || num === undefined) {
-      if (!fixed[bin].some(x => x[0] === name)) fixed[bin].push([name, u || unit]);
-      return;
+      const label = u || unit;                      // 適量、幾滴、複合單位這類加不起來的
+      if (label && !row.fixed.includes(label)) row.fixed.push(label);
+    } else {
+      row.sums[u] = (row.sums[u] || 0) + num;
     }
-    const k = name + '||' + u;
-    bins[bin][k] ? bins[bin][k].n += num : bins[bin][k] = { name, n: num, u };
   };
 
   sel.forEach(r => (r.shoppingList || []).forEach(item => {
@@ -1194,17 +1226,21 @@ function aggregate(sel) {
     }
   }));
 
-  return { bins, fixed };
+  return bins;
 }
+
+/* 一行的份量：能加的先加，加不起來的並列在後面 */
+const amountOf = row => [
+  ...Object.entries(row.sums).map(([u, n]) => fmt(n) + u),
+  ...row.fixed,
+].join(' ＋ ');
 
 /* 還要買的（扣掉家裡已經有的） */
 function shoppingNames() {
   const sel = RECIPES.filter(r => menu.has(r.id));
   if (!sel.length) return [];
-  const { bins, fixed } = aggregate(sel);
-  return [...Object.values(bins).flatMap(b => Object.values(b)).map(x => x.name),
-          ...Object.values(fixed).flat().map(x => x[0])]
-         .filter(n => !haveAtHome.has(n));
+  const bins = aggregate(sel);
+  return Object.values(bins).flatMap(b => Object.keys(b)).filter(n => !haveAtHome.has(n));
 }
 
 const shoppingDone = () => {
@@ -1213,7 +1249,7 @@ const shoppingDone = () => {
 };
 
 function buyHTML(sel) {
-  const { bins, fixed } = aggregate(sel);
+  const bins = aggregate(sel);
 
   const row = (name, amt) => {
     if (haveAtHome.has(name)) return '';                 // 家裡有的先收起來
@@ -1228,10 +1264,7 @@ function buyHTML(sel) {
     </div>`;
   };
 
-  const rows = bin => [
-    ...Object.values(bins[bin]).map(x => row(x.name, fmt(x.n) + x.u)),
-    ...fixed[bin].map(([n, u]) => row(n, u)),
-  ].join('');
+  const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x))).join('');
 
   const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','雜貨'],['season','調味料']];
   let html = secs.map(([k, label]) => {
