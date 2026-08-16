@@ -31,10 +31,17 @@
 body.no-tray { --tray-h: 0px; }
 body.no-tray .tray { display: none; }
 
+/* ⚠️ **iOS Safari 一定要用 dvh，不能用 100%。**
+   Safari 的工具列會伸縮，`height: 100%` 會鎖在「工具列展開時」的小視窗高度。
+   結果是整個 app 以為畫面比實際短：底部固定條浮在畫面中間、下面露出一大塊底色，
+   而且首頁的內容撐不下 —— `.home` 是 flex 置中的，溢出到上方的部分捲不到，
+   對話框就整個被切掉。兩個症狀是同一個原因。
+   （2026-08-17 才發現，因為預覽視窗沒有會伸縮的工具列，重現不出來。） */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-  height: 100%;
+  height: 100%;                     /* 舊瀏覽器的退路 */
+  height: 100dvh;                   /* ⚠️ iOS Safari 必須用 dvh —— 見下 */
   overflow: hidden;                 /* 捲動交給各頁自己處理 */
   background: var(--bg);
   color: var(--text);
@@ -106,10 +113,15 @@ img { display: block; max-width: 100%; }
 
 .home {
   position: relative;
-  min-height: 100%;
+  min-height: 100%;                    /* 相對於 .page —— 那已經扣掉底部條了，不要改成 dvh */
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 24px 8px 12px;              /* 左右留很少，插畫要放得開 */
+  align-items: center;
+  justify-content: center;
+  /* ⚠️ `safe` 是重點：內容撐不下的時候，置中會把溢出的部分推到容器上方，
+     而**往上溢出的部分是捲不到的** —— 對話框就是這樣整個消失的。
+     safe center ＝ 塞得下就置中，塞不下就靠上，該捲的捲得到。 */
+  justify-content: safe center;
+  padding: 20px 8px 12px;              /* 左右留很少，插畫要放得開 */
   text-align: center;
 }
 
@@ -292,7 +304,7 @@ img { display: block; max-width: 100%; }
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
 .bo-stage.sleep { width: min(100%, 430px, 53vh); }    /* 900x675，比 1.333 */
-.bo-stage.drape { width: min(100%, 430px, 55vh); }    /* 820x608，比 1.349 —— 樹枝要通到兩邊 */
+.bo-stage.drape { width: min(100%, 430px, 44vh); }    /* 820x608，比 1.349。vh 上限在矮螢幕才會咬到 */
 
 .lang {
   position: absolute; top: 14px; right: 16px; z-index: 6;
@@ -664,7 +676,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=39"></script>
+<script src="recipes.js?v=43"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -738,10 +750,10 @@ const T = {
   U26: ['冷藏食材', '냉장 식재료'],
   U27: ['常溫食材', '상온 식재료'],
   U28: ['調味料', '양념'],
-  U29: ['家裡已有 N 樣', '집에 있는 것 N개'],
-  U30: ['標記為已買到', '구매 완료로 표시'],
-  U31: ['標記為未買', '미구매로 표시'],
-  U32: ['標記為家裡已有', '집에 있음으로 표시'],
+  U29: ['家裡已有 N 樣', '집에 있는 재료 N개'],
+  U30: ['標記為已買到', '산 것으로 표시'],
+  U31: ['標記為未買', '아직 안 산 것으로 표시'],
+  U32: ['標記為家裡已有', '집에 있는 재료로 표시'],
   U33: ['移出今日菜單', '오늘의 메뉴에서 빼기'],
   A2: ['{d} 天沒來。……好吧，今天吃什麼？', '{d}일 만이네. …그래, 오늘 뭐 먹을래?'],
   A3: ['這個時間還要煮？……好吧。', '이 시간에 요리를? …그래, 해보자.'],
@@ -758,7 +770,7 @@ const T = {
   UCNT:  ['N 道', 'N개'],
   DWAIT: ['你去買，我在家等。反正我也跑不掉。', '장 보고 와. 난 집에 있을게. 어차피 멀리 못 가.'],
   AEND: ['那，今天吃什麼？', '그럼, 오늘 뭐 먹을래?'],
-  DBUY: ['都買齊了，回來吧。', '다 샀네. 이제 와.'],
+  DBUY: ['都買齊了，回來吧。', '다 샀네. 이제 들어와.'],
   E2: ['今天的菜單還沒定。那我先睡。', '오늘 메뉴 아직 안 정했네. 그럼 난 먼저 잘게.'],
 };
 const t = k => (isKo() && T[k] && T[k][1]) || (T[k] ? T[k][0] : k);
@@ -801,7 +813,7 @@ const TERM = {
   '白胡椒粉': '흰후추',
   '白醋': '식초',
   '秀珍菇': '느타리버섯',
-  '米酒或燒酒': '쌀술 또는 소주',
+  '米酒或燒酒': '청주나 소주',
   '紅甜椒': '빨강 파프리카',
   '紅蘿蔔': '당근',
   '紅酒': '레드와인',
@@ -823,7 +835,7 @@ const TERM = {
   '醬油': '간장',
   '醬香炒麵醬汁': '간장 볶음면 소스',
   '雞翅': '닭날개',
-  '雞腿醃料': '닭다리살 밑간',
+  '雞腿醃料': '닭다리살 밑간 양념',
   '雞蛋': '달걀',
   '靈魂黑金醬汁': '비법 간장 양념',
   '青辣椒': '풋고추',
@@ -874,7 +886,6 @@ const TERM = {
   '湯匙': '큰술',
   '片葉子': '장',
   '瓣': '쪽',
-  '瓣份量': '쪽 분량',
   '盒': '팩',
   '茶匙': '작은술',
   '顆': '개',
@@ -922,6 +933,27 @@ const COUNTER_OVERRIDES = {
 };
 const counterOf = (name, unit) =>
   (isKo() && (COUNTER_OVERRIDES[name + '|' + unit] || TERM[unit])) || unit;
+
+/* 量詞沒登記時要出聲 —— 不然它會安靜地用一般翻譯，錯了也看不出來。
+
+   會變的量詞才檢查：g / ml / 匙 不隨名詞變，個／대／장／쪽／가닥 才會。
+   啟動時掃一次就好，不必每次渲染都算。 */
+const COUNTER_UNITS = ['根', '支', '朵', '顆', '瓣', '盒', '包', '片葉子', '數朵'];
+function auditCounters() {
+  const miss = new Set();
+  RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
+    (Array.isArray(item) ? [item] : item.items).forEach(([name, , unit]) => {
+      const u = splitUnit(unit || '').u;
+      if (!COUNTER_UNITS.includes(u)) return;
+      const key = (BUY_AS[name] || name) + '|' + u;
+      if (!COUNTER_OVERRIDES[key]) miss.add(key + '  →  ' + (TERM[u] || u));
+    });
+  }));
+  if (miss.size) console.warn(
+    `[慢寶] ${miss.size} 個「食材|量詞」沒有登記 COUNTER_OVERRIDES，會用一般翻譯：\n  ` +
+    [...miss].sort().join('\n  ') +
+    '\n韓文的量詞跟著名詞變，用錯了畫面上看不出來 —— 逐個確認過再決定要不要補。');
+}
 
 /* 食譜欄位：先看 r.ko，沒有就回中文 */
 const L  = (r, f)    => (isKo() && r.ko && r.ko[f]) || r[f];
@@ -1891,6 +1923,8 @@ $('#tray-go').onclick = () => {
   if (!path.startsWith('/menu')) return go('/menu');
   return shoppingDone() ? finishShopping() : back();
 };
+
+auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
