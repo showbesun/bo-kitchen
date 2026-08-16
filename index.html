@@ -378,7 +378,6 @@ img { display: block; max-width: 100%; }
 .r-stat + .r-stat { border-left: 1px solid var(--line); padding-left: 14px; }
 .r-stat .k { font-size: 10.5px; letter-spacing: 1.5px; color: var(--faint); }
 .r-stat .v { font-size: 14.5px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
-.r-stat .tn { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
 .portion { display: flex; align-items: center; gap: 3px; margin-top: 1px; }
 
 .r-add {
@@ -572,7 +571,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=19"></script>
+<script src="recipes.js?v=22"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -996,7 +995,6 @@ function renderRecipe(el, m) {
           </div>
         </div>
       </div>
-      ${r.timeNote ? `<div class="r-stat"><div class="tn">${esc(r.timeNote)}</div></div>` : ''}
       <button class="r-add ${on ? 'on' : ''}" data-add-label="${r.id}" onclick="toggle(${r.id})">
         ${on ? '✓ 已在今日菜單' : '＋ 加入今日菜單'}
       </button>
@@ -1247,26 +1245,29 @@ function aggregate(sel) {
 }
 
 /* 一行的份量：能加的先加，加不起來的並列在後面 */
-/* 買菜清單上的份量 —— 顯示原則跟食譜頁不同。
+/* 買菜清單預設只寫名字，不寫份量。
 
-   你不可能買一湯匙的糖，一定是整包整罐拿，所以「匙、撮、滴、少許」這類
-   煮飯時才有意義的量，在買菜清單上一律不顯示。留下的是能決定「買幾個、
-   買多重」的量：g、ml、顆、根、包、瓣。
+   絕大多數東西是整包整盒拿了就走 —— 站在貨架前，「0.25 顆甜椒」「2 根蔥」
+   「1 湯匙糖」幫不上任何忙，你不可能買那個量。
 
-   調味料整區再更進一步 —— 那些都是家裡常備、不會為一道菜特地買，
-   所以連 g/ml 也不顯示。只有下面兩樣例外：它們用量大到會影響買幾罐。 */
-const COOK_UNIT = /匙|撮|滴|少許|適量|份量|瓣/;
-const SHOW_IN_SEASON = /麵醬|高湯/;
+   只有這三類要挑份量：
+     肉      跟老闆說幾克
+     麵      包裝大小差很多，買錯會不夠
+     大宗醬料  用量大到要算買幾罐
 
-const amountOf = (row, bin) => {
-  if (bin === 'season' && !SHOW_IN_SEASON.test(row.name)) return '';
-  // row.fixed 是「數朵、一小撮、1 湯匙 + 2 茶匙」這類沒有數字的量 ——
-  // 全部是煮飯時的講法，沒有一個能拿去貨架上比對，買菜清單一律不顯示
-  return Object.entries(row.sums)
-    .map(([u, n]) => fmt(n) + u)
-    .filter(t => !COOK_UNIT.test(t))
-    .join(' ＋ ');
-};
+   ⚠️ 這是白名單，預設是「不顯示」。以前是反過來的（預設顯示，再用
+   煮飯單位、調味料整區、個別品項三層黑名單去藏），結果每看到一行礙眼
+   就要再補一條例外。翻成白名單之後，新增食譜預設就是乾淨的。
+
+   「麵」要寫成 直麵|麵條|冬粉，不能只寫「麵」—— 不然低筋麵粉、
+   煎餅粉或中筋麵粉會一起被拉進來。 */
+const SHOW_AMOUNT = name =>
+  catOf(name) === 'meat' || /直麵|麵條|冬粉|麵醬|高湯/.test(name);
+
+/* row.fixed（數朵、一小撮、1 湯匙 + 2 茶匙）永遠不顯示 —— 那些是煮飯時的講法 */
+const amountOf = row => SHOW_AMOUNT(row.name)
+  ? Object.entries(row.sums).map(([u, n]) => fmt(n) + u).join(' ＋ ')
+  : '';
 
 /* 還要買的（扣掉家裡已經有的） */
 function shoppingNames() {
@@ -1297,7 +1298,7 @@ function buyHTML(sel) {
     </div>`;
   };
 
-  const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x, bin))).join('');
+  const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x))).join('');
 
   const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','雜貨'],['season','調味料']];
   let html = secs.map(([k, label]) => {
