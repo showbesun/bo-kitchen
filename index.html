@@ -357,6 +357,14 @@ img { display: block; max-width: 100%; }
 @keyframes legL { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(-7deg); } }
 @keyframes legR { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(7deg); } }
 
+/* ⛔ 這一頁的枝葉不要用切圖去動（2026-08-17 試過三輪，全部失敗）。
+   腿可以切，是因為腿**懸空**：左右和中間都是平背景，邊界完全乾淨。
+   枝葉不一樣 —— 它們**沿著樹枝的邊長出來**，那條邊是不規則的共用邊界。
+   三輪的結果依序是：切線被細枝騙到、把葉子啃出方形缺口；
+   改用最長深色段後缺口沒了但接縫處留下細絲；
+   讓底部多含樹枝去蓋接縫，反而在每片葉子周圍留下一圈白邊。
+   **共用不規則邊界的東西不要自己切。** 要動就得重生一張把枝葉分開的圖。 */
+
 /* 成對的關鍵影格＝瞬間切換，眨眼不該是淡入淡出的。閉著約 180ms */
 @keyframes blink {
   0%, 89%      { opacity: 0; }
@@ -736,7 +744,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=48"></script>
+<script src="recipes.js?v=49"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
