@@ -178,17 +178,17 @@ img { display: block; max-width: 100%; }
 .bo-stage > img, .bo-stage > .bo-swing { display: block; }
 
 .bo-swing {
-  transform-origin: 52.8% 33.3%;     /* 四隻爪抓著樹枝的中點 */
+  transform-origin: 52.6% 27.3%;     /* 四隻爪抓著樹枝的中點 */
   animation: sway 4.6s ease-in-out infinite;
 }
-.bo-swing > img { clip-path: inset(38.6% 0 0 0); }
+.bo-swing > img { clip-path: inset(33.6% 0 0 0); }
 
 .bo-branch, .bo-leaf-a, .bo-leaf-b, .bo-leaf-c {
   position: absolute; inset: 0;
   width: 100%;
   pointer-events: none;
 }
-.bo-branch { clip-path: inset(25.4% 0 59.6% 0); }   /* 純樹枝，不動 */
+.bo-branch { clip-path: inset(21.0% 0 64.7% 0); }   /* 純樹枝，不動 */
 
 /* 枝葉橫切成三片，切線落在三叢之間的空白處（x=438 / 686 於 900 寬）。
    每一片只畫一次，所以不會有「靜止的和會動的疊在一起」的殘影。
@@ -197,10 +197,10 @@ img { display: block; max-width: 100%; }
    左邊那叢是一根分岔的枝（兩簇共用一根莖），整叢一起晃才對，但那樣看起來
    會有三根在動；讓它整片不動，剛好剩右邊兩根獨立的枝在晃。
    兩根的幅度和週期都不一樣，而且錯開相位，不然又變成整齊劃一。 */
-.bo-leaf-a { clip-path: inset(0 51.3% 74.4% 0); }                            /* 左邊那叉，不動 */
-.bo-leaf-b { clip-path: inset(0 23.8% 74.4% 48.7%); animation: breeze-b 5.6s ease-in-out infinite; }
-.bo-leaf-c { clip-path: inset(0 0 74.4% 76.2%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
-.bo-leaf-b, .bo-leaf-c { transform-origin: 50% 25.6%; }   /* 枝葉與樹枝的接合線 */
+.bo-leaf-a { clip-path: inset(0 51.7% 78.8% 0);      animation: breeze-b 5.6s ease-in-out infinite; }
+.bo-leaf-b { clip-path: inset(0 0 78.8% 51.7%);      animation: breeze-c 3.9s ease-in-out -1.2s infinite; }
+.bo-leaf-c { display: none; }                        /* 這版只有兩叢枝葉 */
+.bo-leaf-a, .bo-leaf-b { transform-origin: 50% 21.2%; }   /* 枝葉與樹枝的接合線 */
 
 @keyframes sway {
   0%, 100% { transform: rotate(-1.4deg); }
@@ -216,7 +216,7 @@ img { display: block; max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-swing, .bo-leaf-b, .bo-leaf-c { animation: none; }
+  .bo-swing, .bo-leaf-a, .bo-leaf-b { animation: none; }
 }
 
 /* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭。
@@ -245,15 +245,48 @@ img { display: block; max-width: 100%; }
 /* 泡泡是 inline-block，沒有上限的話會一直往橫向長 ——
    第一次的自我介紹有 100 字，會撐到 1200px 以上、整個溢出視窗。
    跟插畫同寬，讀起來也才像同一塊。 */
+/* 高度固定成兩行 —— 句子換來換去，泡泡都不長高，慢寶就不會被推上推下。
+   寬度讓它照文字收（只有上限），泡泡才還像泡泡不像看板；
+   寬度變化發生在淡出的那 240ms 裡，看不到。 */
 .home .bub { margin-bottom: 8px; max-width: min(100%, 430px); }
+.home .bub > span {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 3.2em; text-align: center;
+  transition: opacity .24s ease;
+}
 
 /* 插畫要依畫面高度收斂 —— 手機上不設上限的話，內容會超過視窗，
    而 flex 置中時上方溢出的部分是捲不到的（對話框就這樣消失了）。
    用寬高比換算成寬度上限，樹枝那層才會跟著一起縮。 */
 .bo-stage { width: 100%; max-width: 430px; margin: 0 auto; }
 .bo-stage img { width: 100%; }
-.bo-stage.sleep { width: min(100%, 430px, 64vh); }    /* 900x559，比 1.610 */
+.bo-stage.sleep { width: min(100%, 430px, 53vh); }    /* 900x675，比 1.333 */
 .bo-stage.drape { width: min(100%, 430px, 55vh); }    /* 820x608，比 1.349 —— 樹枝要通到兩邊 */
+
+.lang {
+  position: absolute; top: 14px; right: 16px; z-index: 6;
+  display: flex; gap: 2px;
+}
+.lang button {
+  min-width: 34px; padding: 5px 8px;
+  font-size: 12.5px; letter-spacing: 1px;
+  color: var(--faint); border-radius: 999px;
+}
+.lang button.on { color: var(--brand); background: var(--surface); box-shadow: var(--shadow); }
+
+/* 封面版本：那一頁第一眼就是文字（名字、標語、點一下），看不懂的人必須當場能換，
+   所以它站進版面裡、放大、兩顆都給外框。進首頁之後它只是個設定，縮回右上角。 */
+.lang.hero { position: static; margin-top: 22px; gap: 8px; }
+.lang.hero button {
+  min-width: 52px; padding: 8px 15px;
+  font-size: 14px; letter-spacing: 2px;
+  color: var(--muted);
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+}
+.lang.hero button.on {
+  color: var(--brand); border-color: var(--brand-dim); font-weight: 700;
+}
 
 .tap-hint {
   font-size: 12px; color: var(--faint); letter-spacing: 2px;
@@ -589,7 +622,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=27"></script>
+<script src="recipes.js?v=37"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -597,7 +630,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '32';
+const ASSETS = '34';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -609,6 +642,258 @@ let menu = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
 const saveMenu = () => localStorage.setItem(KEY, JSON.stringify([...menu]));
 
 let portions = 2;
+
+/* ══════════ 語言 ══════════
+
+   中文是本體，韓文是覆蓋層 —— 食譜的韓文放在每道的 r.ko，介面的放在下面的 T。
+   **找不到韓文就自動回中文**，這條是刻意的：對照表還沒涵蓋食材名、單位、標籤，
+   缺的地方要看得見中文，而不是空白或壞掉。可以邊補邊上線。
+
+   ⛔ 不要做成兩份 index.html。這個專案已經證明過三次「並存的東西一定分岔」
+   （蝸居米其林、recipes.json、四個醬油名字）。 */
+
+let lang = localStorage.getItem('bo_lang') || 'zh';
+const isKo = () => lang === 'ko';
+function setLang(v) {
+  if (v === lang) return;
+  lang = v; localStorage.setItem('bo_lang', v);
+  route();                         // homeGreeted 維持原樣：在封面就留在封面
+}
+
+/* ⛔ 這裡曾經寫死 homeGreeted = true（理由是「切語言不要把人踢回封面」）。
+   那是切換器只在右上角時寫的 —— 而 homeGreeted 是模組層的狀態，route()
+   本來就不會動它，所以那行其實沒有防到任何東西。
+   語言鍵放到封面之後，它反而變成「按了語言就跳過封面」，正好把
+   「第一頁就有文字，要能當場換語言」這個目的抵銷掉。 */
+
+/* 介面字串。第一格中文、第二格韓文 */
+const T = {
+  U1: ['慢寶', '늘보'],
+  U2: ['今天也要好好吃飯', '오늘도 잘 챙겨 먹자'],
+  U3: ['點一下', '한 번 눌러 봐'],
+  U4: ['我知道要吃什麼', '먹고 싶은 게 있어'],
+  U5: ['自己翻，看到想吃的就加進菜單', '직접 둘러보고, 먹고 싶은 건 오늘의 메뉴에 추가'],
+  U6: ['完全沒想法', '아무 생각도 없어'],
+  U7: ['回答三個問題，慢寶幫你挑', '질문 세 개만 답하면 늘보가 골라 줄게'],
+  U8: ['食譜牆', '레시피'],
+  U9: ['搜尋名稱、菜系、標籤…', '이름・종류・태그 검색…'],
+  U10: ['時間', '시간'],
+  U11: ['難度', '난이도'],
+  U12: ['幾人份', '인분'],
+  U13: ['備料', '재료 준비'],
+  U14: ['步驟', '조리 순서'],
+  U15: ['先做，不然會卡住', '먼저 해 두기 — 안 하면 막혀'],
+  U16: ['備料完成後，從這裡開始。', '재료 준비가 끝났으면 여기서 시작.'],
+  U17: ['注意事項', '조리 팁'],
+  U18: ['＋ 加入今日菜單', '＋ 오늘의 메뉴에 추가'],
+  U19: ['✓ 已在今日菜單', '✓ 오늘의 메뉴'],
+  U20: ['今日菜單', '오늘의 메뉴'],
+  U21: ['買菜清單', '장보기 목록'],
+  U22: ['關閉', '닫기'],
+  U23: ['買完了，收工', '다 샀다. 끝.'],
+  U24: ['肉類・海鮮', '고기・해산물'],
+  U25: ['蔬菜・水果', '채소・과일'],
+  U26: ['冷藏食材', '냉장 식재료'],
+  U27: ['常溫食材', '상온 식재료'],
+  U28: ['調味料', '양념'],
+  U29: ['家裡已有 N 樣', '집에 있는 것 N개'],
+  U30: ['標記為已買到', '구매 완료로 표시'],
+  U31: ['標記為未買', '미구매로 표시'],
+  U32: ['標記為家裡已有', '집에 있음으로 표시'],
+  U33: ['移出今日菜單', '오늘의 메뉴에서 빼기'],
+  A2: ['{d} 天沒來。……好吧，今天吃什麼？', '{d}일 만이네. …그래, 오늘 뭐 먹을래?'],
+  A3: ['這個時間還要煮？……好吧。', '이 시간에 요리를? …그래, 해보자.'],
+  A4: ['又是你。……今天也要吃好的？', '또 왔네. …오늘도 맛있는 거 먹으려고?'],
+  A5: ['回來啦。今天想吃什麼？', '왔네. 오늘은 뭐 먹을래?'],
+  D1: ['慢慢看。挑吃的，本來就不能催。', '천천히 봐. 먹을 건 서두를 필요 없잖아.'],
+  D2: ['{n} 道了。還要加？……行啊。', '벌써 {n}개야. 더 담아? …그래.'],
+  D3: ['{n} 道……你今天是真的有野心喔。', '{n}개… 오늘 진짜 야심찬데?'],
+  D4: ['還沒選。……慢慢來。', '아직 안 골랐네. …천천히 해.'],
+  D5: ['這些買齊就夠了。別把冰箱塞滿。', '장볼 건 이 정도면 돼. 냉장고까지 꽉 채우진 마.'],
+  D6: ['要泡要醃的先處理。你可以拖，食材不會配合。', '불리거나 재울 건 먼저 해. 미뤄도 되는데, 재료는 기다려주지 않아.'],
+  D7: ['菜單裡有 {n} 道。你挑，我等著吃。', '메뉴에 {n}개 있어. 골라. 난 먹을 준비할게.'],
+  E1: ['找不到這道菜。我也沒聽過。', '이건 없네. 나도 처음 들어.'],
+  UCNT:  ['N 道', 'N개'],
+  DWAIT: ['你去買，我在家等。反正我也跑不掉。', '장 보고 와. 난 집에 있을게. 어차피 멀리 못 가.'],
+  AEND: ['那，今天吃什麼？', '그럼, 오늘 뭐 먹을래?'],
+  DBUY: ['都買齊了，回來吧。', '다 샀네. 이제 와.'],
+  E2: ['今天的菜單還沒定。那我先睡。', '오늘 메뉴 아직 안 정했네. 그럼 난 먼저 잘게.'],
+};
+const t = k => (isKo() && T[k] && T[k][1]) || (T[k] ? T[k][0] : k);
+
+/* 詞彙對照表 —— 食材名、單位、醬料組名、標籤、菜系。
+   這些是「詞」不是「句」，翻一次就重複使用，不隨食譜數量增加。
+   ⚠️ 沒有在表裡的詞會原樣顯示中文，那是刻意的 —— 缺什麼要看得見。 */
+const TERM = {
+  /* 食材名稱（74） */
+  '乾海帶': '마른 미역',
+  '低筋麵粉': '박력분',
+  '去骨雞腿肉': '닭다리살',
+  '喝的優格': '마시는 요거트',
+  '大白菜': '배추',
+  '大蒜': '마늘',
+  '大蔥': '대파',
+  '太白粉': '감자전분',
+  '奶油': '버터',
+  '小蘇打粉': '베이킹소다',
+  '昆布魚乾高湯': '다시마·멸치 육수',
+  '杏鮑菇': '새송이버섯',
+  '松露橄欖油': '트러플 올리브오일',
+  '板豆腐': '부침용 두부',
+  '棒棒腿': '닭다리(북채)',
+  '橄欖油': '올리브오일',
+  '櫛瓜': '애호박',
+  '水': '물',
+  '水梨汁': '배즙',
+  '洋蔥': '양파',
+  '煎餅粉或中筋麵粉': '부침가루 또는 중력분',
+  '熟成泡菜': '잘 익은 김치',
+  '熟透香蕉': '잘 익은 바나나',
+  '牛絞肉': '다진 소고기',
+  '牛肉片': '불고기용 소고기',
+  '牛腩': '양지',
+  '甘栗仁': '깐밤',
+  '生麵條': '생면',
+  '番茄義大利麵醬': '토마토 파스타 소스',
+  '白糖': '설탕',
+  '白胡椒粉': '흰후추',
+  '白醋': '식초',
+  '秀珍菇': '느타리버섯',
+  '米酒或燒酒': '쌀술 또는 소주',
+  '紅甜椒': '빨강 파프리카',
+  '紅蘿蔔': '당근',
+  '紅酒': '레드와인',
+  '義大利直麵': '스파게티',
+  '胡蘿蔔': '당근',
+  '芝麻油': '참기름',
+  '蒜末': '다진 마늘',
+  '蘑菇': '양송이버섯',
+  '蛋': '달걀',
+  '蠔油': '굴소스',
+  '西洋芹': '셀러리',
+  '豬五花或梅花肉': '삼겹살 또는 목살',
+  '豬五花肉': '삼겹살',
+  '豬絞肉': '다진 돼지고기',
+  '辣椒': '페페론치노',
+  '辣醬鍋醬汁': '고추장찌개 양념',
+  '醋': '식초',
+  '醬油': '간장',
+  '醬香炒麵醬汁': '간장 볶음면 소스',
+  '雞翅': '닭날개',
+  '雞腿醃料': '닭다리살 밑간',
+  '雞蛋': '달걀',
+  '靈魂黑金醬汁': '비법 간장 양념',
+  '青辣椒': '풋고추',
+  '青陽辣椒': '청양고추',
+  '韓國櫛瓜': '애호박',
+  '韓式冬粉': '당면',
+  '韓式湯醬油（可用日式薄口醬油）': '국간장 (없으면 우스쿠치 간장)',
+  '韓式辣椒粉': '고춧가루',
+  '韓式辣椒醬': '고추장',
+  '韓式醃蝦醬（可用少量魚露替代）': '새우젓 (없으면 액젓 약간)',
+  '香草精': '바닐라 익스트랙',
+  '香菇': '표고버섯',
+  '馬鈴薯': '감자',
+  '高湯': '육수',
+  '鹽': '소금',
+  '黃甜椒': '노랑 파프리카',
+  '黃金比例梨汁醃醬': '배즙 불고기 양념',
+  '黑糖': '흑설탕',
+  '黑胡椒粉': '후추',
+  /* 醬料／備料組名（17） */
+  '先泡': '미리 불리기',
+  '先洗': '씻기',
+  '先醃': '미리 재우기',
+  '切塊': '큼직하게 썰기',
+  '切末': '다지기',
+  '切段': '토막 내기',
+  '切片': '얇게 썰기',
+  '切絲': '채 썰기',
+  '糖': '설탕',
+  '調醬汁': '소스 섞기',
+  '醬醃醬汁': '장아찌 간장물',
+  '開火前放旁邊': '불 켜기 전에 꺼내 두기',
+  /* 單位（21） */
+  '1 湯匙 + 2 茶匙': '1큰술 + 2작은술',
+  '1/2 湯匙': '1/2큰술',
+  '1–1.5湯匙': '1–1.5큰술',
+  '3 湯匙 + 1.5 茶匙': '3큰술 + 1.5작은술',
+  'g': 'g',
+  'ml': 'ml',
+  '一小撮': '한 꼬집',
+  '包': '봉지',
+  '少許': '약간',
+  '幾滴': '몇 방울',
+  '支': '대',
+  '數朵': '몇 가닥',
+  '朵': '개',
+  '根': '개',
+  '湯匙': '큰술',
+  '片葉子': '장',
+  '瓣': '쪽',
+  '瓣份量': '쪽 분량',
+  '盒': '팩',
+  '茶匙': '작은술',
+  '顆': '개',
+  /* 標籤（24） */
+  '30分鐘上桌': '30분 완성',
+  '一鍋到底': '원팬',
+  '下午茶': '간식',
+  '下班後': '퇴근 후',
+  '下飯菜': '밥도둑',
+  '剩菜救援': '남은 재료 활용',
+  '小菜': '밑반찬',
+  '小酌良伴': '술안주',
+  '想吃熱的': '뜨끈한 게 당길 때',
+  '湯': '국물요리',
+  '烘焙': '베이킹',
+  '牛肉': '소고기',
+  '甜點': '디저트',
+  '生日': '생일',
+  '蔬菜': '채소',
+  '豬肉': '돼지고기',
+  '週末慢慢煮': '주말 요리',
+  '醬料': '소스',
+  '錢包友善': '가성비',
+  '鍋物': '냄비요리',
+  '隔夜更好吃': '다음 날 더 맛있어',
+  '雞肉': '닭고기',
+  '韓劇感': '집밥 감성',
+  '麵': '면요리',
+  /* 菜系（4） */
+  '中式': '중식',
+  '義式': '이탈리안',
+  '西式': '양식',
+  '韓式': '한식',
+};
+const tr = x => (isKo() && TERM[x]) || x;
+
+/* 量詞不能全域替換 —— 韓文的量詞跟著名詞變。
+   中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
+   所以先查「食材|中文單位」，沒中才回退到 TERM 的一般翻譯。
+   ⚠️ 沒列在這裡的組合會用一般翻譯，不要為了「看起來一致」自己補 —— 補錯比沒補糟。 */
+const COUNTER_OVERRIDES = {
+  '大蔥|根': '대',   /* 大蔥 1根 → 대파 1대 */
+  '西洋芹|支': '대',   /* 西洋芹 1支 → 셀러리 1대 */
+  '秀珍菇|數朵': '가닥',   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
+};
+const counterOf = (name, unit) =>
+  (isKo() && (COUNTER_OVERRIDES[name + '|' + unit] || TERM[unit])) || unit;
+
+/* 食譜欄位：先看 r.ko，沒有就回中文 */
+const L  = (r, f)    => (isKo() && r.ko && r.ko[f]) || r[f];
+const La = (r, f, i) => (isKo() && r.ko && r.ko[f] && r.ko[f][i]) || null;
+
+/* 慢寶的自我介紹，兩種語言各一組句子 */
+const BO_INTRO_KO = [
+  '아…… 새 룸메이트구나. 나는 늘보야.',
+  '평소엔 저기 매달려 자거나, 그냥 안 움직여.',
+  '대신 먹는 건 진심이야.',
+  '맛에는 까다롭고, 불 조절이랑 향 내는 법, 절대 빼먹으면 안 되는 건 내가 딱 알려줄게.',
+  '맛있는 거 앞에서는 나도 달라지거든.',
+  '우리, 밥만큼은 제대로 먹고 살자.',
+];
+const introLines = () => (isKo() ? BO_INTRO_KO : BO_INTRO_LINES);
 
 /* ── 慢寶 ── */
 const BO = {
@@ -783,29 +1068,60 @@ function boGreeting() {
   const d = daysSinceSeen();
   const h = new Date().getHours();
   if (d === null)          return BO_INTRO;
-  if (d >= 3)              return `${d} 天沒來。……好吧，今天吃什麼？`;
-  if (h >= 22 || h < 5)    return '這個時間還要煮？……好吧。';
-  if (d === 0)             return '又是你。……今天也要吃好的？';
-  return '回來啦。今天想吃什麼？';
+  if (d >= 3)              return t('A2').replace('{d}', d);
+  if (h >= 22 || h < 5)    return t('A3');
+  if (d === 0)             return t('A4');
+  return t('A5');
 }
 
-/* 一個字一個字跑出來。泡泡的 SVG 外框有 ResizeObserver 盯著，會跟著長。
+/* 自我介紹拆成一句一句 —— 一句打完、停一下、淡出、換下一句。
 
-   點畫面可以跳過 —— 長句子不能綁架第一次打開 app 的人。
-   跑完停一下再換成短句，不然剛讀完就消失，會像沒看到。 */
-function typeOut(el, text, done) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; done(); return; }
-  let i = 0, stopped = false;
-  const finish = () => { if (stopped) return; stopped = true; el.textContent = text; setTimeout(done, 1400); };
+   ⛔ 不要讓整段長文在同一個泡泡裡越長越高。試過，泡泡會一路把慢寶往下推，
+   使用者的原話是「看起來真的超級怪」。泡泡的高度要固定，牠才不會動。 */
+const BO_INTRO_LINES = [
+  '喔……新室友啊。嗨，我是慢寶。',
+  '平常你大概會看到我掛在那裡，不是在睡，就是懶得動。',
+  '不過對吃，我很認真。',
+  '火候、香氣、哪一步不能省，我都會告訴你。',
+  '你負責煮，我負責讓它好吃。',
+  '住一起嘛，至少飯要吃好一點。',
+];
+
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 一句話一個字一個字跑出來。標點後多停一下，唸起來才有呼吸 */
+function typeLine(el, text, done) {
+  if (REDUCE) { el.textContent = text; done && done(); return () => {}; }
+  let i = 0, t, stop = false;
   const tick = () => {
-    if (stopped) return;
+    if (stop) return;
     el.textContent = text.slice(0, ++i);
-    if (i >= text.length) return finish();
-    // 標點後多停一下，唸起來才有呼吸
-    setTimeout(tick, /[。，、？！…]/.test(text[i - 1]) ? 260 : 52);
+    if (i < text.length) { t = setTimeout(tick, /[。，、？！…]/.test(text[i - 1]) ? 240 : 52); return; }
+    done && done();
   };
-  setTimeout(tick, 420);
-  return finish;
+  tick();
+  return () => { stop = true; clearTimeout(t); el.textContent = text; };
+}
+
+/* 一串句子輪流上場。最後一句打完就留著，不淡出 */
+function typeSeq(el, lines, last, onDone) {
+  let i = 0, cancel = () => {}, t, stop = false;
+  const fade = (to, cb) => { el.style.opacity = to; t = setTimeout(cb, REDUCE ? 0 : 240); };
+  const next = () => {
+    if (stop) return;
+    if (i >= lines.length) {
+      el.style.opacity = 1;
+      cancel = typeLine(el, last, onDone);
+      return;
+    }
+    el.style.opacity = 1;
+    cancel = typeLine(el, lines[i++], () => {
+      t = setTimeout(() => fade(0, next), REDUCE ? 600 : 1100);   // 讀完停一下再換
+    });
+  };
+  next();
+  // 點畫面跳過整段，直接到最後一句
+  return () => { stop = true; clearTimeout(t); cancel(); stop = false; i = lines.length; next(); };
 }
 
 /* 慢寶在各頁講的話 —— 牠整個 app 都在，這裡是牠的嘴巴 */
@@ -872,33 +1188,48 @@ function murmurPose(r) {
 function boLine(path) {
   const n = menu.size;
   if (path.startsWith('/menu')) {
-    if (n === 0) return [BO.sleepy, '還沒選。……慢慢來。'];
-    if (shoppingDone()) return [BO.satisfied, '都買齊了，回來吧。'];
+    if (n === 0) return [BO.sleepy, t('D4')];
+    if (shoppingDone()) return [BO.satisfied, t('DBUY')];
     return path.endsWith('prep')
-      ? [BO.cheeky, '要泡要醃的先處理。你可以拖，食材不會配合。']
-      : [BO.satisfied, '這些買齊就夠了。別把冰箱塞滿。'];
+      ? [BO.cheeky, t('D6')]
+      : [BO.satisfied, t('D5')];
   }
   if (path.startsWith('/recipe/')) {
     const r = byId(+path.split('/')[2]);
     if (!r) return [BO.blank, ''];
     // 每道自己的碎碎念。有 urgentNote 的那幾則已經把提醒寫進去了，不必再靠下面那句罐頭
-    return [r.urgentNote ? BO.cheeky : BO.sleepy, r.murmur || ''];
+    return [r.urgentNote ? BO.cheeky : BO.sleepy, L(r, 'murmur') || ''];
   }
   if (path === '/wall') {
-    if (n === 0) return [BO.sleepy, '慢慢看。挑吃的，本來就不能催。'];
-    if (n <= 3)  return [BO.satisfied, `${n} 道了。還要加？……行啊。`];
-    return [BO.cheeky, `${n} 道……你今天是真的有野心喔。`];
+    if (n === 0) return [BO.sleepy, t('D1')];
+    if (n <= 3)  return [BO.satisfied, t('D2').replace('{n}', n)];
+    return [BO.cheeky, t('D3').replace('{n}', n)];
   }
-  return [n ? BO.satisfied : BO.sleepy, n ? `菜單裡有 ${n} 道。你挑，我等著吃。` : ''];
+  return [n ? BO.satisfied : BO.sleepy, n ? t('D7').replace('{n}', n) : ''];
 }
 
 /* ── 小工具 ── */
-const cardTime = t => String(t || '')
-  .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
-  .replace(/約\s*/g, '')            // 「約」拿掉，時間本來就是估的
-  .replace(/\s+/g, '')
-  .replace(/([\d.]+)/g, ' $1 ')     // 原始資料空格不一致，統一重排
-  .replace(/\s+/g, ' ').trim();
+/* 時間：兩種語言同一套邏輯 —— 拿掉「約」、一律用分鐘、不換算成小時。
+
+   ⛔ 韓文不要加「약」，也不要寫成「1시간 15분」。
+   中文那邊「約」在第一步就被剝掉了，小時也全部換算成分鐘（她 2026-08-16 定的：
+   同單位才比得動，10 和 150 擺在一起一眼就知道差幾倍）。
+   韓文自己加回「약」和小時，等於兩邊邏輯分岔 —— 2026-08-17 糾正。
+
+   韓文從數字組，不維護死字串：新增食譜自動就有。 */
+const cardTime = t => {
+  const raw = String(t || '')
+    .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+    .replace(/約\s*/g, '')
+    .replace(/\s+/g, '');
+  if (isKo()) {
+    const m = raw.match(/([\d.]+)\s*分鐘?/);
+    if (m) return Math.round(+m[1]) + '분';
+  }
+  return raw
+    .replace(/([\d.]+)/g, ' $1 ')
+    .replace(/\s+/g, ' ').trim();
+};
 
 function fmt(n) {
   const v = Math.round(n * 100) / 100;
@@ -906,9 +1237,10 @@ function fmt(n) {
 }
 
 /* 份量縮放：number 為 null 代表「適量」這種不縮放的 */
-function amountText(num, unit, factor) {
-  if (num === null || num === undefined) return unit;
-  return fmt(num * factor) + unit;
+function amountText(num, unit, factor, name) {
+  // 沒有數字時，unit 本身就是完整說法（「數朵」「一小撮」），整串翻
+  if (num === null || num === undefined) return tr(unit);
+  return fmt(num * factor) + counterOf(name, unit);
 }
 
 /* 把 unit 裡的括號說明搬到名字後面 */
@@ -968,6 +1300,13 @@ function route() {
 
 window.addEventListener('hashchange', route);
 
+/* 語言切換 —— 只放首頁右上角。切了會記住，下次打開就是那個語言 */
+const langToggle = (cls = '') => `
+  <div class="lang ${cls}">
+    <button class="${isKo() ? '' : 'on'}" onclick="event.stopPropagation();setLang('zh')">中</button>
+    <button class="${isKo() ? 'on' : ''}" onclick="event.stopPropagation();setLang('ko')">한</button>
+  </div>`;
+
 /* ══════════ 首頁 ══════════ */
 
 /* 首頁有兩段：先看到牠在睡，點一下才出現兩個入口 */
@@ -987,8 +1326,8 @@ function paintHome(box) {
     document.body.classList.add('no-tray');
     box.innerHTML = `
       <div class="wordmark">
-        <div class="wm-name">慢寶</div>
-        <div class="wm-sub">今天也要好好吃飯</div>
+        <div class="wm-name">${t('U1')}</div>
+        <div class="wm-sub">${t('U2')}</div>
       </div>
       <div class="bo-stage sleep">
         <div class="bo-swing">
@@ -999,7 +1338,8 @@ function paintHome(box) {
         <img class="bo-leaf-b" src="${BO.sleep}" alt="" aria-hidden="true">
         <img class="bo-leaf-c" src="${BO.sleep}" alt="" aria-hidden="true">
       </div>
-      <div class="tap-hint">點一下</div>`;
+      <div class="tap-hint">${t('U3')}</div>
+      ${langToggle('hero')}`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
     layoutBubbles(box);
     return;
@@ -1008,28 +1348,27 @@ function paintHome(box) {
   box.onclick = null;
   const intro = homeLine === BO_INTRO;
   box.innerHTML = `
-    ${say(intro ? '' : homeLine, 'bottom', ' data-at="50%"')}
+    ${say('', 'bottom', ' data-at="50%"')}
     <div class="bo-stage drape"><img src="${BO.drapeTree}" alt="慢寶"></div>
     <div class="gate">
       <button class="primary" onclick="go('/wall')">
-        <div class="g-t">我知道要吃什麼</div>
-        <div class="g-s">自己翻，看到想吃的就加進菜單</div>
+        <div class="g-t">${t('U4')}</div>
+        <div class="g-s">${t('U5')}</div>
       </button>
       <button onclick="alert('問答流程還沒做 — 下一步就是它')">
-        <div class="g-t">完全沒想法</div>
-        <div class="g-s">回答三個問題，慢寶幫你挑</div>
+        <div class="g-t">${t('U6')}</div>
+        <div class="g-s">${t('U7')}</div>
       </button>
-    </div>`;
+    </div>
+    ${langToggle()}`;
 
-  if (intro) {
-    const span = $('.bub span', box);
-    const skip = typeOut(span, BO_INTRO, () => {
-      homeLine = BO_INTRO_END;
-      span.textContent = BO_INTRO_END;
-      layoutBubbles(box);
-    });
-    box.onclick = skip;          // 點一下直接看完，不用等打完
-  }
+  const span = $('.bub span', box);
+  const stay = intro ? t('AEND') : homeLine;
+  // 每次進來那句都用打字跑出來，跑完就留著
+  const skip = intro
+    ? typeSeq(span, introLines(), stay, () => { homeLine = stay; })
+    : typeLine(span, stay);
+  box.onclick = skip;            // 點一下跳過，不用等打完
   layoutBubbles(box);
 }
 
@@ -1042,10 +1381,10 @@ function renderWall(el) {
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
-      <div><h1>食譜牆</h1><div class="sub">${RECIPES.length} 道</div></div>
+      <div><h1>${t('U8')}</h1><div class="sub">${t('UCNT').replace('N', RECIPES.length)}</div></div>
     </div>
     <div class="search">
-      <input id="q" placeholder="搜尋名稱、菜系、標籤…" value="${esc(wallQuery)}">
+      <input id="q" placeholder="${t('U9')}" value="${esc(wallQuery)}">
       <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
     </div>
     <div class="wrap"><div class="grid" id="grid"></div></div>`;
@@ -1056,16 +1395,23 @@ function renderWall(el) {
   paintGrid(el);
 }
 
+/* 搜尋索引：兩種語言都放進去。
+   只放當前語言的話，切到韓文後用中文搜會找不到 —— 反過來也一樣。 */
+const hay = r => [
+  r.title, r.subtitle, r.cuisine, ...(r.tags || []),
+  L(r, 'title'), L(r, 'subtitle'), tr(r.cuisine), ...(r.tags || []).map(tr),
+].join(' ').toLowerCase();
+
 function paintGrid(el) {
   const q = wallQuery.trim().toLowerCase();
   const list = RECIPES
-    .filter(r => !q || [r.title, r.subtitle, r.cuisine, ...(r.tags || [])].join(' ').toLowerCase().includes(q))
+    .filter(r => !q || hay(r).includes(q))
     .sort((a, b) => b.id - a.id);
   const g = $('#grid', el);
   g.innerHTML = list.length
     ? list.map(cardHTML).join('')
     : `<div class="empty"><img class="empty-bo" src="${BO.shrug}" alt="慢寶">
-         找不到這道菜。<br>我也沒聽過。</div>`;
+         ${t('E1').replace('。', '。<br>')}</div>`;
 
 }
 
@@ -1078,7 +1424,7 @@ function cardHTML(r) {
               onclick="event.stopPropagation();toggle(${r.id},this)"
               aria-label="加入今日菜單">${on ? '✓' : '＋'}</button>
       <div class="card-b" onclick="go('/recipe/${r.id}')">
-        <div class="card-t">${esc(r.title)}</div>
+        <div class="card-t">${esc(L(r, 'title'))}</div>
         <div class="card-m">
           <span><i>時間</i>${esc(cardTime(r.time))}</span>
           <span><i>難度</i>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)}</span>
@@ -1098,7 +1444,7 @@ function toggle(id, btn) {
     b.textContent = on ? '✓' : '＋';
   });
   document.querySelectorAll(`[data-add-label="${id}"]`).forEach(b => {
-    b.textContent = on ? '✓ 已在今日菜單' : '＋ 加入今日菜單';
+    b.textContent = on ? t('U19') : t('U18');
   });
   paintTray();
 }
@@ -1122,19 +1468,19 @@ function renderRecipe(el, m) {
     <img class="r-hero" src="${asset(r.image)}" alt="">
 
     <div class="r-card">
-      <div class="r-title">${esc(r.title)}</div>
-      ${r.subtitle ? `<div class="r-sub">${esc(r.subtitle)}</div>` : ''}
+      <div class="r-title">${esc(L(r, 'title'))}</div>
+      ${r.subtitle ? `<div class="r-sub">${esc(L(r, 'subtitle'))}</div>` : ''}
       <div class="r-stats">
         <div class="r-stat">
-          <div class="k">時間</div>
+          <div class="k">${t('U10')}</div>
           <div class="v">${esc(cardTime(r.time))}</div>
         </div>
         <div class="r-stat">
-          <div class="k">難度</div>
+          <div class="k">${t('U11')}</div>
           <div class="v">${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)}</div>
         </div>
         <div class="r-stat">
-          <div class="k">幾人份</div>
+          <div class="k">${t('U12')}</div>
           <div class="portion">
             <button onclick="setPortion(-1,${r.id})">−</button>
             <span class="n" id="pn">${portions}</span>
@@ -1143,19 +1489,19 @@ function renderRecipe(el, m) {
         </div>
       </div>
       <button class="r-add ${on ? 'on' : ''}" data-add-label="${r.id}" onclick="toggle(${r.id})">
-        ${on ? '✓ 已在今日菜單' : '＋ 加入今日菜單'}
+        ${on ? t('U19') : t('U18')}
       </button>
     </div>
 
     ${r.note ? `
       <div class="bo-talk">
         <img src="${murmurPose(r).img()}" alt="慢寶">
-        ${say(r.note, 'left', ` data-at="${murmurPose(r).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r).ml}px"`)}
+        ${say(L(r, 'note'), 'left', ` data-at="${murmurPose(r).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r).ml}px"`)}
       </div>` : ''}
 
     <div class="r-tabs">
-      <button class="on" data-rtab="prep" onclick="setRecipeTab('prep',${r.id})">備料</button>
-      <button data-rtab="steps" onclick="setRecipeTab('steps',${r.id})">步驟</button>
+      <button class="on" data-rtab="prep" onclick="setRecipeTab('prep',${r.id})">${t('U13')}</button>
+      <button data-rtab="steps" onclick="setRecipeTab('steps',${r.id})">${t('U14')}</button>
     </div>
     <div class="wrap" id="r-body"></div>`;
   paintRecipeBody(el, r);
@@ -1172,13 +1518,13 @@ function paintRecipeBody(el, r) {
   const body = $('#r-body', el);
   if (recipeTab === 'prep') {
     body.innerHTML = `
-      ${r.urgentNote ? `<div class="urgent"><h3>先做，不然會卡住</h3><p>${esc(r.urgentNote)}</p></div>` : ''}
+      ${r.urgentNote ? `<div class="urgent"><h3>${t('U15')}</h3><p>${esc(L(r, 'urgentNote'))}</p></div>` : ''}
       <div id="ings"></div>`;
     paintIngs(el, r);
   } else {
     body.innerHTML = stepsHTML(r) + (r.tips && r.tips.length
-      ? `<div class="sect"><div class="sect-t">注意事項</div>
-           <ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`
+      ? `<div class="sect"><div class="sect-t">${t('U17')}</div>
+           <ul class="tips">${r.tips.map((x, i) => `<li>${esc(La(r, 'tips', i) || x)}</li>`).join('')}</ul></div>`
       : '');
   }
   layoutBubbles(el);
@@ -1193,6 +1539,9 @@ function setPortion(d, id) {
 
 /* 備料頁：份量和處理方式合成一行。
    原本份量在這裡、處理方式在步驟的「備料」階段，使用者得自己把兩邊拼起來。 */
+/* 備料的韓文是照 prepNotes 的順序存的，用索引取回來 */
+const prepKo = (r, p) => La(r, 'prep', (r.prepNotes || []).indexOf(p));
+
 function paintIngs(el, r) {
   const f = portions / (r.basePortions || 2);
   const notes = new Map((r.prepNotes || []).map(p => [p.name, p]));
@@ -1204,10 +1553,10 @@ function paintIngs(el, r) {
     if (p) used.add(name);
     return `<div class="ing">
       <div class="ing-head">
-        <span>${esc(name)}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
-        <span class="amt">${esc(amountText(num, u, f))}</span>
+        <span>${esc(tr(name))}${note ? `<span class="paren">${esc(note)}</span>` : ''}</span>
+        <span class="amt">${esc(amountText(num, u, f, name))}</span>
       </div>
-      ${p ? `<div class="ing-how">${esc(p.method)}</div>` : ''}
+      ${p ? `<div class="ing-how">${esc(prepKo(r, p) || p.method)}</div>` : ''}
     </div>`;
   };
 
@@ -1216,9 +1565,9 @@ function paintIngs(el, r) {
     const p = notes.get(item.label);
     if (p) used.add(item.label);
     return `<div class="ing-set">
-      <div class="ing-set-name">${esc(item.label)}</div>
+      <div class="ing-set-name">${esc(tr(item.label))}</div>
       ${item.note ? `<div class="ing-set-note">${esc(item.note)}</div>` : ''}
-      ${p ? `<div class="ing-set-note">${esc(p.method)}</div>` : ''}
+      ${p ? `<div class="ing-set-note">${esc(prepKo(r, p) || p.method)}</div>` : ''}
       <div class="ing-set-body">${item.items.map(line).join('')}</div>
     </div>`;
   };
@@ -1238,8 +1587,8 @@ function paintIngs(el, r) {
   const extra = (r.prepNotes || []).filter(p => !used.has(p.name));
   if (extra.length) {
     html += extra.map(p => `<div class="ing">
-      <div class="ing-head"><span>${esc(p.name)}</span><span class="amt">${esc(p.amount)}</span></div>
-      <div class="ing-how">${esc(p.method)}</div>
+      <div class="ing-head"><span>${esc(tr(p.name))}</span><span class="amt">${esc(p.amount)}</span></div>
+      <div class="ing-how">${esc(prepKo(r, p) || p.method)}</div>
     </div>`).join('');
   }
   $('#ings', el).innerHTML = html;
@@ -1255,22 +1604,24 @@ function stepText(step) {
 
 function stepsHTML(r) {
   let out = '', open = false, skipping = false, skipped = 0;
+  let gi = 0, si = 0;                  // 階段名和步驟各自數，韓文覆蓋層是分開兩個陣列
   (r.steps || []).forEach(s => {
     if (s.startsWith('## ')) {
-      const name = s.slice(3);
+      const name = La(r, 'stages', gi++) || s.slice(3);
       if (open) { out += '</ol>'; open = false; }
-      skipping = PREP_PHASE.test(name);
+      skipping = PREP_PHASE.test(s.slice(3));
       if (skipping) { skipped++; return; }
       out += `<div class="phase">${esc(name)}</div><ol class="steps">`;
       open = true;
     } else {
+      const line = La(r, 'steps', si++) || s;
       if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
-      out += `<li>${stepText(s)}</li>`;
+      out += `<li>${stepText(line)}</li>`;
     }
   });
   out += open ? '</ol>' : '';
-  if (skipped) out = `<div class="from-prep">備料完成後，從這裡開始。</div>` + out;
+  if (skipped) out = `<div class="from-prep">${t('U16')}</div>` + out;
   return out;
 }
 
@@ -1284,23 +1635,23 @@ function renderMenu(el) {
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
-      <div><h1>今日菜單</h1><div class="sub">${sel.length} 道</div></div>
+      <div><h1>${t('U20')}</h1><div class="sub">${t('UCNT').replace('N', sel.length)}</div></div>
     </div>
     <div class="chips">${sel.map(r => `
-      <span class="chip">${esc(r.title)}
-        <button onclick="toggle(${r.id});renderMenu(current)" aria-label="移出今日菜單">✕</button>
+      <span class="chip">${esc(L(r, 'title'))}
+        <button onclick="toggle(${r.id});renderMenu(current)" aria-label="${t('U33')}">✕</button>
       </span>`).join('')}</div>
     ${sel.length ? `
       <div class="bo-talk wait">
         <img src="${BO.drape}" alt="慢寶">
-        ${say('你去買，我在家等。反正我也跑不掉。', 'left', ' data-at="46%" data-len="15" data-half="7"')}
+        ${say(t('DWAIT'), 'left', ' data-at="46%" data-len="15" data-half="7"')}
       </div>` : ''}
     <div class="wrap">${
       sel.length === 0
         ? `<div class="empty"><img class="empty-bo wide" src="${BO.lie}" alt="慢寶">
-             今天的菜單還沒定。<br>那我先睡。</div>`
+             ${t('E2').replace('。', '。<br>')}</div>`
         : `<div class="sect" style="margin:14px 0 0">
-             <div class="sect-t">買菜清單</div>
+             <div class="sect-t">${t('U21')}</div>
              ${buyHTML(sel)}
            </div>`
     }</div>`;
@@ -1321,7 +1672,9 @@ function toggleBought(name) {
   saveBuy();
   // 只更新那一列 —— 整頁重繪會把捲動位置洗掉
   current.querySelectorAll('.row.buy').forEach(el => {
-    if (el.querySelector('.r-name')?.textContent !== name) return;
+    // ⚠️ 比對用 data-name（中文原名）。韓文模式下畫面上是譯名，
+    // 比 textContent 會永遠不相等，勾了不會變色
+    if (el.querySelector('.r-name')?.dataset.name !== name) return;
     el.classList.toggle('got', on);
     el.querySelector('.tick').textContent = on ? '✓' : '';
   });
@@ -1421,7 +1774,7 @@ const SHOW_AMOUNT = name =>
 
 /* row.fixed（數朵、一小撮、1 湯匙 + 2 茶匙）永遠不顯示 —— 那些是煮飯時的講法 */
 const amountOf = row => SHOW_AMOUNT(row.name)
-  ? Object.entries(row.sums).map(([u, n]) => fmt(n) + u).join(' ＋ ')
+  ? Object.entries(row.sums).map(([u, n]) => fmt(n) + tr(u)).join(' ＋ ')
   : '';
 
 /* 還要買的（扣掉家裡已經有的） */
@@ -1445,27 +1798,27 @@ function buyHTML(sel) {
     const on = bought.has(name);
     return `<div class="row buy ${on ? 'got' : ''}">
       <button class="tick" onclick="toggleBought('${esc(name).replace(/'/g, "\\'")}')"
-              aria-label="${on ? '標記為未買' : '標記為已買到'}">${on ? '✓' : ''}</button>
-      <span class="r-name">${esc(name)}</span>
+              aria-label="${on ? t('U31') : t('U30')}">${on ? '✓' : ''}</button>
+      <span class="r-name" data-name="${esc(name)}">${esc(tr(name))}</span>
       <span class="r-amt">${esc(amt)}</span>
       <button class="rm" onclick="haveIt('${esc(name).replace(/'/g, "\\'")}')"
-              aria-label="標記為家裡已有">✕</button>
+              aria-label="${t('U32')}">✕</button>
     </div>`;
   };
 
   const rows = bin => Object.values(bins[bin]).map(x => row(x.name, amountOf(x))).join('');
 
-  const secs = [['meat','肉類・海鮮'],['veg','蔬菜・水果'],['chill','冷藏食材'],['groc','雜貨'],['season','調味料']];
+  const secs = [['meat','U24'],['veg','U25'],['chill','U26'],['groc','U27'],['season','U28']];
   let html = secs.map(([k, label]) => {
     const r = rows(k);
-    return r ? `<div class="grp-h">${label}</div>${r}` : '';
+    return r ? `<div class="grp-h">${t(label)}</div>${r}` : '';
   }).join('');
 
   // 收起來的那些要有路可以回來，不然就是死路
   const home = [...haveAtHome];
   if (home.length) {
     html += `<div class="have-box">
-      <div class="have-t">家裡已有 ${home.length} 樣</div>
+      <div class="have-t">${t('U29').replace('N', home.length)}</div>
       ${home.map(n => `<button class="have-chip" onclick="haveIt('${esc(n).replace(/'/g, "\\'")}')">${esc(n)} ↩</button>`).join('')}
     </div>`;
   }
@@ -1485,7 +1838,7 @@ function paintTray() {
   badge.textContent = menu.size;
   const go_ = $('#tray-go');
   const done = path.startsWith('/menu') && shoppingDone();
-  go_.firstChild.textContent = done ? '買完了，收工' : (path.startsWith('/menu') ? '關閉' : '今日菜單');
+  go_.firstChild.textContent = done ? t('U23') : (path.startsWith('/menu') ? t('U22') : t('U20'));
   go_.classList.toggle('finish', done);
 }
 
