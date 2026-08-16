@@ -588,7 +588,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '28';
+const ASSETS = '29';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -616,6 +616,12 @@ const BO = {
   chicken: asset('assets/bo/hold_chicken.webp'),
   pasta:   asset('assets/bo/hold_pasta.webp'),
   root:    asset('assets/bo/hold_root.webp'),
+  banana:  asset('assets/bo/hold_banana.webp'),
+  pot:     asset('assets/bo/hold_pot.webp'),
+  spatula: asset('assets/bo/hold_spatula.webp'),
+  seaweed: asset('assets/bo/hold_seaweed.webp'),
+  kimchi:  asset('assets/bo/hold_kimchi.webp'),
+  taste:   asset('assets/bo/taste_spoon.webp'),
   think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
   cookB:   asset('assets/bo/cook_pan.webp'),
   sleepy:  asset('assets/bo/face_sleepy.webp'),
@@ -786,11 +792,18 @@ const MURMUR_POSES = [
    ⚠️ 關鍵字要挑不會誤中的。用過「菜」，結果泡菜鍋被判成綠葉蔬菜。
    寧可比對不到掉回中性姿勢，也不要對應錯的食材。 */
 const HOLD_POSES = [
-  [/雞/,                { img: () => BO.chicken, at: 40, ml:  0 }],
-  [/牛/,                { img: () => BO.beef,    at: 40, ml: -5 }],
-  [/義大利麵|炒麵|麵條/, { img: () => BO.pasta,   at: 42, ml: -2 }],
-  [/馬鈴薯|洋蔥/,        { img: () => BO.root,    at: 39, ml: -4 }],
-  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.greens,  at: 39, ml: -5 }],
+  //  比對詞               姿勢                              at   ml
+  [/泡菜/,        { img: () => BO.kimchi,  at: 39, ml:  -6 }],  // 必須排在任何含「菜」的規則前面
+  [/海帶/,        { img: () => BO.seaweed, at: 38, ml:  -9 }],
+  [/香蕉/,        { img: () => BO.banana,  at: 41, ml:  -7 }],
+  [/炒/,          { img: () => BO.spatula, at: 41, ml:  -8 }],  // 炒＝鍋鏟
+  [/雞/,          { img: () => BO.chicken, at: 43, ml:  -1 }],
+  [/牛/,          { img: () => BO.beef,    at: 41, ml:  -5 }],
+  [/義大利麵|麵條/,{ img: () => BO.pasta,   at: 39, ml:  -2 }],
+  [/醬醃/,        { img: () => BO.taste,   at: 45, ml:  -9 }],  // 醬汁類，牠試味道
+  [/馬鈴薯|洋蔥/,  { img: () => BO.root,    at: 39, ml:  -4 }],
+  [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.greens, at: 41, ml: -5 }],
+  [/鍋/,          { img: () => BO.pot,     at: 42, ml:  -8 }],  // 燉煮類，放最後當廣義兜底
 ];
 
 function murmurPose(r) {
