@@ -219,14 +219,19 @@ img { display: block; max-width: 100%; }
   .bo-swing, .bo-leaf-b, .bo-leaf-c { animation: none; }
 }
 
-/* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭 */
-.bo-talk { display: flex; align-items: flex-start; margin: 18px 12px 0; }
+/* 慢寶全身站著說話：牠在左，話在右，尾尖指向牠的頭。
+   泡泡不撐滿 —— 字少的時候收成內容寬度，整組往中間靠，版面才不會左重右空。 */
+.bo-talk {
+  display: flex; align-items: flex-start; justify-content: center;
+  margin: 18px 12px 0;
+}
 .bo-talk > img {
   height: 124px; width: auto; max-width: 130px;   /* 姿勢的寬高比差很多，鎖高度視覺份量才一致 */
   object-fit: contain; flex: none; margin-top: 6px;
 }
 .bo-talk .bub {
-  flex: 1;
+  flex: 0 1 auto;                  /* 字多才撐開，字少就收窄 */
+  max-width: 230px;                /* 字少的一行也會斷成兩行 —— 泡泡窄了，慢寶才進得了中間 */
   margin-left: -14px;              /* 預設值。碎碎念那塊會逐姿勢覆寫，見 MURMUR_POSES */
   padding: 13px 16px;
   font-size: 13.5px; line-height: 1.75; color: var(--muted);
@@ -237,7 +242,10 @@ img { display: block; max-width: 100%; }
 .bo-talk.wait > img { width: 132px; margin-top: 0; }
 .bo-talk.wait .bub { flex: 1; max-width: none; margin-left: -12px; }
 
-.home .bub { margin-bottom: 8px; }
+/* 泡泡是 inline-block，沒有上限的話會一直往橫向長 ——
+   第一次的自我介紹有 100 字，會撐到 1200px 以上、整個溢出視窗。
+   跟插畫同寬，讀起來也才像同一塊。 */
+.home .bub { margin-bottom: 8px; max-width: min(100%, 430px); }
 
 /* 插畫要依畫面高度收斂 —— 手機上不設上限的話，內容會超過視窗，
    而 flex 置中時上方溢出的部分是捲不到的（對話框就這樣消失了）。
@@ -581,7 +589,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=26"></script>
+<script src="recipes.js?v=27"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -589,7 +597,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '30';
+const ASSETS = '32';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -656,9 +664,22 @@ function bubPad(tail) {
 }
 
 /* w,h = 泡泡本體尺寸；tail = {side, at, len} —— at 是尾尖沿著該邊的位置 */
+/* 圓角半徑。⚠️ 泡泡矮的時候一定要收。
+   固定 24 的話，上下兩個圓角就吃掉 51px，而單行泡泡只有 50px 高 ——
+   尾巴無處可放，路徑會往回折，形狀整個壞掉（2026-08-16 實際出現過缺角）。 */
+function bubR(w, h, half) {
+  return Math.max(8, Math.min(24, h / 2 - half - 3, w / 2 - half - 3));
+}
+
+/* 尾尖沿著那條邊的合法範圍 —— 兩端都要讓開圓角和尾巴根部的半寬 */
+function bubAtRange(span, R, half) {
+  const lo = R + 4 + half, hi = span - (R + 2) - half;
+  return hi < lo ? [span / 2, span / 2] : [lo, hi];
+}
+
 function bubblePath(w, h, tail) {
   const p = bubPad(tail);
-  const R = 24;                     // 圓角；四角刻意給一點差異，才不像 Word
+  const R = bubR(w, h, tail.half || 15);   // 四角刻意給一點差異，才不像 Word
   const r1 = R + 4, r2 = R - 3, r3 = R + 2, r4 = R - 1;
   const x0 = p.l, y0 = p.t, x1 = p.l + w, y1 = p.t + h;
   const half = tail.half || 15;     // 尾巴根部半寬
@@ -709,8 +730,9 @@ function drawBubble(el) {
     ? (raw.endsWith('%') ? span * parseFloat(raw) / 100 : +raw)
     : (side === 'bottom' ? w / 2 : Math.min(32, h / 2));
   const tail = { side, at, len: +(el.dataset.len || 30), half: +(el.dataset.half || 15) };
-  // 台詞短的時候泡泡很矮，寫死的尾尖位置會掉到形狀外面 —— 夾回邊界內
-  tail.at = Math.max(tail.half + 4, Math.min(span - tail.half - 4, at));
+  // 台詞短的時候泡泡很矮，寫死的尾尖位置會撞到圓角 —— 夾回圓角讓出來的範圍內
+  const [lo, hi] = bubAtRange(span, bubR(w, h, tail.half), tail.half);
+  tail.at = Math.max(lo, Math.min(hi, at));
   const p = bubPad(tail);
   const d = bubblePath(w, h, tail);
   let svg = el.querySelector(':scope > svg');
@@ -811,7 +833,6 @@ function typeOut(el, text, done) {
    量臉盤：找 R>247 G>238 B>225 的白色區域，取列的中位數（中心）和最右欄（右緣）。 */
 const MURMUR_POSES = [
   //                          at      ml       臉盤中心 / 右緣
-  { img: () => BO.cookB, at: 35, ml: +10 },   // 站著端鍋  24% / 86%
   { img: () => BO.cookA, at: 37, ml:   0 },   // 站著攪碗  25% / 70%
   { img: () => BO.glass, at: 40, ml:  -2 },   // 看沙漏    27% / 67%
 ];
@@ -828,9 +849,11 @@ const HOLD_POSES = [
   [/香蕉/,        { img: () => BO.banana,  at: 41, ml:  -7 }],
   [/燉飯/,        { img: () => BO.stirpan, at: 44, ml:  -5 }],  // 要一直攪的，排在「飯」前面
   [/炒/,          { img: () => BO.spatula, at: 41, ml:  -8 }],  // 炒＝鍋鏟
+  [/義大利麵|麵條/,{ img: () => BO.cookB,   at: 35, ml: +10 }],  // 平底鍋 —— 蒜片冷油慢香是在平底鍋裡
+  [/肉醬/,        { img: () => BO.lidpot,  at: 39, ml:  -5 }],  // 蓋著鍋蓋慢慢燉。⚠️ 要排在「牛」前面，
+                                                               //   否則番茄肉醬會被副標的「豬牛混合」攔走
   [/雞/,          { img: () => BO.chicken, at: 43, ml:  -1 }],
   [/牛/,          { img: () => BO.beef,    at: 41, ml:  -5 }],
-  [/義大利麵|麵條/,{ img: () => BO.lidpot,  at: 39, ml:  -5 }],  // 要煮一鍋水的
   [/醬醃/,        { img: () => BO.taste,   at: 45, ml:  -9 }],  // 醬汁類，牠試味道
   [/馬鈴薯|洋蔥/,  { img: () => BO.root,    at: 39, ml:  -4 }],
   [/櫛瓜|青菜|菠菜|蔬菜/, { img: () => BO.basket, at: 40, ml: -4 }],
