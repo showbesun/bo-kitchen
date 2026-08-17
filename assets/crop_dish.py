@@ -21,14 +21,11 @@ SOLID = 18                # 兩邊都會出事，18 是實測的中間值：
                           #    主體縮成小小一團浮在卡片中間（r10、r11 踩過）
                           #  r17 白盤：34→1102×728（切到盤）、18→1300×844（對）、
                           #  8→1424×1068（幾乎整張）。r10 小碟：8→712×476、18→558×334。
-FOOD = 70                 # 框「食物」用的門檻。器皿是白的、跟背景很近，
-                          # 用 SOLID 會把整個盤子框進去，食物就顯得小小一團。
-                          # 重點是菜不是盤子 —— 盤緣被切掉沒關係（r13 拌麵那張
-                          # 就是這樣，食物填掉 96% 的高度；框整盤的燉飯只有 60%）。
-FOOD_PAD = 0.0            # ⛔ 不要留邊。留 6% 會變成「盤子露九成、邊緣被削掉」，
-                          # 那是最醜的中間地帶 —— 看起來像切壞了。
-                          # 要嘛器皿整個在畫面內，要嘛切到它不再是主體（拌麵那張
-                          # 只看得到一點碗，讀起來是「麵填滿畫面」，就不覺得被切）。
+FOOD = 70                 # 只用來找「看得見的底緣」做貼底對齊，不拿來框主體。
+                          # ⛔ 試過用它框主體（想讓食物看起來大一點），結果每一張的
+                          # 盤子都被左右切斷。切圖解不了「食物小」——
+                          # 那是原圖構圖的問題（小份食物擺在大盤中央），
+                          # 唯一的解是重生成時讓食物填滿盤子。器皿完整優先。
 BASELINE = 12             # 下緣統一留這麼多 —— 見 render() 的註解
 QLO, QHI = 0.001, 0.999   # ⚠️ 邊界用分位數不用 min/max —— 一顆雜點就會把框拉到整張。
 
@@ -129,13 +126,6 @@ def bbox(flat, x0, x1, y0, y1, thr=None):
     return q(xs, QLO), q(xs, QHI), q(ys, QLO), q(ys, QHI)
 
 
-def food_box(flat, x0, x1, y0, y1):
-    """框食物，不框器皿。往外放 FOOD_PAD 讓盤緣露一圈，
-    再夾回這一格的範圍內（不能吃到隔壁格）。"""
-    l, r, t, b = bbox(flat, x0, x1, y0, y1, FOOD)
-    pw, ph = int((r - l) * FOOD_PAD), int((b - t) * FOOD_PAD)
-    return (max(x0, l - pw), min(x1, r + pw),
-            max(y0, t - ph), min(y1, b + ph))
 
 
 def fix_bg(path):
@@ -229,6 +219,6 @@ for cell, rid in zip(want, a.ids):
     y0, y1 = rows[cy] if cy < len(rows) else rows[0]
     band = cols[cy] if cy < len(cols) else cols[0]
     x0, x1 = band[cx] if cx < len(band) else band[0]
-    render(flat, food_box(flat, x0, x1, y0, y1), f'assets/dish/r{rid}.webp')
+    render(flat, bbox(flat, x0, x1, y0, y1), f'assets/dish/r{rid}.webp')
 
 print('\n  ⚠️ 別忘了把 index.html 的 const ASSETS 加一號。')
