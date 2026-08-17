@@ -471,17 +471,19 @@ img { display: block; max-width: 100%; }
 
 /* 菜系篩選鍵 —— 橫向可捲，菜系變多也不會換行把版面撐高。
    ⚠️ 沒有「全部」那一顆：再按一次已選的就取消。多一顆就多一組要翻譯的字串，
-   而且「全部」在視覺上會跟菜系並列，看起來像第五種菜系。 */
-.chips {
+   而且「全部」在視覺上會跟菜系並列，看起來像第五種菜系。
+   ⚠️ class 不能叫 .chips/.chip —— 今日菜單那頁已經佔走了，而且那組設了
+   flex-wrap: wrap（排在後面會蓋掉這裡）。切到韓文字變長就會掉第二行。 */
+.cui-bar {
   position: relative; z-index: 1;   /* 同 .search：木紋層是絕對定位的 */
-  display: flex; gap: 8px;
+  display: flex; flex-wrap: nowrap; gap: 8px;
   margin: -4px 0 14px;
   padding: 0 14px 2px;
   overflow-x: auto;
   scrollbar-width: none;
 }
-.chips::-webkit-scrollbar { display: none; }
-.chip {
+.cui-bar::-webkit-scrollbar { display: none; }
+.cui {
   flex: none;
   border: 1.5px solid var(--line);
   background: var(--surface);
@@ -492,11 +494,11 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
   transition: transform .12s;
 }
-.chip:active { transform: scale(.94); }
-.chip.on {
+.cui:active { transform: scale(.94); }
+.cui.on {
   background: var(--brand); border-color: var(--brand); color: #fff;
 }
-.chip i { font-style: normal; opacity: .55; margin-left: 5px; font-size: 12px; }
+.cui i { font-style: normal; opacity: .55; margin-left: 5px; font-size: 12px; }
 
 /* 兩欄的紙片牆 —— 一次看得到四張，一百道也滑得完。
    新的插畫是平塗簡化的，縮小後照樣認得出來（舊的照片就不行）。 */
@@ -1760,8 +1762,8 @@ function renderWall(el) {
       <input id="q" placeholder="${t('U9')}" value="${esc(wallQuery)}">
       <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
     </div>
-    <div class="chips">${cuisines().map(([c, n]) => `
-      <button class="chip ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}<i>${n}</i></button>`).join('')}
+    <div class="cui-bar">${cuisines().map(([c, n]) => `
+      <button class="cui ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}<i>${n}</i></button>`).join('')}
     </div>
     <div class="wrap"><div class="grid" id="grid"></div></div>`;
 
@@ -1769,9 +1771,9 @@ function renderWall(el) {
   input.oninput = () => { wallQuery = input.value; clr.classList.toggle('on', !!wallQuery); paintGrid(el); };
   clr.onclick = () => { wallQuery = ''; input.value = ''; clr.classList.remove('on'); paintGrid(el); input.focus(); };
 
-  el.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+  el.querySelectorAll('.cui').forEach(b => b.onclick = () => {
     wallCuisine = b.dataset.c === wallCuisine ? '' : b.dataset.c;   // 再按一次＝取消
-    el.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.c === wallCuisine));
+    el.querySelectorAll('.cui').forEach(x => x.classList.toggle('on', x.dataset.c === wallCuisine));
     paintGrid(el);
   });
 
