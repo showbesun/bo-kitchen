@@ -21,6 +21,7 @@ SOLID = 18                # 兩邊都會出事，18 是實測的中間值：
                           #    主體縮成小小一團浮在卡片中間（r10、r11 踩過）
                           #  r17 白盤：34→1102×728（切到盤）、18→1300×844（對）、
                           #  8→1424×1068（幾乎整張）。r10 小碟：8→712×476、18→558×334。
+BASELINE = 12             # 下緣統一留這麼多 —— 見 render() 的註解
 QLO, QHI = 0.001, 0.999   # ⚠️ 邊界用分位數不用 min/max —— 一顆雜點就會把框拉到整張。
 
 d = lambda c, t: sum(abs(c[i] - t[i]) for i in range(3))
@@ -82,12 +83,23 @@ def gaps(flat, x0, x1, lo, hi, axis):
 
 
 def render(flat, box, path):
+    """⚠️ 垂直方向要「貼底」不是「置中」。東西放在桌上本來就對齊同一條底線 ——
+    置中的話，小盤子和小碟子會浮起來，跟旁邊坐在卡片底部的大鍋擺在一起就很明顯。
+    實測：置中切出來的 r10/r11 下緣留 41–61px，其他張只留 9–13px，
+    使用者的原話是「只有他們倆往上飄」。"""
     l, r, t, b = box
     sc = min(OUT_W * FILL / (r - l), OUT_H * FILL / (b - t))
     nw, nh = int((r - l) * sc), int((b - t) * sc)
+    # 對齊的是「看得見的底」，不是框的底 —— 框裡含著淡陰影，
+    # 拿框去貼底的話陰影會佔掉下緣，器皿本身還是浮著（r10 實測差 37px）。
+    f = flat.load()
+    strong = [y for y in range(t, b, 2) for x in range(l, r, 3) if d(f[x, y], TGT) > 70]
+    vis_b = max(strong) if strong else b
+    off = int((vis_b - t) * sc)                       # 看得見的底在貼上後的相對位置
+    top = min(max(OUT_H - BASELINE - off, 0), OUT_H - nh)   # FILL<1，nh 一定放得下
     out = Image.new('RGB', (OUT_W, OUT_H), TGT)
     out.paste(flat.crop((l, t, r, b)).resize((nw, nh), Image.LANCZOS),
-              ((OUT_W - nw) // 2, (OUT_H - nh) // 2))
+              ((OUT_W - nw) // 2, top))
     out.save(path, 'WEBP', quality=88)
     print(f'    {os.path.basename(path):<12} 主體 {r-l}×{b-t} → {nw}×{nh}'
           f'，留白 {(OUT_W-nw)//2}/{(OUT_H-nh)//2}px'
