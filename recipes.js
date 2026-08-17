@@ -472,7 +472,7 @@ const RECIPES = [
     "id": 4,
     "title": "香蕉胖胖瑪芬",
     "subtitle": "熟香蕉・黑糖・氣炸也鬆軟",
-    "cuisine": "西式",
+    "cuisine": "甜點",
     "stars": 2,
     "starsLabel": "家常實力",
     "author": "Stephany",
