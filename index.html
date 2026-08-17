@@ -469,6 +469,35 @@ img { display: block; max-width: 100%; }
 }
 .search .clr.on { display: grid; }
 
+/* 菜系篩選鍵 —— 橫向可捲，菜系變多也不會換行把版面撐高。
+   ⚠️ 沒有「全部」那一顆：再按一次已選的就取消。多一顆就多一組要翻譯的字串，
+   而且「全部」在視覺上會跟菜系並列，看起來像第五種菜系。 */
+.chips {
+  position: relative; z-index: 1;   /* 同 .search：木紋層是絕對定位的 */
+  display: flex; gap: 8px;
+  margin: -4px 0 14px;
+  padding: 0 14px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px; font-family: inherit;
+  white-space: nowrap;
+  transition: transform .12s;
+}
+.chip:active { transform: scale(.94); }
+.chip.on {
+  background: var(--brand); border-color: var(--brand); color: #fff;
+}
+.chip i { font-style: normal; opacity: .55; margin-left: 5px; font-size: 12px; }
+
 /* 兩欄的紙片牆 —— 一次看得到四張，一百道也滑得完。
    新的插畫是平塗簡化的，縮小後照樣認得出來（舊的照片就不行）。 */
 /* 木牆 —— 貼圖掛在頁面本身。
@@ -777,7 +806,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '47';
+const ASSETS = '48';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1710,23 +1739,42 @@ function paintHome(box) {
 /* ══════════ 食譜牆 ══════════ */
 
 let wallQuery = '';
+let wallCuisine = '';   // '' ＝ 不篩選
+
+/* 菜系清單由資料算出來，不寫死 —— 哪天多一道日式，篩選鍵自己就會多一顆。
+   排序照道數多寡，所以最常煮的那幾類永遠在最左邊、位置不會跳。 */
+function cuisines() {
+  const n = new Map();
+  RECIPES.forEach(r => n.set(r.cuisine, (n.get(r.cuisine) || 0) + 1));
+  return [...n].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
 
 function renderWall(el) {
   el.id = 'wall-page';
   el.innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="back()">‹</button>
-      <div><h1>${t('U8')}</h1><div class="sub">${t('UCNT').replace('N', RECIPES.length)}</div></div>
+      <div><h1>${t('U8')}</h1><div class="sub" id="wall-count"></div></div>
     </div>
     <div class="search">
       <input id="q" placeholder="${t('U9')}" value="${esc(wallQuery)}">
       <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
+    </div>
+    <div class="chips">${cuisines().map(([c, n]) => `
+      <button class="chip ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}<i>${n}</i></button>`).join('')}
     </div>
     <div class="wrap"><div class="grid" id="grid"></div></div>`;
 
   const input = $('#q', el), clr = $('#qc', el);
   input.oninput = () => { wallQuery = input.value; clr.classList.toggle('on', !!wallQuery); paintGrid(el); };
   clr.onclick = () => { wallQuery = ''; input.value = ''; clr.classList.remove('on'); paintGrid(el); input.focus(); };
+
+  el.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    wallCuisine = b.dataset.c === wallCuisine ? '' : b.dataset.c;   // 再按一次＝取消
+    el.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.c === wallCuisine));
+    paintGrid(el);
+  });
+
   paintGrid(el);
 }
 
@@ -1737,11 +1785,39 @@ const hay = r => [
   L(r, 'title'), L(r, 'subtitle'), tr(r.cuisine), ...(r.tags || []).map(tr),
 ].join(' ').toLowerCase();
 
+/* 菜系輪流出場：韓式 → 義式 → 中式 → 西式 → 韓式 → …
+
+   ⚠️ 這是在修「新增順序＝唯一的組織方式」。她加菜是隨性的（2026-08-17 一口氣
+   加了 6 道義式），照 id 倒序排的話同一類會整片黏在一起，一打開整面白盤。
+
+   ✅ 輪流取，但**順序完全由資料決定，不是隨機** —— 同一批食譜每次進來的排列
+   都一樣，加一道新菜也只是插進它那一列，不會整面重排。（隨機排會讓人找不到
+   剛剛看到的那張卡。）
+   隊列照道數多寡排，尾巴才會是道數最多的那類，而不是中間突然斷掉。 */
+function interleave(list) {
+  const byCuisine = new Map();
+  list.forEach(r => {
+    if (!byCuisine.has(r.cuisine)) byCuisine.set(r.cuisine, []);
+    byCuisine.get(r.cuisine).push(r);
+  });
+  const queues = [...byCuisine.values()]
+    .map(q => q.sort((a, b) => b.id - a.id))
+    .sort((a, b) => b.length - a.length || a[0].cuisine.localeCompare(b[0].cuisine));
+  const out = [];
+  for (let i = 0; out.length < list.length; i++)
+    for (const q of queues) if (q[i]) out.push(q[i]);
+  return out;
+}
+
 function paintGrid(el) {
   const q = wallQuery.trim().toLowerCase();
-  const list = RECIPES
-    .filter(r => !q || hay(r).includes(q))
-    .sort((a, b) => b.id - a.id);
+  const hits = RECIPES
+    .filter(r => !wallCuisine || r.cuisine === wallCuisine)
+    .filter(r => !q || hay(r).includes(q));
+  // 已經篩成單一菜系就沒有東西可以輪流，照新的在前面排
+  const list = wallCuisine ? hits.sort((a, b) => b.id - a.id) : interleave(hits);
+  const count = $('#wall-count', el);
+  if (count) count.textContent = t('UCNT').replace('N', list.length);
   const g = $('#grid', el);
   g.innerHTML = list.length
     ? list.map(cardHTML).join('')
