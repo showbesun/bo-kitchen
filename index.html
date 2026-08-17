@@ -498,7 +498,9 @@ img { display: block; max-width: 100%; }
 .cui.on {
   background: var(--brand); border-color: var(--brand); color: #fff;
 }
-.cui i { font-style: normal; opacity: .55; margin-left: 5px; font-size: 12px; }
+/* ⛔ 篩選鍵上不要標道數。「甜點 1」「中式 2」等於在昭告這個分類有多空 ——
+   使用者的原話是「不要寫數字，自暴其短」。道數還是有算，只是拿來決定
+   哪一顆排前面，不顯示。 */
 
 /* 兩欄的紙片牆 —— 一次看得到四張，一百道也滑得完。
    新的插畫是平塗簡化的，縮小後照樣認得出來（舊的照片就不行）。 */
@@ -1763,7 +1765,7 @@ function renderWall(el) {
       <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
     </div>
     <div class="cui-bar">${cuisines().map(([c, n]) => `
-      <button class="cui ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}<i>${n}</i></button>`).join('')}
+      <button class="cui ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}</button>`).join('')}
     </div>
     <div class="wrap"><div class="grid" id="grid"></div></div>`;
 
