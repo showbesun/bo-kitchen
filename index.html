@@ -410,19 +410,12 @@ img { display: block; max-width: 100%; }
 }
 .lang button.on { color: var(--brand); background: var(--surface); box-shadow: var(--shadow); }
 
-/* 封面版本：那一頁第一眼就是文字（名字、標語、點一下），看不懂的人必須當場能換，
-   所以它站進版面裡、放大、兩顆都給外框。進首頁之後它只是個設定，縮回右上角。 */
-.lang.hero { position: static; margin-top: 22px; gap: 8px; }
-.lang.hero button {
-  min-width: 52px; padding: 8px 15px;
-  font-size: 14px; letter-spacing: 2px;
-  color: var(--muted);
-  border: 1.5px solid var(--line);
-  background: var(--surface);
-}
-.lang.hero button.on {
-  color: var(--brand); border-color: var(--brand-dim); font-weight: 700;
-}
+/* ⛔ 曾經有一個 .lang.hero：封面上把語言鍵站進版面、放大、兩顆都給外框，
+   理由是「封面第一眼全是文字，看不懂的人必須當場能換」。**已移除。**
+   實測回饋：封面上唯一有外框、看起來能按的東西就是那兩顆，使用者以為
+   要按它才會進下一頁，按半天沒反應才發現整個畫面哪裡都能點。
+   語言改成第一次進來照裝置語言自動決定（見 lang 的宣告），
+   按鍵一律留在右上角當設定用 —— 封面只剩一個可按的東西：整個畫面。 */
 
 .tap-hint {
   font-size: 12px; color: var(--faint); letter-spacing: 2px;
@@ -832,7 +825,17 @@ let portions = 2;
    ⛔ 不要做成兩份 index.html。這個專案已經證明過三次「並存的東西一定分岔」
    （蝸居米其林、recipes.json、四個醬油名字）。 */
 
-let lang = localStorage.getItem('bo_lang') || 'zh';
+/* 第一次打開時照裝置語言決定，之後一律照使用者自己選的。
+
+   ⚠️ 這條取代了「把語言鍵放到封面」那個設計。當初的理由是「封面第一眼全是文字，
+   看不懂的人必須當場能換」—— 但實測回饋是：封面上唯一有外框、看起來能按的東西
+   就是那兩顆語言鍵，使用者以為要按它才會進下一頁，按半天沒反應，
+   最後才發現整個畫面哪裡都能點。**唯一有效的東西看起來不能按，
+   不能按的東西看起來最像按鈕。**
+   自動偵測比任何 UI 都更早解決那件事：韓文系統點開就是韓文，不必找按鈕。
+   偵測錯了也有救 —— 右上角隨時能換，選了就記住（選過之後就不再偵測）。 */
+let lang = localStorage.getItem('bo_lang')
+  || (/^ko\b/i.test(navigator.language || '') ? 'ko' : 'zh');
 const isKo = () => lang === 'ko';
 function setLang(v) {
   if (v === lang) return;
@@ -851,7 +854,7 @@ function setLang(v) {
 const T = {
   U1: ['慢寶', '늘보'],
   U2: ['今天也要好好吃飯', '오늘도 잘 챙겨 먹자'],
-  U3: ['點一下', '한 번 눌러 봐'],
+  U3: ['螢幕任一處點一下', '화면 아무 곳이나 눌러 봐'],
   U4: ['我知道要吃什麼', '먹고 싶은 게 있어'],
   U5: ['自己翻，看到想吃的就加進菜單', '직접 둘러보고, 먹고 싶은 건 오늘의 메뉴에 추가'],
   U6: ['完全沒想法', '아무 생각도 없어'],
@@ -1701,7 +1704,7 @@ function paintHome(box) {
         <div class="cov cov-leaf-4"><img src="${BO.sleep}" alt="" aria-hidden="true"></div>
       </div>
       <div class="tap-hint">${t('U3')}</div>
-      ${langToggle('hero')}`;
+      ${langToggle()}`;
     box.onclick = () => { homeGreeted = true; markSeen(); paintHome(box); };
     layoutBubbles(box);
     return;
