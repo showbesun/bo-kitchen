@@ -14,7 +14,11 @@ from PIL import Image, ImageFilter
 
 TGT = (249, 230, 209)     # #F9E6D1，必須跟 index.html 的 --bg 完全一致
 OUT_W, OUT_H = 700, 525
-FILL = 0.94               # ⚠️ 不要調到 1.0：撐滿會把器皿邊緣切掉（r17、r11 各踩過一次）
+FILL = 0.98               # 卡片是 aspect-ratio:4/3 + object-fit:cover，跟素材同比例，
+                          # 所以素材裡的留白會原樣顯示在卡片上 —— 這個值直接決定
+                          # 「菜看起來多大」。⚠️ 不要到 1.0：分位數有誤差，撐滿會削到器皿邊。
+                          # ⛔ 也不要為了「食物看起來小」去切食物 —— 盤裡的留白是
+                          #    刻意的擺盤，切掉就沒有餐廳感了。要大就整張等比放大。
 SOLID = 18                # 兩邊都會出事，18 是實測的中間值：
                           #  · 太寬（34）→ 白色器皿被判成背景，整圈盤子被切掉
                           #  · 太窄（8） → 連紙紋和淡陰影都算進去，框會膨脹，
@@ -87,27 +91,41 @@ def gaps(flat, x0, x1, lo, hi, axis):
     return int(st.median(band)) if band else (lo + hi) // 2
 
 
-def render(flat, box, path):
-    """⚠️ 垂直方向要「貼底」不是「置中」。東西放在桌上本來就對齊同一條底線 ——
-    置中的話，小盤子和小碟子會浮起來，跟旁邊坐在卡片底部的大鍋擺在一起就很明顯。
-    實測：置中切出來的 r10/r11 下緣留 41–61px，其他張只留 9–13px，
-    使用者的原話是「只有他們倆往上飄」。"""
+def render(flat, box, path, cell=None):
+    """⛔ 不要「裁一塊再貼到背景畫布上」。裁切線只要切過器皿，那條硬邊就會落在
+    畫布裡面、四周還圍著背景 —— 看起來像盤子在半空中被削掉一塊。
+    使用者的原話：「不是在背景裡面盤子莫名就斷了」。
+
+    正確做法：先由主體算出縮放比，再回推「整張畫布對應到原圖的哪個窗」，
+    直接裁那個窗。這樣任何切口都發生在畫布邊界上，讀起來就是自然的出血。
+
+    ⚠️ 垂直方向貼底（見下），水平置中。
+    """
     l, r, t, b = box
     sc = min(OUT_W * FILL / (r - l), OUT_H * FILL / (b - t))
-    nw, nh = int((r - l) * sc), int((b - t) * sc)
-    # 對齊的是「看得見的底」，不是框的底 —— 框裡含著淡陰影，
-    # 拿框去貼底的話陰影會佔掉下緣，器皿本身還是浮著（r10 實測差 37px）。
+
+    # 看得見的底緣（淡陰影不算），拿來對齊 BASELINE
     f = flat.load()
-    strong = [y for y in range(t, b, 2) for x in range(l, r, 3) if d(f[x, y], TGT) > 70]
+    strong = [y for y in range(t, b, 2) for x in range(l, r, 3) if d(f[x, y], TGT) > FOOD]
     vis_b = max(strong) if strong else b
-    off = int((vis_b - t) * sc)                       # 看得見的底在貼上後的相對位置
-    top = min(max(OUT_H - BASELINE - off, 0), OUT_H - nh)   # FILL<1，nh 一定放得下
-    out = Image.new('RGB', (OUT_W, OUT_H), TGT)
-    out.paste(flat.crop((l, t, r, b)).resize((nw, nh), Image.LANCZOS),
-              ((OUT_W - nw) // 2, top))
+
+    win_w, win_h = OUT_W / sc, OUT_H / sc          # 畫布換算回原圖的尺寸
+    wx = (l + r) / 2 - win_w / 2                    # 水平置中
+    wy = vis_b + BASELINE / sc - win_h              # 讓可見底緣落在 BASELINE 上
+
+    x0, y0 = int(round(wx)), int(round(wy))
+    ww, wh = int(round(win_w)), int(round(win_h))
+    # ⚠️ 窗常常會超出原圖（或超出這一格）。PIL 的 crop 超界時補「黑色」，
+    #    直接用會在畫面上留一條黑邊 —— 所以自己鋪一張背景色的底再貼。
+    cl, cr, ct, cb = cell if cell else (0, flat.size[0], 0, flat.size[1])
+    src = Image.new('RGB', (ww, wh), TGT)
+    kx0, ky0 = max(x0, cl), max(y0, ct)
+    kx1, ky1 = min(x0 + ww, cr), min(y0 + wh, cb)
+    if kx1 > kx0 and ky1 > ky0:
+        src.paste(flat.crop((kx0, ky0, kx1, ky1)), (kx0 - x0, ky0 - y0))
+    out = src.resize((OUT_W, OUT_H), Image.LANCZOS)
     out.save(path, 'WEBP', quality=88)
-    print(f'    {os.path.basename(path):<12} 主體 {r-l}×{b-t} → {nw}×{nh}'
-          f'，留白 {(OUT_W-nw)//2}/{(OUT_H-nh)//2}px'
+    print(f'    {os.path.basename(path):<12} 主體 {r-l}×{b-t} · 窗 {int(win_w)}×{int(win_h)}'
           f' · {round(os.path.getsize(path)/1024)} KB')
 
 
@@ -219,6 +237,7 @@ for cell, rid in zip(want, a.ids):
     y0, y1 = rows[cy] if cy < len(rows) else rows[0]
     band = cols[cy] if cy < len(cols) else cols[0]
     x0, x1 = band[cx] if cx < len(band) else band[0]
-    render(flat, bbox(flat, x0, x1, y0, y1), f'assets/dish/r{rid}.webp')
+    render(flat, bbox(flat, x0, x1, y0, y1), f'assets/dish/r{rid}.webp',
+           (x0, x1, y0, y1) if a.grid == '2x2' else None)
 
 print('\n  ⚠️ 別忘了把 index.html 的 const ASSETS 加一號。')
