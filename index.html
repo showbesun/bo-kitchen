@@ -745,7 +745,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=49"></script>
+<script src="recipes.js?v=50"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -983,6 +983,17 @@ const TERM = {
   '雞肉': '닭고기',
   '韓劇感': '집밥 감성',
   '麵': '면요리',
+  /* r13 紫蘇油拌蕎麥麵 */
+  '蕎麥麵': '메밀면',
+  '紫蘇油': '들기름',
+  '白芝麻': '통깨',
+  '海苔': '김',
+  '蛋黃': '노른자',
+  '小黃瓜': '오이',
+  '白醋或檸檬汁': '식초나 레몬즙',
+  '紫蘇油醬汁': '들기름 양념',
+  '大把': '넉넉히',
+
   /* 菜系（4） */
   '中式': '중식',
   '義式': '이탈리안',
@@ -1007,6 +1018,11 @@ const NOTE = {
   '可省略；省略時水多補 1 湯匙': '빼도 된다. 뺄 땐 물을 1큰술 더.',
   '只有使用無加糖 100% 天然梨汁時才加；韓國含糖水梨汁不用': '무가당 100% 배즙을 쓸 때만. 한국 가당 배즙이면 안 넣는다.',
   '不放也可以': '안 올려도 된다.',
+  '꼬소명가 這類現榨的最香': '꼬소명가 같은 갓 짠 들기름이 제일 고소하다.',
+  '생명물간장 這類淡醬油；換韓式濃醬油要減量': '생명물간장 같은 연한 간장. 진간장이면 양을 줄인다.',
+  '不能省，整碗的靈魂': '빼면 안 된다. 이 한 그릇의 전부다.',
+  '可省，加了直接升級': '빼도 되지만, 넣으면 확 올라간다.',
+  '要不要加隨你': '넣어도 되고 안 넣어도 된다.',
 };
 const tr = x => (isKo() && TERM[x]) || x;
 /* note 是連著全形括號一起拆出來的，查表前脫掉、查到再包回去 ——
@@ -1649,7 +1665,7 @@ function cardHTML(r) {
   const on = menu.has(r.id);
   return `
     <div class="card">
-      <img class="card-img" src="${asset(r.image)}" alt="" loading="lazy" onclick="go('/recipe/${r.id}')">
+      <img class="card-img" src="${asset(r.image)}" alt="" loading="lazy" onerror="this.remove()" onclick="go('/recipe/${r.id}')">
       <button class="add-btn ${on ? 'on' : ''}" data-id="${r.id}"
               onclick="event.stopPropagation();toggle(${r.id},this)"
               aria-label="加入今日菜單">${on ? '✓' : '＋'}</button>
@@ -1695,7 +1711,7 @@ function renderRecipe(el, m) {
       <button class="back-btn" onclick="back()">‹</button>
     </div>
 
-    <img class="r-hero" src="${asset(r.image)}" alt="">
+    <img class="r-hero" src="${asset(r.image)}" alt="" onerror="this.remove()">
 
     <div class="r-card">
       <div class="r-title">${esc(L(r, 'title'))}</div>
