@@ -3,13 +3,13 @@
 
     python gen_locale.py
 
-讀 recipes.js ＋ index.html，產出兩份：
+讀 strings.js（文案的唯一來源）＋ recipes.js（結構），產出兩份：
 
     語系總表.md   給人讀的。全部字串編號、中韓並排
     locale.tsv    給 Google Sheet 吃的。同一批資料，扁平一列一句
 
 ⚠️ 兩份都是生成物，不要手改 —— 改了下次重跑就沒了。
-   要改文案：改 Sheet → 跑 apply_locale.py 寫回程式碼 → 再跑這支重生成。
+   要改文案：改 Sheet → 跑 apply_locale.py 寫回 strings.js → 再跑這支重生成。
 
 ⚠️ 所有數量一律現算。寫死的數字會過期 —— 這份檔案本身就是為了修那個問題而存在的。
 """
@@ -35,7 +35,7 @@ PREAMBLE = """# 慢寶 · 語系總表
 **這份是生成的，不要手改。** 改 app 之後重跑 `gen_locale.py` 就會更新。
 
 > 手寫的對照表隔天就會跟程式分岔 —— 2026-08-16 踩過：一份 v13 的表跟 app 差了 8 處，
-> 全部是「表是舊快照、app 已經改過」。所以這份的唯一真相是 `recipes.js` ＋ `index.html`。
+> 全部是「表是舊快照、app 已經改過」。所以這份的唯一真相是 `strings.js`。
 
 共 **@TOTAL@ 個字串**。缺韓文的有 **@MISSING@** 個（表裡標 `—`）。
 
@@ -44,13 +44,13 @@ PREAMBLE = """# 慢寶 · 語系總表
 ## 怎麼改文案
 
 ```
-recipes.js + index.html          ← app 真正讀的，唯一真相
+strings.js                       ← app 真正讀的，文案的唯一真相
    ↓ gen_locale.py
 語系總表.md（這份）+ locale.tsv
    ↓ Google Sheet 從 repo 抓 locale.tsv
 Sheet ── 你在任何一台電腦上改 ──┐
    ↓ 下載成 CSV                 │
-apply_locale.py ────────────────┘  寫回 recipes.js + index.html
+apply_locale.py ────────────────┘  寫回 strings.js
 ```
 
 **要改哪一句就報編號。** 編號是兩支腳本共用的定位方式，對不上就寫不回去。
@@ -79,15 +79,14 @@ apply_locale.py ────────────────┘  寫回 reci
 
 ## 要加第三種語言（英文）時
 
-程式端已經是為多語言寫的，加一種語言要動四個地方：
+2026-08-18 重構之後，文案只有一個形狀：**編號當 key、語言當欄位**。
+加一種語言＝**每筆多一個欄位**，不再是「改五個地方」。
 
-1. **`index.html` 的 `T`** —— 每條從 `['中', '한']` 變成 `['中', '한', 'en']`
-2. **`TERM` / `COUNTER_OVERRIDES`** —— 同上
-3. **`recipes.js` 每道菜的 `ko`** —— 旁邊加一個 `en`
-4. **`isKo()` 換成 `lang` 索引**，`langToggle()` 多一顆按鈕
+1. `strings.js` 每筆加 `en: '…'`（Sheet 加一欄，`apply_locale.py` 直接寫得回去）
+2. `locale_lib.py` 的 `LANGS` 加 `"en"`
+3. `langToggle()` 多一顆按鈕
 
-`L()` / `t()` / `tr()` 三個存取器的**回退機制不用改** —— 缺什麼就顯示中文，
-所以可以邊翻邊上線，不必等全部翻完。
+`S()` 的**回退機制不用改** —— 缺哪一語就顯示中文，所以可以邊翻邊上線。
 
 ---
 """
@@ -121,16 +120,16 @@ def main():
     intro = [r for r in rows if r.id.startswith("BO.intro.")]
     md.append(f"## 自我介紹（{len(intro)} 句）\n")
     md.append("第一次打開時一句一句打字跑出來，跑完換成 `AEND` 留在畫面上。之後不再出現。\n")
-    md.append("`index.html · BO_INTRO_LINES / BO_INTRO_KO`\n")
+    md.append("`strings.js · BO.intro.*`\n")
     md.append(table(intro) + "\n")
 
-    t_rows = [r for r in rows if r.where.endswith("· T")]
+    t_rows = [r for r in rows if r.section == "介面與固定台詞"]
     for prefix, label in T_GROUPS.items():
         grp = [r for r in t_rows if r.id.startswith(prefix)]
         if not grp:
             continue
         md.append(f"### {label}（{len(grp)}）\n")
-        md.append("`index.html · T`\n")
+        md.append("`strings.js`\n")
         md.append(table(grp) + "\n")
 
     # ---- 二、食譜文字 ---------------------------------------------------
@@ -141,24 +140,25 @@ def main():
         grp = [x for x in rows if x.id == rid or x.id.startswith(rid + ".")]
         if not grp:
             continue
-        md.append(f"### {rid}　{r.get('title', '')}\n")
-        md.append(f"`recipes.js · id {r['id']}`\n")
+        title = next((x.zh for x in grp if x.id == rid + ".title"), "")
+        md.append(f"### {rid}　{title}\n")
+        md.append(f"`strings.js · {rid}.*`\n")
         md.append(table(grp) + "\n")
 
     # ---- 三、詞彙 -------------------------------------------------------
     md.append("# 三、詞彙\n")
     md.append("這些是「詞」不是「句」，翻一次就重複使用，不隨食譜數量增加。\n")
     md.append("⚠️ 沒有在表裡的詞會原樣顯示中文 —— 那是刻意的，缺什麼要看得見。\n")
-    for label, where in (
-        ("食材・單位・標籤・菜系", "index.html · TERM"),
-        ("量詞例外", "index.html · COUNTER_OVERRIDES"),
-        ("份量括號註", "index.html · NOTE"),
+    for label, sec in (
+        ("食材・單位・標籤・菜系", "詞彙"),
+        ("量詞例外", "量詞例外"),
+        ("份量括號註", "份量括號註"),
     ):
-        grp = [r for r in rows if r.where == where]
+        grp = [r for r in rows if r.section == sec]
         if not grp:
             continue
         md.append(f"### {label}（{len(grp)}）\n")
-        md.append(f"`{where}`\n")
+        md.append("`strings.js`\n")
         md.append(table(grp) + "\n")
 
     OUT_MD.write_text("\n".join(md).rstrip() + "\n", encoding="utf-8")

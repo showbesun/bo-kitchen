@@ -795,8 +795,8 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=1"></script>
-<script src="recipes.js?v=83"></script>
+<script src="strings.js?v=2"></script>
+<script src="recipes.js?v=84"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -819,7 +819,7 @@ let portions = 2;
 
 /* ══════════ 語言 ══════════
 
-   中文是本體，韓文是覆蓋層 —— 食譜的韓文放在每道的 r.ko，介面的放在下面的 T。
+   中文是本體，韓文是同一筆的另一個欄位 —— 全部在 strings.js，編號當 key。
    **找不到韓文就自動回中文**，這條是刻意的：對照表還沒涵蓋食材名、單位、標籤，
    缺的地方要看得見中文，而不是空白或壞掉。可以邊補邊上線。
 
@@ -852,58 +852,6 @@ function setLang(v) {
    「第一頁就有文字，要能當場換語言」這個目的抵銷掉。 */
 
 /* 介面字串。第一格中文、第二格韓文 */
-const T = {
-  U1: ['慢寶', '늘보'],
-  U2: ['今天也要好好吃飯', '오늘도 잘 챙겨 먹자'],
-  U3: ['螢幕任一處點一下', '화면 아무 곳이나 눌러 봐'],
-  U4: ['我知道要吃什麼', '먹고 싶은 게 있어'],
-  U5: ['自己翻，看到想吃的就加進菜單', '직접 둘러보고, 먹고 싶은 건 오늘의 메뉴에 추가'],
-  U6: ['完全沒想法', '아무 생각도 없어'],
-  U7: ['回答三個問題，慢寶幫你挑', '질문 세 개만 답하면 늘보가 골라 줄게'],
-  U8: ['食譜牆', '레시피'],
-  U9: ['搜尋名稱、菜系、標籤…', '이름・종류・태그 검색…'],
-  U10: ['時間', '시간'],
-  U11: ['難度', '난이도'],
-  U12: ['幾人份', '인분'],
-  U13: ['備料', '재료 준비'],
-  U14: ['步驟', '조리 순서'],
-  U15: ['先做，不然會卡住', '먼저 해 두기 — 안 하면 막혀'],
-  U16: ['備料完成後，從這裡開始。', '재료 준비가 끝났으면 여기서 시작.'],
-  U17: ['注意事項', '조리 팁'],
-  U18: ['＋ 加入今日菜單', '＋ 오늘의 메뉴에 추가'],
-  U19: ['✓ 已在今日菜單', '✓ 오늘의 메뉴'],
-  U20: ['今日菜單', '오늘의 메뉴'],
-  U21: ['買菜清單', '장보기 목록'],
-  U22: ['關閉', '닫기'],
-  U23: ['買完了，收工', '다 샀다. 끝.'],
-  U24: ['肉類・海鮮', '고기・해산물'],
-  U25: ['蔬菜・水果', '채소・과일'],
-  U26: ['冷藏食材', '냉장 식재료'],
-  U27: ['常溫食材', '상온 식재료'],
-  U28: ['調味料', '양념'],
-  U29: ['家裡已有 N 樣', '집에 있는 재료 N개'],
-  U30: ['標記為已買到', '산 것으로 표시'],
-  U31: ['標記為未買', '아직 안 산 것으로 표시'],
-  U32: ['標記為家裡已有', '집에 있는 재료로 표시'],
-  U33: ['移出今日菜單', '오늘의 메뉴에서 빼기'],
-  A2: ['{d} 天沒來。……好吧，今天吃什麼？', '{d}일 만이네. …그래, 오늘 뭐 먹을래?'],
-  A3: ['這個時間還要煮？……好吧。', '이 시간에 요리를? …그래, 해보자.'],
-  A4: ['又是你。……今天也要吃好的？', '또 왔네. …오늘도 맛있는 거 먹으려고?'],
-  A5: ['回來啦。今天想吃什麼？', '왔네. 오늘은 뭐 먹을래?'],
-  D1: ['慢慢看。挑吃的，本來就不能催。', '천천히 봐. 먹을 건 서두를 필요 없잖아.'],
-  D2: ['{n} 道了。還要加？……行啊。', '벌써 {n}개야. 더 담아? …그래.'],
-  D3: ['{n} 道……你今天是真的有野心喔。', '{n}개… 오늘 진짜 야심찬데?'],
-  D4: ['還沒選。……慢慢來。', '아직 안 골랐네. …천천히 해.'],
-  D5: ['這些買齊就夠了。別把冰箱塞滿。', '장볼 건 이 정도면 돼. 냉장고까지 꽉 채우진 마.'],
-  D6: ['要泡要醃的先處理。你可以拖，食材不會配合。', '불리거나 재울 건 먼저 해. 미뤄도 되는데, 재료는 기다려주지 않아.'],
-  D7: ['菜單裡有 {n} 道。你挑，我等著吃。', '메뉴에 {n}개 있어. 골라. 난 먹을 준비할게.'],
-  E1: ['找不到這道菜。我也沒聽過。', '이건 없네. 나도 처음 들어.'],
-  UCNT:  ['N 道', 'N개'],
-  DWAIT: ['你去買，我在家等。反正我也跑不掉。', '장 보고 와. 난 집에 있을게. 어차피 멀리 못 가.'],
-  AEND: ['那，今天吃什麼？', '그럼, 오늘 뭐 먹을래?'],
-  DBUY: ['都買齊了，回來吧。', '다 샀네. 이제 들어와.'],
-  E2: ['今天的菜單還沒定。那我先睡。', '오늘 메뉴 아직 안 정했네. 그럼 난 먼저 잘게.'],
-};
 /* ⭐ 所有文案都走 STR：編號當 key、語言當欄位（strings.js）。
    加一種語言＝每筆多一個欄位，不必再改五個地方。
    找不到該語言就回中文 —— 缺的地方看得見中文，不是空白。 */
@@ -913,226 +861,10 @@ const t = k => S(k) ?? k;
 /* 詞彙對照表 —— 食材名、單位、醬料組名、標籤、菜系。
    這些是「詞」不是「句」，翻一次就重複使用，不隨食譜數量增加。
    ⚠️ 沒有在表裡的詞會原樣顯示中文，那是刻意的 —— 缺什麼要看得見。 */
-const TERM = {
-  /* 食材名稱（74） */
-  '乾海帶': '마른 미역',
-  '低筋麵粉': '박력분',
-  '去骨雞腿肉': '닭다리살',
-  '喝的優格': '마시는 요거트',
-  '大白菜': '배추',
-  '大蒜': '마늘',
-  '大蔥': '대파',
-  '太白粉': '감자전분',
-  '奶油': '버터',
-  '小蘇打粉': '베이킹소다',
-  '昆布魚乾高湯': '다시마·멸치 육수',
-  '杏鮑菇': '새송이버섯',
-  '松露橄欖油': '트러플 올리브오일',
-  '板豆腐': '찌개용 두부',
-  '棒棒腿': '닭봉',
-  '橄欖油': '올리브오일',
-  '櫛瓜': '애호박',
-  '水': '물',
-  '水梨汁': '배즙',
-  '洋蔥': '양파',
-  '煎餅粉或中筋麵粉': '부침가루 또는 중력분',
-  '熟成泡菜': '잘 익은 김치',
-  '熟透香蕉': '잘 익은 바나나',
-  '牛絞肉': '다진 소고기',
-  '牛肉片': '불고기용 소고기',
-  '牛腩': '양지',
-  '甘栗仁': '깐밤',
-  '生麵條': '생면',
-  '番茄義大利麵醬': '토마토 파스타 소스',
-  '白糖': '설탕',
-  '白胡椒粉': '흰후추',
-  '白醋': '식초',
-  '秀珍菇': '느타리버섯',
-  '米酒或燒酒': '청주나 소주',
-  '紅甜椒': '빨강 파프리카',
-  '紅蘿蔔': '당근',
-  '紅酒': '레드와인',
-  '義大利直麵': '스파게티',
-  '胡蘿蔔': '당근',
-  '芝麻油': '참기름',
-  '蒜末': '다진 마늘',
-  '蘑菇': '양송이버섯',
-  '蛋': '달걀',
-  '蠔油': '굴소스',
-  '西洋芹': '셀러리',
-  '豬五花或梅花肉': '삼겹살 또는 목살',
-  '豬五花肉': '삼겹살',
-  '豬絞肉': '다진 돼지고기',
-  '義式乾辣椒': '페페론치노',
-  '辣醬鍋醬汁': '고추장찌개 양념',
-  '醋': '식초',
-  '醬油': '간장',
-  '醬香炒麵醬汁': '간장 볶음면 소스',
-  '雞翅': '닭날개',
-  '雞腿醃料': '닭다리살 밑간 양념',
-  '雞蛋': '달걀',
-  '靈魂黑金醬汁': '비법 간장 양념',
-  '青辣椒': '고추',
-  '青陽辣椒': '청양고추',
-  '韓國櫛瓜': '애호박',
-  '韓式冬粉': '당면',
-  '韓式湯醬油（可用日式薄口醬油）': '국간장 (없으면 우스쿠치 간장)',
-  '韓式辣椒粉': '고춧가루',
-  '韓式辣椒醬': '고추장',
-  '韓式醃蝦醬（可用少量魚露替代）': '새우젓 (없으면 액젓 약간)',
-  '香草精': '바닐라 익스트랙',
-  '香菇': '표고버섯',
-  '馬鈴薯': '감자',
-  '高湯': '육수',
-  '鹽': '소금',
-  '黃甜椒': '노랑 파프리카',
-  '黃金比例梨汁醃醬': '배즙 불고기 양념',
-  '黑糖': '흑설탕',
-  '黑胡椒粉': '후추',
-  /* 醬料／備料組名（17） */
-  '先泡': '미리 불리기',
-  '先洗': '씻기',
-  '先醃': '미리 재우기',
-  '切塊': '큼직하게 썰기',
-  '切末': '다지기',
-  '切段': '어슷썰기',
-  '切片': '얇게 썰기',
-  '切絲': '채 썰기',
-  '糖': '설탕',
-  '調醬汁': '소스 섞기',
-  '醬醃醬汁': '장아찌 간장물',
-  '開火前放旁邊': '불 켜기 전에 꺼내 두기',
-  /* 單位（21） */
-  '1 湯匙 + 2 茶匙': '1큰술 + 2작은술',
-  '1/2 湯匙': '1/2큰술',
-  '1–1.5湯匙': '1–1.5큰술',
-  '3 湯匙 + 1.5 茶匙': '3큰술 + 1.5작은술',
-  'g': 'g',
-  'ml': 'ml',
-  '一小撮': '한 꼬집',
-  '包': '봉지',
-  '少許': '약간',
-  '幾滴': '몇 방울',
-  '支': '대',
-  '數朵': '몇 가닥',
-  '朵': '개',
-  '根': '개',
-  '湯匙': '큰술',
-  '片葉子': '장',
-  '瓣': '쪽',
-  '盒': '팩',
-  '茶匙': '작은술',
-  '顆': '개',
-  /* 標籤（24） */
-  '30分鐘上桌': '30분 완성',
-  '一鍋到底': '원팬',
-  '下午茶': '간식',
-  '下班後': '퇴근 후',
-  '下飯菜': '밥도둑',
-  '剩菜救援': '남은 재료 활용',
-  '小菜': '밑반찬',
-  '小酌良伴': '술안주',
-  '想吃熱的': '뜨끈한 게 당길 때',
-  '湯': '국물요리',
-  '烘焙': '베이킹',
-  '牛肉': '소고기',
-  '甜點': '디저트',
-  '生日': '생일',
-  '蔬菜': '채소',
-  '豬肉': '돼지고기',
-  '週末慢慢煮': '주말 요리',
-  '醬料': '소스',
-  '錢包友善': '가성비',
-  '鍋物': '냄비요리',
-  '隔夜更好吃': '다음 날 더 맛있어',
-  '雞肉': '닭고기',
-  '韓劇感': '집밥 감성',
-  '麵': '면요리',
-  /* r13 紫蘇油拌蕎麥麵 */
-  '蕎麥麵': '메밀면',
-  '青蔥': '쪽파',
-  '紫蘇油': '들기름',
-  '白芝麻': '통깨',
-  '海苔': '김',
-  '蛋黃': '노른자',
-  '小黃瓜': '오이',
-  '白醋或檸檬汁': '식초 또는 레몬즙',
-  '紫蘇油醬汁': '들기름 양념장',
-
-  /* r14–r16 */
-  '蝦仁': '손질 새우',
-  '蝦子': '새우',
-  '蘆筍': '아스파라거스',
-  '番紅花': '사프란',
-  '培根': '베이컨',
-  '清酒': '청주',
-  '燒酒': '소주',
-  '白酒': '화이트와인',
-  '牛骨高湯': '사골 육수',
-  '牛高湯': '소고기 육수',
-  '雞高湯': '닭육수',
-  '蔬菜高湯': '채소 육수',
-  '檸檬': '레몬',
-  '松露鹽': '트러플 소금',
-  '帕瑪森起司': '파르미지아노 치즈',
-  '帕馬森起司粉': '파르미지아노 치즈 가루',
-  '燉飯米': '리조또용 쌀',
-  'Guanciale 義式醃豬頰肉': '관찰레',
-  'San Marzano DOP 去皮整番茄': '산 마르자노 DOP 홀토마토',
-  'Pecorino Romano': '페코리노 로마노',
-  '海鮮': '해산물',
-  '隻': '마리',
-  '片': '장',
-  '把': '단',
-  '適量': '적당량',
-
-  /* 菜系（4） */
-  '中式': '중식',
-  '義式': '이탈리안',
-  '西式': '양식',
-  '韓式': '한식',
-};
 
 /* 買菜清單份量後面那個小括號。是「句」不是「詞」，所以跟 TERM 分開放 ——
    兩者混在一起，生成語系總表時就分不出哪些該用詞彙的標準審，哪些該用句子的。
    用中文原句當 key（不是編號）：位置會變，句子不會，重複的句子也自動共用一條。 */
-const NOTE = {
-  '也可用整隻雞切塊；本食譜採這個組合，因為我就愛': '통닭을 토막 내서 써도 된다. 이 조합인 건 그냥 내가 좋아해서.',
-  '推薦昆布魚乾或牛骨風味': '다시마·멸치나 사골 육수를 추천.',
-  '醃牛腩 1.5 茶匙、湯底 1 湯匙，試味再補': '양지 밑간 1.5작은술, 국물 1큰술. 맛보고 더 넣는다.',
-  '推薦 Spaghetti No.5，最剛好': '스파게티 5번이 딱 좋다.',
-  '愛吃辣再加，不吃辣可省略': '매운 걸 좋아하면 넣고, 아니면 빼도 된다.',
-  '熄火後加，有就封神，沒有可省略': '불 끄고 넣는다. 있으면 격이 달라지고, 없어도 된다.',
-  '關火前': '불 끄기 직전에',
-  '蛋汁用': '달걀물용',
-  'Barilla 派在此小聲強推': '바릴라파가 여기서 조용히 추천.',
-  '可省略；省略時水多補 1 湯匙': '빼도 된다. 뺄 땐 물을 1큰술 더.',
-  '只有使用無加糖 100% 天然梨汁時才加；韓國含糖水梨汁不用': '무가당 100% 배즙을 쓸 때만. 한국 가당 배즙이면 안 넣는다.',
-  '不放也可以': '안 올려도 된다.',
-  '擺盤用': '플레이팅용',
-  '牛骨或雞高湯': '사골 육수 또는 치킨스톡',
-  '香菇、杏鮑菇、蘑菇都可以，混著用更好': '표고, 새송이, 양송이 모두 가능. 섞어 쓰면 더 좋다.',
-  '選香氣新鮮的，這碗差很多': '향이 신선한 걸로. 이 한 그릇은 여기서 갈린다.',
-  '淡醬油基準；換韓式濃醬油先減量': '연한 간장 기준. 진간장이면 1.5큰술부터.',
-  '別省': '아끼지 말 것.',
-  '依口味添加': '취향에 따라.',
-  'Spaghetti 或 Linguine': '스파게티 또는 링귀네',
-  '帶頭帶殼 16/20 大蝦；偷懶買蝦仁也行，少一道蝦頭油': '머리·껍질 붙은 16/20 사이즈. 귀찮으면 손질 새우도 되지만 새우 기름은 포기.',
-  '提味用，不是主角': '향을 더하는 용도. 주인공은 아니다.',
-  '沒有白酒時，可用清酒或燒酒代替': '화이트와인이 없으면 청주나 소주로 대체 가능',
-  '皮屑和果汁都要': '껍질과 즙 모두 쓴다',
-  '起鍋前撒': '마지막에 뿌린다',
-  '可省': '선택',
-  '現磨': '갈아서 바로 쓴다',
-  'Carnaroli': '카르나롤리',
-  '約 250–300g；嫩頭、中段、硬梗分開用': '약 250–300g. 끝부분·가운데·밑동을 나눠서 쓴다.',
-  '迷你的最好': '미니 사이즈 추천',
-  '約 0.5g 那包的 1/4；剩下密封冷藏': '0.5g 한 봉지의 1/4 정도. 남은 것은 밀봉해 냉장한다.',
-  'Bucatini 或 Spaghetti': '부카티니 또는 스파게티',
-  '整番茄，認明 DOP 標示': '홀토마토. DOP 표시를 확인한다.',
-  '乾辣椒或辣椒片': '홀이든 플레이크든 상관없다',
-  '煮麵水用': '면 삶는 물에 넣는다',
-};
 const tr = x => (isKo() && S('TERM.' + x)) || x;
 /* note 是連著全形括號一起拆出來的，查表前脫掉、查到再包回去 ——
    這樣 NOTE 的 key 就是乾淨的句子，跟 recipes.js 裡看到的一樣 */
@@ -1143,17 +875,6 @@ const trNote = x => (isKo() && S('NOTE.' + bare(x)) && '（' + S('NOTE.' + bare(
    中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
    所以先查「食材|中文單位」，沒中才回退到 TERM 的一般翻譯。
    ⚠️ 沒列在這裡的組合會用一般翻譯，不要為了「看起來一致」自己補 —— 補錯比沒補糟。 */
-const COUNTER_OVERRIDES = {
-  '大蔥|根': '대',   /* 大蔥 1根 → 대파 1대 */
-  '西洋芹|支': '대',   /* 西洋芹 1支 → 셀러리 1대 */
-  '秀珍菇|數朵': '몇 가닥',   // 沒有數字，所以存完整說法
-  '秀珍菇|朵': '가닥',    /* 蠔菇是撕成條的（備料就寫「撕成細條」），數它用 가닥 不是 개 */
-  '板豆腐|盒': '모',
-  '海苔|大把': '넉넉히',
-  '小黃瓜|根': '개',
-  '青蔥|根': '뿌리',   /* 青蔥＝쪽파（她 2026-08-18 確認），쪽파 數的是 뿌리，不是 개 */
-  '蘆筍|根': '대',      /* 豆腐 0.5盒 → 찌개용 두부 0.5모。「盒」的一般翻譯 팩 是包裝單位，不是豆腐的量詞 */   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
-};
 const counterOf = (name, unit) =>
   (isKo() && (S('COUNTER.' + name + '|' + unit) || S('TERM.' + unit))) || unit;
 
@@ -1229,26 +950,27 @@ function auditKorean() {
     if (!re.test(text) || (only && only.includes(name))) return;
     hits.push(`${where}｜${text}\n      ⟵ ${why}`);
   });
-  RECIPES.forEach(r => {
-    const ko = r.ko || {};
-    (ko.prep || []).forEach((x, i) =>
-      scan(`r${r.id} 備料 ${(r.prepNotes[i] || {}).name || ''}`, x, (r.prepNotes[i] || {}).name));
-    ['steps', 'tips', 'stages'].forEach(f =>
-      (ko[f] || []).forEach((x, i) => scan(`r${r.id} ${f}.${i + 1}`, x)));
-  });
-  Object.entries(TERM).forEach(([k, v]) => scan(`TERM.${k}`, v));
+  // 掃 STR 裡每一句韓文。備料那幾句要帶食材名進去 —— 편 對大蒜是對的。
+  const prepName = id => {
+    const m = id.match(/^R(\d+)\.prep\.(\d+)$/);
+    if (!m) return '';
+    const r = byId(+m[1]);
+    return ((r && r.prepNotes && r.prepNotes[+m[2] - 1]) || {}).name || '';
+  };
+  Object.entries(STR).forEach(([id, v]) => { if (v.ko) scan(id, v.ko, prepName(id)); });
   if (hits.length) console.warn(
     `[慢寶] ${hits.length} 處韓文用語要人工看一眼：\n  ` + hits.join('\n  '));
 }
 
-/* ⛔ 韓文的陣列是**照順序**對位的，錯開了畫面上看不出來。
+/* ⛔ 這裡擋的是「結構和文案數量對不上」。
 
-   `ko.steps[i]` 對「中文步驟裡第 i 個非 ## 的句子」、`ko.stages[i]` 對第 i 個 ##、
-   `ko.prep[i]` 對 `prepNotes[i]`、`ko.tips[i]` 對 `tips[i]`。
+   2026-08-18 重構前，韓文是**照順序**對位的（`ko.steps[i]` 對第 i 句），
+   中文插一句、韓文沒跟著插，之後每一句都會對到前一句的韓文 ——
+   畫面正常顯示、只是全部錯開一格，**而且不會出聲**。加蝦頭那步時差點中招。
 
-   ⚠️ **這是全app最危險的一種壞法，因為它不會出聲。** 中文插一句、韓文沒跟著插，
-   之後每一句都會對到前一句的韓文 —— 畫面正常顯示，只是全部錯開一格，
-   要切到韓文一句一句讀才看得出來。2026-08-18 加蝦頭那步時差點中招。
+   現在每一句有自己的編號，那種錯位不可能發生。剩下的風險是數量對不上：
+   `recipes.js` 的 steps 模式說有 5 步，但 strings.js 只有 4 個 `R{n}.step.*`，
+   畫面就會少一句。所以這裡改成比對「結構的數量」對「編號的數量」。
 
    `apply_locale.py` 有 assert 擋著，但那只在用腳本套文案時跑。
    直接手改 `recipes.js` 就沒有任何防線 —— 所以這裡在啟動時再擋一次。
@@ -1257,23 +979,24 @@ function auditKorean() {
    理論上抓不到，但那要同時做兩個相反的動作，實務上沒發生過。 */
 function auditAlignment() {
   const bad = [];
+  const count = pre => Object.keys(STR).filter(k => k.startsWith(pre)).length;
   RECIPES.forEach(r => {
-    const ko = r.ko || {};
-    const steps = r.steps || [];
+    const st = r.steps || [];
     const pairs = [
-      ['steps',  steps.filter(s => !s.startsWith('## ')).length, (ko.steps  || []).length],
-      ['stages', steps.filter(s =>  s.startsWith('## ')).length, (ko.stages || []).length],
-      ['prep',   (r.prepNotes || []).length,                     (ko.prep   || []).length],
-      ['tips',   (r.tips      || []).length,                     (ko.tips   || []).length],
+      ['step',  st.filter(x => x !== 'stage').length, count(`R${r.id}.step.`)],
+      ['stage', st.filter(x => x === 'stage').length, count(`R${r.id}.stage.`)],
+      ['prep',  (r.prepNotes || []).length,           count(`R${r.id}.prep.`)],
+      ['tip',   r.tips || 0,                          count(`R${r.id}.tip.`)],
     ];
-    pairs.forEach(([f, zh, kr]) => {
-      if (zh !== kr) bad.push(`r${r.id} ${f}：中文 ${zh} 句 / 韓文 ${kr} 句（差 ${zh - kr}）`);
+    pairs.forEach(([f, structure, strings]) => {
+      if (structure !== strings) bad.push(
+        `r${r.id} ${f}：結構 ${structure} 個 / 文案 ${strings} 個（差 ${structure - strings}）`);
     });
   });
   if (bad.length) console.error(
-    `[慢寶] ⛔ ${bad.length} 處中韓陣列對不齊 —— 韓文會整段錯位，畫面看不出來：\n  ` +
+    `[慢寶] ⛔ ${bad.length} 處結構與文案對不上 —— 畫面會少一句或多一個空格子：\n  ` +
     bad.join('\n  ') +
-    '\n韓文是照順序對位的。中文插一句，ko 的同一個陣列要在同一個位置插一句。');
+    '\nrecipes.js 的 steps 是順序模式（stage/step），strings.js 是每句一個編號，兩邊數量必須一致。');
 }
 
 /* ⛔ 副標只能一行。這是硬約束不是偏好 —— 她非常討厭亂換行。
@@ -1307,7 +1030,7 @@ function auditSubtitles() {
   ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
 
   const over = [];
-  RECIPES.forEach(r => [['中', r.subtitle], ['한', (r.ko || {}).subtitle]]
+  RECIPES.forEach(r => [['中', zhOf(`R${r.id}.subtitle`)], ['한', (STR[`R${r.id}.subtitle`] || {}).ko]]
     .forEach(([lang, s]) => {
       if (!s) return;
       const w = Math.round(ctx.measureText(s).width);
@@ -1321,23 +1044,16 @@ function auditSubtitles() {
     '\n副標只能一行。刪字或換句，不要靠字數判斷 —— 拉丁字比漢字窄很多。');
 }
 
-/* 食譜欄位：先看 r.ko，沒有就回中文 */
 /* ⛔ 舊版是「r.ko 的陣列第 i 格」—— 中文插一句、韓文沒跟著插，整段錯位而且不報錯。
    改成編號對位之後那個坑消失。 */
 const FIELD_ID = { urgentNote: 'urgent' };
 const ARR_ID   = { stages: 'stage', steps: 'step', tips: 'tip', prep: 'prep' };
 const L  = (r, f)    => S(`R${r.id}.${FIELD_ID[f] || f}`) ?? r[f];
+const has  = (r, f) => `R${r.id}.${FIELD_ID[f] || f}` in STR;   // 有沒有這個欄位（取代舊的 r.note ? …）
+const zhOf = id => (STR[id] || {}).zh || '';                    // 比對關鍵字一律用中文，不跟著語言跑
 const La = (r, f, i) => S(`R${r.id}.${ARR_ID[f]}.${i + 1}`);
 
 /* 慢寶的自我介紹，兩種語言各一組句子 */
-const BO_INTRO_KO = [
-  '아…… 새 룸메이트구나. 나는 늘보야.',
-  '평소엔 저기 매달려 자거나, 그냥 안 움직여.',
-  '대신 먹는 건 진심이야.',
-  '맛에는 까다롭고, 불 조절이랑 향 내는 법, 절대 빼먹으면 안 되는 건 내가 딱 알려줄게.',
-  '맛있는 거 앞에서는 나도 달라지거든.',
-  '우리, 밥만큼은 제대로 먹고 살자.',
-];
 const introLines = () => BO_INTRO_LINES.map((_, i) => S(`BO.intro.${i + 1}`));
 
 /* ── 慢寶 ── */
@@ -1632,7 +1348,7 @@ const HOLD_POSES = [
 ];
 
 function murmurPose(r) {
-  const hay = `${r.title} ${r.subtitle || ''}`;
+  const hay = `${zhOf(`R${r.id}.title`)} ${zhOf(`R${r.id}.subtitle`)}`;   // ⚠️ 用中文比，不跟著語言跑
   const hit = HOLD_POSES.find(([re]) => re.test(hay));
   // 比對不到就用中性姿勢輪替。取餘數不是隨機 —— 同一道菜每次都是同一張
   return hit ? hit[1] : MURMUR_POSES[r.id % MURMUR_POSES.length];
@@ -1651,7 +1367,7 @@ function boLine(path) {
     const r = byId(+path.split('/')[2]);
     if (!r) return [BO.blank, ''];
     // 每道自己的碎碎念。有 urgentNote 的那幾則已經把提醒寫進去了，不必再靠下面那句罐頭
-    return [r.urgentNote ? BO.cheeky : BO.sleepy, L(r, 'murmur') || ''];
+    return [has(r, 'urgentNote') ? BO.cheeky : BO.sleepy, L(r, 'murmur') || ''];
   }
   if (path === '/wall') {
     if (n === 0) return [BO.sleepy, t('D1')];
@@ -1908,7 +1624,7 @@ function renderWall(el) {
 /* 搜尋索引：兩種語言都放進去。
    只放當前語言的話，切到韓文後用中文搜會找不到 —— 反過來也一樣。 */
 const hay = r => [
-  r.title, r.subtitle, r.cuisine, ...(r.tags || []),
+  zhOf(`R${r.id}.title`), zhOf(`R${r.id}.subtitle`), r.cuisine, ...(r.tags || []),
   L(r, 'title'), L(r, 'subtitle'), tr(r.cuisine), ...(r.tags || []).map(tr),
 ].join(' ').toLowerCase();
 
@@ -2007,7 +1723,7 @@ function renderRecipe(el, m) {
 
     <div class="r-card">
       <div class="r-title">${esc(L(r, 'title'))}</div>
-      ${r.subtitle ? `<div class="r-sub">${esc(L(r, 'subtitle'))}</div>` : ''}
+      ${has(r, 'subtitle') ? `<div class="r-sub">${esc(L(r, 'subtitle'))}</div>` : ''}
       <div class="r-stats">
         <div class="r-stat">
           <div class="k">${t('U10')}</div>
@@ -2031,7 +1747,7 @@ function renderRecipe(el, m) {
       </button>
     </div>
 
-    ${r.note ? `
+    ${has(r, 'note') ? `
       <div class="bo-talk">
         <img src="${murmurPose(r).img()}" alt="慢寶">
         ${say(L(r, 'note'), 'left', ` data-at="${murmurPose(r).at}" data-len="16" data-half="7" style="margin-left:${murmurPose(r).ml}px"`)}
@@ -2056,13 +1772,13 @@ function paintRecipeBody(el, r) {
   const body = $('#r-body', el);
   if (recipeTab === 'prep') {
     body.innerHTML = `
-      ${r.urgentNote ? `<div class="urgent"><h3>${t('U15')}</h3><p>${esc(L(r, 'urgentNote'))}</p></div>` : ''}
+      ${has(r, 'urgentNote') ? `<div class="urgent"><h3>${t('U15')}</h3><p>${esc(L(r, 'urgentNote'))}</p></div>` : ''}
       <div id="ings"></div>`;
     paintIngs(el, r);
   } else {
-    body.innerHTML = stepsHTML(r) + (r.tips && r.tips.length
+    body.innerHTML = stepsHTML(r) + (r.tips
       ? `<div class="sect"><div class="sect-t">${t('U17')}</div>
-           <ul class="tips">${r.tips.map((x, i) => `<li>${esc(La(r, 'tips', i) || x)}</li>`).join('')}</ul></div>`
+           <ul class="tips">${Array.from({ length: r.tips }, (_, i) => `<li>${esc(La(r, 'tips', i))}</li>`).join('')}</ul></div>`
       : '');
   }
   layoutBubbles(el);
@@ -2094,7 +1810,7 @@ function paintIngs(el, r) {
         <span>${esc(tr(name))}${note ? `<span class="paren">${esc(trNote(note))}</span>` : ''}</span>
         <span class="amt">${esc(amountText(num, u, f, name))}</span>
       </div>
-      ${p ? `<div class="ing-how">${esc(prepKo(r, p) || p.method)}</div>` : ''}
+      ${p ? `<div class="ing-how">${esc(prepKo(r, p))}</div>` : ''}
     </div>`;
   };
 
@@ -2105,7 +1821,7 @@ function paintIngs(el, r) {
     return `<div class="ing-set">
       <div class="ing-set-name">${esc(tr(item.label))}</div>
       ${item.note ? `<div class="ing-set-note">${esc(item.note)}</div>` : ''}
-      ${p ? `<div class="ing-set-note">${esc(prepKo(r, p) || p.method)}</div>` : ''}
+      ${p ? `<div class="ing-set-note">${esc(prepKo(r, p))}</div>` : ''}
       <div class="ing-set-body">${item.items.map(line).join('')}</div>
     </div>`;
   };
@@ -2126,7 +1842,7 @@ function paintIngs(el, r) {
   if (extra.length) {
     html += extra.map(p => `<div class="ing">
       <div class="ing-head"><span>${esc(tr(p.name))}</span><span class="amt">${esc(p.amount)}</span></div>
-      <div class="ing-how">${esc(prepKo(r, p) || p.method)}</div>
+      <div class="ing-how">${esc(prepKo(r, p))}</div>
     </div>`).join('');
   }
   $('#ings', el).innerHTML = html;
@@ -2142,17 +1858,17 @@ function stepText(step) {
 
 function stepsHTML(r) {
   let out = '', open = false, skipping = false, skipped = 0;
-  let gi = 0, si = 0;                  // 階段名和步驟各自數，韓文覆蓋層是分開兩個陣列
-  (r.steps || []).forEach(s => {
-    if (s.startsWith('## ')) {
-      const name = La(r, 'stages', gi++) || s.slice(3);
+  let gi = 0, si = 0;                  // 階段名和步驟各自編號，所以各自數
+  (r.steps || []).forEach(kind => {
+    if (kind === 'stage') {
+      const name = La(r, 'stages', gi++);
       if (open) { out += '</ol>'; open = false; }
-      skipping = PREP_PHASE.test(s.slice(3));
+      skipping = PREP_PHASE.test(zhOf(`R${r.id}.stage.${gi}`));   // 用中文判斷，不受語言影響
       if (skipping) { skipped++; return; }
       out += `<div class="phase">${esc(name)}</div><ol class="steps">`;
       open = true;
     } else {
-      const line = La(r, 'steps', si++) || s;
+      const line = La(r, 'steps', si++);
       if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
       out += `<li>${stepText(line)}</li>`;
