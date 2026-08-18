@@ -2370,5 +2370,112 @@ const RECIPES = [
         "撒蔥椒起鍋 ✅"
       ]
     ]
+  },
+  {
+    "id": 19,
+    "cuisine": "CUI.西式",
+    "stars": 1,
+    "starsLabel": "新手村",
+    "image": "assets/dish/r19.webp",
+    "tags": [
+      "TAG.蔬菜",
+      "TAG.小菜",
+      "TAG.30分鐘上桌",
+      "TAG.錢包友善"
+    ],
+    "basePortions": 2,
+    "time": "約20分鐘",
+    "shoppingList": [
+      [
+        "ING.櫛瓜",
+        1,
+        "UNIT.根"
+      ],
+      [
+        "ING.雞蛋",
+        1,
+        "UNIT.顆"
+      ],
+      [
+        "ING.中筋麵粉",
+        50,
+        "UNIT.g"
+      ],
+      [
+        "ING.胡蘿蔔",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.洋蔥",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.鹽",
+        0.75,
+        "UNIT.茶匙（櫛瓜出水 1/2、麵糊調味 1/4）"
+      ],
+      [
+        "ING.黑胡椒粉",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.帕瑪森起司",
+        null,
+        "UNIT.適量（可省）"
+      ],
+      [
+        "ING.食用油",
+        32,
+        "UNIT.ml（每張約 8ml）"
+      ]
+    ],
+    "prepNotes": [
+      {
+        "name": "ING.櫛瓜",
+        "amount": "1 根",
+        "group": "先醃"
+      },
+      {
+        "name": "ING.胡蘿蔔",
+        "amount": "少許",
+        "group": "切絲"
+      },
+      {
+        "name": "ING.洋蔥",
+        "amount": "少許",
+        "group": "切絲"
+      }
+    ],
+    "steps": [
+      "stage",
+      "step",
+      "stage",
+      "step",
+      "step",
+      "stage",
+      "step"
+    ],
+    "tips": 4,
+    "schedule": [
+      [
+        0,
+        "櫛瓜刨絲、撒鹽靜置"
+      ],
+      [
+        8,
+        "擠乾、調麵糊"
+      ],
+      [
+        12,
+        "下鍋煎第一張"
+      ],
+      [
+        20,
+        "四張煎完 ✅"
+      ]
+    ]
   }
 ];
