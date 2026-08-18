@@ -1233,6 +1233,51 @@ function auditKorean() {
     `[慢寶] ${hits.length} 處韓文用語要人工看一眼：\n  ` + hits.join('\n  '));
 }
 
+/* ⛔ 副標只能一行。這是硬約束不是偏好 —— 她非常討厭亂換行。
+
+   ⚠️ 字數看不出來會不會折。拉丁字比漢字窄得多，`Guanciale` 一個詞佔 58px、
+   等於四個半漢字，但用「拉丁詞算 1 字」的規則只算 12.5px。2026-08-18 就是
+   這樣讓 r16 的副標用字數算「通過」、實機 333px 折成兩行。**要量的是像素。**
+
+   所以這裡不猜：拿真的 DOM 疊一個離螢幕的 .page>.r-card>.r-sub，
+   讓瀏覽器自己算出可用寬（CSS 改了它會跟著變），再用同一套字體去 canvas 量每一句。
+
+   ⚠️ 剛好等寬就會折 —— r12 的韓文正好 311px＝可用寬，實機是兩行。
+   所以留 SUB_SAFE 的餘裕。 */
+const SUB_BASE_W = 375;   // 設計基準：現行最窄的 iPhone（SE）。她自己用 iPhone 17，更寬
+/* 餘裕只留 6px。實測：305px 單行 ✓、311px（＝可用寬）折行 ✗，真正的斷點在兩者之間。
+   ⚠️ 不要為了「保險」把它加大 —— 基準寬 375 本身就已經是保守值（她的手機更寬），
+   再疊一層就會開始誤報。誤報比不報糟：報幾次沒事之後，真的爆版那次也會被忽略。 */
+const SUB_SAFE = 6;
+
+function auditSubtitles() {
+  const probe = document.createElement('div');
+  probe.style.cssText =
+    `position:absolute;left:-9999px;top:0;visibility:hidden;width:${SUB_BASE_W}px`;
+  probe.innerHTML = '<div class="page"><div class="r-card"><div class="r-sub"></div></div></div>';
+  document.body.appendChild(probe);
+
+  const el = probe.querySelector('.r-sub');
+  const cs = getComputedStyle(el);
+  const limit = el.clientWidth - SUB_SAFE;
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+
+  const over = [];
+  RECIPES.forEach(r => [['中', r.subtitle], ['한', (r.ko || {}).subtitle]]
+    .forEach(([lang, s]) => {
+      if (!s) return;
+      const w = Math.round(ctx.measureText(s).width);
+      if (w > limit) over.push(`r${r.id} ${lang} ${w}px（超 ${w - limit}）｜${s}`);
+    }));
+  probe.remove();
+
+  if (over.length) console.warn(
+    `[慢寶] ${over.length} 句副標會在 ${SUB_BASE_W}px 手機上折行（上限 ${limit}px）：\n  ` +
+    over.join('\n  ') +
+    '\n副標只能一行。刪字或換句，不要靠字數判斷 —— 拉丁字比漢字窄很多。');
+}
+
 /* 食譜欄位：先看 r.ko，沒有就回中文 */
 const L  = (r, f)    => (isKo() && r.ko && r.ko[f]) || r[f];
 const La = (r, f, i) => (isKo() && r.ko && r.ko[f] && r.ko[f][i]) || null;
@@ -2273,6 +2318,7 @@ auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
 auditNotes();
 auditKorean();
 auditUnits();
+auditSubtitles();         // 要量真的字體，所以在 CSS 進 DOM 之後
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
