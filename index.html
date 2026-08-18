@@ -1235,6 +1235,41 @@ function auditKorean() {
     `[慢寶] ${hits.length} 處韓文用語要人工看一眼：\n  ` + hits.join('\n  '));
 }
 
+/* ⛔ 韓文的陣列是**照順序**對位的，錯開了畫面上看不出來。
+
+   `ko.steps[i]` 對「中文步驟裡第 i 個非 ## 的句子」、`ko.stages[i]` 對第 i 個 ##、
+   `ko.prep[i]` 對 `prepNotes[i]`、`ko.tips[i]` 對 `tips[i]`。
+
+   ⚠️ **這是全app最危險的一種壞法，因為它不會出聲。** 中文插一句、韓文沒跟著插，
+   之後每一句都會對到前一句的韓文 —— 畫面正常顯示，只是全部錯開一格，
+   要切到韓文一句一句讀才看得出來。2026-08-18 加蝦頭那步時差點中招。
+
+   `apply_locale.py` 有 assert 擋著，但那只在用腳本套文案時跑。
+   直接手改 `recipes.js` 就沒有任何防線 —— 所以這裡在啟動時再擋一次。
+
+   📌 長度不同就一定錯。長度相同但內容錯位（一邊插一句、另一邊刪一句）
+   理論上抓不到，但那要同時做兩個相反的動作，實務上沒發生過。 */
+function auditAlignment() {
+  const bad = [];
+  RECIPES.forEach(r => {
+    const ko = r.ko || {};
+    const steps = r.steps || [];
+    const pairs = [
+      ['steps',  steps.filter(s => !s.startsWith('## ')).length, (ko.steps  || []).length],
+      ['stages', steps.filter(s =>  s.startsWith('## ')).length, (ko.stages || []).length],
+      ['prep',   (r.prepNotes || []).length,                     (ko.prep   || []).length],
+      ['tips',   (r.tips      || []).length,                     (ko.tips   || []).length],
+    ];
+    pairs.forEach(([f, zh, kr]) => {
+      if (zh !== kr) bad.push(`r${r.id} ${f}：中文 ${zh} 句 / 韓文 ${kr} 句（差 ${zh - kr}）`);
+    });
+  });
+  if (bad.length) console.error(
+    `[慢寶] ⛔ ${bad.length} 處中韓陣列對不齊 —— 韓文會整段錯位，畫面看不出來：\n  ` +
+    bad.join('\n  ') +
+    '\n韓文是照順序對位的。中文插一句，ko 的同一個陣列要在同一個位置插一句。');
+}
+
 /* ⛔ 副標只能一行。這是硬約束不是偏好 —— 她非常討厭亂換行。
 
    ⚠️ 字數看不出來會不會折。拉丁字比漢字窄得多，`Guanciale` 一個詞佔 58px、
@@ -2347,6 +2382,7 @@ auditNotes();
 auditKorean();
 auditUnits();
 auditSubtitles();         // 要量真的字體，所以在 CSS 進 DOM 之後
+auditAlignment();         // 對不齊是無聲的壞法，所以用 console.error 不是 warn
 
 /* ══════════ 起飛 ══════════ */
 if (!location.hash) location.hash = '#/';
