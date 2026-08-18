@@ -4,46 +4,87 @@ app 用到的圖全部在這裡，沒有第二個地方。
 
 ```
 assets/
-  bo/       慢寶本人（11 張）
-  dish/     菜色（12 張，檔名對應食譜 id）
+  bo/       慢寶本人（34 張）
+  dish/     菜色（17 張，檔名對應食譜 id）
   bg/       背景質感
   source/   生圖用的定稿參考 —— app 不會載入它們
 ```
 
 ## bo/ — 慢寶
 
+共 34 張。
+
+### 姿勢（13 張）
+
 | 檔名 | 是什麼 | 用在哪 |
 |---|---|---|
-| `hang_sleep_tree` | 睡著、倒掛在有葉子的樹枝上 | 封面。**切三層動**，見下 |
-| `hang_drape_tree` | 趴在有葉子的樹枝上、醒著 | 兩個入口那頁 |
-| `hang_drape` | 同上但是近景、沒有樹 | 今日菜單那個 132px 的小圖 |
+| `hang_sleep_tree` | 睡著、倒掛在有葉子的樹枝上 | 封面。**切六層動**，見下 |
+| `hang_drape_tree` | 趴在有葉子的樹枝上、醒著 | 兩個入口那頁（會眨眼、腿會開合） |
+| `drape_blink` | 只有眼睛那一帶，改成閉眼 | 疊在 `hang_drape_tree` 上做眨眼 |
+| `leg_l` `leg_r` | 左右兩條腿，透明底 | 各自繞髖部擺 ±7° |
+| `hang_drape` | 趴在橫桿上、近景、沒有樹 | 今日菜單那個 132px 的小圖 |
 | `hang_u` | U 型倒掛、醒著 | 目前備用 |
 | `cook_bowl` | 站著攪碗 | 目前備用 |
 | `cook_pan` | 站著端鍋 | 食譜詳情（牠說話那塊） |
-| `face_sleepy` `face_satisfied` `face_cheeky` `face_blank` `face_thinking` `face_surprised` | 六個表情頭像，已去背 | 底部橫條、空狀態 |
+| `lie_sleep` | 趴著睡，旁邊一個空碗 | 今日菜單空的時候 |
+| `shrug` | 攤手 | 搜尋沒結果。**唯一去背的姿勢**（食譜牆的底是木紋） |
+| `eat_bowl` | 捧著碗開動 | **尚未使用** —— 留給「煮好了」那一刻 |
+| `hang_think` | 倒吊思考 | 問答推薦流程用，**流程還沒做，先放著** |
+
+### 表情（6 張）
+
+`face_sleepy` `face_satisfied` `face_cheeky` `face_blank` `face_thinking` `face_surprised`
+
+已去背成頭型，用在底部橫條和空狀態。
+
+### 抱食材／拿廚具（15 張）
+
+`hold_beef` `hold_chicken` `hold_root` `hold_banana` `hold_basket` `hold_seaweed`
+`hold_kimchi` `hold_pot` `hold_lidpot` `hold_rice` `hold_spatula`
+`stir_pan` `taste_spoon` `crack_egg` `hourglass`
+
+用在食譜詳情的碎碎念，比對那道菜的主料。`crack_egg`、`stir_pan` 是備給以後的
+（蛋料理、燉飯），目前比對不到。
 
 ## dish/ — 菜色
 
 數字就是 `recipes.js` 裡的食譜 `id`。全部 700×525 WebP。
 
-目前有 `r1`–`r16`。**r14–r16 的食譜本身還沒進 `recipes.js`**，圖先放著等。
+目前有 `r1`–`r17`，17 道全部都在 `recipes.js` 裡 —— 沒有等食譜的孤兒圖。
 
 ## bg/ — 背景
 
 `wood.webp` — 480×480 無縫貼圖，食譜牆的木牆。CSS 以 240px 重複。
 
-## 封面那張切五層播
+## 封面那張切六層播
 
-`hang_sleep_tree.webp` 在 `index.html` 疊五次，`clip-path` 各露一塊。
+`hang_sleep_tree.webp` 在 `index.html` 疊六次。每一層是一個 **`overflow: hidden` 的窗**，
+裡面的圖用負位移推到該露出的位置。
+
+⛔ **不要用 `clip-path` 做這件事。** 原本就是 clip-path，在 iOS Safari 上
+「被動畫的祖先底下、用 clip-path 裁切的內容」不會重繪 —— 動畫在跑，但那幾層完全不動，
+加 `translateZ(0)` 也沒用。理由和踩過的坑寫在 `index.html` 該段的註解裡。
+
 **下面是這張圖的實測值** —— 換圖一定要重量，不能沿用。怎麼量寫在 `manbao` 技能。
 
 | 層 | 範圍（於 900×675） | 動作 |
 |---|---|---|
-| `bo-leaf-a` | 縱 0–24.0%，橫 0–51.8% | `skewX` ±2°，5.6s |
-| `bo-leaf-b` | 縱 0–24.0%，橫 51.8–100% | `skewX` ±3.5°，3.9s，相位 −1.2s |
-| `bo-leaf-c` | —— | 這版左右各一叢，這層關掉 |
-| `bo-branch` | 縱 24.0–38.4% | 不動 |
-| `bo-swing` | 縱 36.7% 以下 | `rotate` ±1.4°，支點 54.7% / 30.3% |
+| `.cov-leaf-1` | 縱 0–24.0%，橫 3.9–25.7% | 不動 |
+| `.cov-leaf-2` | 縱 0–24.0%，橫 26.4–46.1% | `rotate` ±1.4°，5.6s，支點 18.08% / 100% |
+| `.cov-leaf-3` | 縱 0–24.0%，橫 56.7–76.6% | 不動 |
+| `.cov-leaf-4` | 縱 0–24.0%，橫 80.3–99.7% | `rotate` ±1.8°，3.9s，相位 −1.2s，支點 51.15% / 100% |
+| `.cov-branch` | 縱 22.8–39.7% | 不動 |
+| `.cov-body` | 縱 36.7% 以下 | `rotate` ±1.5°，3.4s，支點 54.7% / −10.11% |
+
+**枝葉一支一個窗,四支分開。** 一個窗裝兩支的話，離支點遠的那一支，
+它的莖在葉子帶／樹枝帶的交界上會被上下錯開 —— 看起來就是樹枝斷掉。
+**而且只有第 2、4 支會動,一邊一支** —— 四支一起晃太熱鬧。
+
+⚠️ 所有層都是絕對定位，**舞台高度沒有東西撐**，改用 `aspect-ratio: 900/675` 給。
+換圖要一起改這個比例。
+
+⚠️ `.cov-branch` 的上緣（22.8%）刻意比葉子窗的下緣（24.0%）高，鑽到葉子窗底下。
+剛好貼齊的話，次像素捨入會在那條線上露出一絲背景。
 
 換圖時四個幾何條件必須同時成立：
 
