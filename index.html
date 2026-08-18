@@ -774,7 +774,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=17"></script>
+<script src="strings.js?v=19"></script>
 <script src="recipes.js?v=94"></script>
 <script>
 /* ══════════════════════════════════════════════
@@ -783,7 +783,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '67';
+const ASSETS = '68';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
