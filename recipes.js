@@ -2757,7 +2757,7 @@ const RECIPES = [
       [
         "San Marzano DOP 去皮整番茄",
         400,
-        "g（認明 Pomodoro San Marzano dell'Agro Sarnese-Nocerino DOP；這份食譜不換一般番茄罐頭）"
+        "g（整番茄，認明 DOP 標示）"
       ],
       [
         "Pecorino Romano",
