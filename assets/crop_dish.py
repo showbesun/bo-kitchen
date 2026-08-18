@@ -65,9 +65,10 @@ def flat_field(im):
                 ny, nx = min(ok, key=lambda p: (p[0] - gy) ** 2 + (p[1] - gx) ** 2)
                 grid[gy][gx] = grid[ny][nx]
 
-    est = Image.new('RGB', (N, N))
-    est.putdata([grid[gy][gx] for gy in range(N) for gx in range(N)])
-    est = est.resize((W, H), Image.BICUBIC).filter(ImageFilter.GaussianBlur(28)).load()
+    est_im = Image.new('RGB', (N, N))
+    est_im.putdata([grid[gy][gx] for gy in range(N) for gx in range(N)])
+    est_im = est_im.resize((W, H), Image.BICUBIC).filter(ImageFilter.GaussianBlur(28))
+    est = est_im.load()
 
     out = Image.new('RGB', (W, H))
     op = out.load()
@@ -75,7 +76,11 @@ def flat_field(im):
         for x in range(W):
             c, e = px[x, y], est[x, y]
             op[x, y] = tuple(max(0, min(255, c[i] - (e[i] - TGT[i]))) for i in range(3))
-    return out, bg
+    # ⚠️ 第三個回傳值是「背景的低頻估計」，不是校正後的圖 —— fix_bg() 要的是它。
+    #    2026-08-18 修：原本 fix_bg 寫 `est_im, _ = flat_field(im)`，拿到的是校正後的
+    #    圖，於是它拿原圖去跟「已經修好的版本」比，把差很多的像素判成「不是背景」——
+    #    剛好把需要修的全部排除掉，只對本來就不用修的圖有效（r5 差 33 → 修完還是 33）。
+    return out, bg, est_im
 
 
 def gaps(flat, x0, x1, lo, hi, axis):
@@ -102,7 +107,14 @@ def render(flat, box, path, cell=None):
     ⚠️ 垂直方向貼底（見下），水平置中。
     """
     l, r, t, b = box
-    sc = min(OUT_W * FILL / (r - l), OUT_H * FILL / (b - t))
+    # ⛔ 不要用 min()「整個放進畫面」。比 4:3（1.33）寬的器皿會上下留白，排在食譜牆上
+    #    比隔壁小一截 —— 2026-08-18 量過全部 17 張，長寬比 1.44–1.57 的只有 84–92%，
+    #    1.27–1.39 的則是 94–100%，落差一眼看得出來（使用者：「他真的太鬆」）。
+    #    ✅ 照高度撐，寬度不夠就溢出、兩側自然切掉 —— 切口落在畫布邊界上就是出血。
+    #    ⚠️ 例外：長寬比 > 1.6 的又寬又扁器皿，照高度撐會把盤緣整個切光，退回 min()。
+    ratio = (r - l) / (b - t)
+    sc = (OUT_H * FILL / (b - t) if ratio <= 1.6
+          else min(OUT_W * FILL / (r - l), OUT_H * FILL / (b - t)))
 
     # 看得見的底緣（淡陰影不算），拿來對齊 BASELINE
     f = flat.load()
@@ -153,8 +165,7 @@ def fix_bg(path):
     im = Image.open(path).convert('RGB')
     W, H = im.size
     px = im.load()
-    _, bg = flat_field(im)
-    est_im, _ = flat_field(im)          # 借它的低頻估計
+    _, bg, est_im = flat_field(im)      # ⚠️ 要第三個（低頻估計），不是第一個（校正後的圖）
     est = est_im.load()
 
     mask = Image.new('L', (W, H), 0)
@@ -188,10 +199,15 @@ def fix_bg(path):
             c, e, m = px[x, y], est[x, y], mk[x, y] / 255
             op[x, y] = tuple(max(0, min(255, round(c[i] - (e[i] - TGT[i]) * m))) for i in range(3))
     out.save(path, 'WEBP', quality=88)
+    # ⛔ 不要用「幾個固定點取最大值」驗收。那幾個點會落在菜或器皿上 —— 黑陶鍋碰到
+    #    左邊時就報「差 412」，看起來像整張毀了，其實底色是好的（2026-08-18 誤判過，
+    #    還因此把四張好檔案還原掉）。✅ 沿四邊密集取樣後取中位數，跟稽核同一個量法。
     o = out.load()
-    chk = [o[a, b] for a, b in [(3, 3), (W // 2, 3), (W - 4, 3), (3, H // 2), (W - 4, H - 4)]]
+    edge = ([o[x, 1] for x in range(0, W, 3)] + [o[x, H - 2] for x in range(0, W, 3)] +
+            [o[1, y] for y in range(0, H, 3)] + [o[W - 2, y] for y in range(0, H, 3)])
+    med = tuple(sorted(c[i] for c in edge)[len(edge) // 2] for i in range(3))
     print(f'    {os.path.basename(path):<12} 底色 {bg} 差 {d(bg,TGT):>2}'
-          f'  →  差 {max(d(c,TGT) for c in chk)}')
+          f'  →  {med} 差 {d(med,TGT)}')
 
 
 CELLS = {'TL': (0, 0), 'TR': (1, 0), 'BL': (0, 1), 'BR': (1, 1)}
@@ -212,7 +228,7 @@ if a.fix_bg:
 im = Image.open(a.src).convert('RGB')
 W, H = im.size
 print(f'  來源 {W}×{H}')
-flat, bg = flat_field(im)
+flat, bg, _ = flat_field(im)
 print(f'  底色 {bg} 差 {d(bg, TGT)} → 已壓到 {TGT}')
 
 want = [c.strip().upper() for c in a.cells.split(',')]
