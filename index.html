@@ -774,7 +774,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=6"></script>
+<script src="strings.js?v=7"></script>
 <script src="recipes.js?v=86"></script>
 <script>
 /* ══════════════════════════════════════════════
@@ -835,6 +835,9 @@ function setLang(v) {
    加一種語言＝每筆多一個欄位，不必再改五個地方。
    找不到該語言就回中文 —— 缺的地方看得見中文，不是空白。 */
 const S = id => { const e = STR[id]; return e ? (e[lang] || e.zh) : null; };
+/* ⛔ S() 有中文退路，所以**不能拿它判斷「某個語言翻了沒」** —— 永遠會是真。
+   稽核要問「這一格有沒有韓文」時，直接讀欄位。 */
+const has_ = (id, lg) => !!(STR[id] || {})[lg];
 const t = k => S(k) ?? k;
 
 /* 詞彙對照表 —— 食材名、單位、醬料組名、標籤、菜系。
@@ -891,7 +894,7 @@ function auditNotes() {
   RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
     (Array.isArray(item) ? [item] : item.items).forEach(([, , unit]) => {
       const n = bare(splitUnit(unit || '').note || '');
-      if (n && !S('NOTE.' + n)) miss.add(n);
+      if (n && !has_('NOTE.' + n, 'ko')) miss.add(n);
     });
   }));
   if (miss.size) console.warn(
@@ -908,7 +911,7 @@ function auditUnits() {
     (Array.isArray(item) ? [item] : item.items).forEach(([name, , unit]) => {
       const u = splitUnit(unit || '').u;
       if (!u || /^[\d\s./–-]*(g|ml)?$/.test(zhOf(u))) return;   // 純數字和 g/ml 不用翻
-      if (S(u) || S(`COUNTER.${BUY_AS[name] || name}|${u}`)) return;
+      if (has_(u, 'ko') || has_(`COUNTER.${BUY_AS[name] || name}|${u}`, 'ko')) return;
       miss.add(`${zhOf(u)}（${zhOf(name)}）`);
     });
   }));
