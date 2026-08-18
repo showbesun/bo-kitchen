@@ -38,7 +38,13 @@ d = lambda c, t: sum(abs(c[i] - t[i]) for i in range(3))
 
 def flat_field(im):
     """把背景壓成 TGT。整體位移沒用 —— 原圖的背景是有漸層的暈影，
-    要估成一張低頻圖再逐像素扣掉。回傳 (校正後的圖, 原本的底色)。"""
+    要估成一張低頻圖再逐像素扣掉。回傳 (校正後的圖, 原本的底色, 低頻估計)。
+
+    ⚠️ 校正只作用在「從畫面邊緣連得到」的背景像素上，不是整張。
+    2026-08-18 修：原本整張每個像素都扣同一個差值，背景是對了，但菜也一起偏。
+    大醬湯的原圖底色 #FADDB7 藍通道差 26，等於整張加了 26 的藍 ——
+    黑陶뚝배기是接近中性的深色，加藍就直接變成藍灰（#39332D → #393F4B，
+    使用者：「也太藍了吧」）。暖色系的菜看不出來，中性深色一定看得出來。"""
     W, H = im.size
     px = im.load()
     edge = [(4, 4), (W // 2, 4), (W - 5, 4), (4, H // 2),
@@ -70,12 +76,38 @@ def flat_field(im):
     est_im = est_im.resize((W, H), Image.BICUBIC).filter(ImageFilter.GaussianBlur(28))
     est = est_im.load()
 
+    # 背景遮罩：從四邊淹水，只有連得到畫面邊緣的像素才算背景 —— 器皿和食物碰不到邊
+    mask = Image.new('L', (W, H), 0)
+    mp = mask.load()
+    seen = bytearray(W * H)
+    q = deque()
+    for x in range(W):
+        for y in (0, H - 1):
+            if not seen[y * W + x]:
+                seen[y * W + x] = 1; q.append((x, y))
+    for y in range(H):
+        for x in (0, W - 1):
+            if not seen[y * W + x]:
+                seen[y * W + x] = 1; q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        if d(px[x, y], est[x, y]) >= 22:
+            continue
+        mp[x, y] = 255
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < W and 0 <= ny < H and not seen[ny * W + nx]:
+                seen[ny * W + nx] = 1; q.append((nx, ny))
+    mask = mask.filter(ImageFilter.GaussianBlur(3))
+    mk = mask.load()
+
     out = Image.new('RGB', (W, H))
     op = out.load()
     for y in range(H):
         for x in range(W):
-            c, e = px[x, y], est[x, y]
-            op[x, y] = tuple(max(0, min(255, c[i] - (e[i] - TGT[i]))) for i in range(3))
+            c, e, m = px[x, y], est[x, y], mk[x, y] / 255
+            op[x, y] = tuple(max(0, min(255, round(c[i] - (e[i] - TGT[i]) * m)))
+                             for i in range(3))
     # ⚠️ 第三個回傳值是「背景的低頻估計」，不是校正後的圖 —— fix_bg() 要的是它。
     #    2026-08-18 修：原本 fix_bg 寫 `est_im, _ = flat_field(im)`，拿到的是校正後的
     #    圖，於是它拿原圖去跟「已經修好的版本」比，把差很多的像素判成「不是背景」——
