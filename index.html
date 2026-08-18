@@ -440,27 +440,6 @@ img { display: block; max-width: 100%; }
 
 /* ─────────── 食譜牆 ─────────── */
 
-.search {
-  position: relative; z-index: 1;   /* 木紋層是絕對定位，不抬起來會被蓋住 */
-  margin: 0 14px 14px;
-}
-.search input {
-  width: 100%;
-  border: 1.5px solid var(--line);
-  background: var(--surface);
-  border-radius: var(--r-pill, 999px);
-  padding: 11px 40px 11px 18px;
-  font-size: 14px; font-family: inherit; color: var(--text);
-  outline: none;
-}
-.search input:focus { border-color: var(--brand-dim); }
-.search .clr {
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-  width: 28px; height: 28px; border-radius: 50%;
-  color: var(--faint); font-size: 15px;
-  display: none; place-items: center;
-}
-.search .clr.on { display: grid; }
 
 /* 菜系篩選鍵 —— 橫向可捲，菜系變多也不會換行把版面撐高。
    ⚠️ 沒有「全部」那一顆：再按一次已選的就取消。多一顆就多一組要翻譯的字串，
@@ -468,7 +447,7 @@ img { display: block; max-width: 100%; }
    ⚠️ class 不能叫 .chips/.chip —— 今日菜單那頁已經佔走了，而且那組設了
    flex-wrap: wrap（排在後面會蓋掉這裡）。切到韓文字變長就會掉第二行。 */
 .cui-bar {
-  position: relative; z-index: 1;   /* 同 .search：木紋層是絕對定位的 */
+  position: relative; z-index: 1;   /* 木紋層是絕對定位的，不抬起來會被蓋住 */
   display: flex; flex-wrap: nowrap; gap: 8px;
   margin: -4px 0 14px;
   padding: 0 14px 2px;
@@ -795,7 +774,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=4"></script>
+<script src="strings.js?v=5"></script>
 <script src="recipes.js?v=85"></script>
 <script>
 /* ══════════════════════════════════════════════
@@ -1581,7 +1560,6 @@ function paintHome(box) {
 
 /* ══════════ 食譜牆 ══════════ */
 
-let wallQuery = '';
 let wallCuisine = '';   // '' ＝ 不篩選
 
 /* 菜系清單由資料算出來，不寫死 —— 哪天多一道日式，篩選鍵自己就會多一顆。
@@ -1599,18 +1577,10 @@ function renderWall(el) {
       <button class="back-btn" onclick="back()">‹</button>
       <div><h1>${t('U8')}</h1><div class="sub" id="wall-count"></div></div>
     </div>
-    <div class="search">
-      <input id="q" placeholder="${t('U9')}" value="${esc(wallQuery)}">
-      <button class="clr ${wallQuery ? 'on' : ''}" id="qc">✕</button>
-    </div>
     <div class="cui-bar">${cuisines().map(([c, n]) => `
       <button class="cui ${c === wallCuisine ? 'on' : ''}" data-c="${esc(c)}">${esc(tr(c))}</button>`).join('')}
     </div>
     <div class="wrap"><div class="grid" id="grid"></div></div>`;
-
-  const input = $('#q', el), clr = $('#qc', el);
-  input.oninput = () => { wallQuery = input.value; clr.classList.toggle('on', !!wallQuery); paintGrid(el); };
-  clr.onclick = () => { wallQuery = ''; input.value = ''; clr.classList.remove('on'); paintGrid(el); input.focus(); };
 
   el.querySelectorAll('.cui').forEach(b => b.onclick = () => {
     wallCuisine = b.dataset.c === wallCuisine ? '' : b.dataset.c;   // 再按一次＝取消
@@ -1620,13 +1590,6 @@ function renderWall(el) {
 
   paintGrid(el);
 }
-
-/* 搜尋索引：兩種語言都放進去。
-   只放當前語言的話，切到韓文後用中文搜會找不到 —— 反過來也一樣。 */
-const hay = r => [
-  zhOf(`R${r.id}.title`), zhOf(`R${r.id}.subtitle`), r.cuisine, ...(r.tags || []),
-  L(r, 'title'), L(r, 'subtitle'), tr(r.cuisine), ...(r.tags || []).map(tr),
-].join(' ').toLowerCase();
 
 /* 菜系輪流出場：韓式 → 義式 → 中式 → 西式 → 韓式 → …
 
@@ -1653,10 +1616,7 @@ function interleave(list) {
 }
 
 function paintGrid(el) {
-  const q = wallQuery.trim().toLowerCase();
-  const hits = RECIPES
-    .filter(r => !wallCuisine || r.cuisine === wallCuisine)
-    .filter(r => !q || hay(r).includes(q));
+  const hits = RECIPES.filter(r => !wallCuisine || r.cuisine === wallCuisine);
   // 已經篩成單一菜系就沒有東西可以輪流，照新的在前面排
   const list = wallCuisine ? hits.sort((a, b) => b.id - a.id) : interleave(hits);
   const count = $('#wall-count', el);
