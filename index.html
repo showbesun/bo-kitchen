@@ -795,7 +795,8 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="recipes.js?v=82"></script>
+<script src="strings.js?v=1"></script>
+<script src="recipes.js?v=83"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -903,7 +904,11 @@ const T = {
   DBUY: ['都買齊了，回來吧。', '다 샀네. 이제 들어와.'],
   E2: ['今天的菜單還沒定。那我先睡。', '오늘 메뉴 아직 안 정했네. 그럼 난 먼저 잘게.'],
 };
-const t = k => (isKo() && T[k] && T[k][1]) || (T[k] ? T[k][0] : k);
+/* ⭐ 所有文案都走 STR：編號當 key、語言當欄位（strings.js）。
+   加一種語言＝每筆多一個欄位，不必再改五個地方。
+   找不到該語言就回中文 —— 缺的地方看得見中文，不是空白。 */
+const S = id => { const e = STR[id]; return e ? (e[lang] || e.zh) : null; };
+const t = k => S(k) ?? k;
 
 /* 詞彙對照表 —— 食材名、單位、醬料組名、標籤、菜系。
    這些是「詞」不是「句」，翻一次就重複使用，不隨食譜數量增加。
@@ -1128,11 +1133,11 @@ const NOTE = {
   '乾辣椒或辣椒片': '홀이든 플레이크든 상관없다',
   '煮麵水用': '면 삶는 물에 넣는다',
 };
-const tr = x => (isKo() && TERM[x]) || x;
+const tr = x => (isKo() && S('TERM.' + x)) || x;
 /* note 是連著全形括號一起拆出來的，查表前脫掉、查到再包回去 ——
    這樣 NOTE 的 key 就是乾淨的句子，跟 recipes.js 裡看到的一樣 */
 const bare = x => String(x).replace(/^（|）$/g, '');
-const trNote = x => (isKo() && NOTE[bare(x)] && '（' + NOTE[bare(x)] + '）') || x;
+const trNote = x => (isKo() && S('NOTE.' + bare(x)) && '（' + S('NOTE.' + bare(x)) + '）') || x;
 
 /* 量詞不能全域替換 —— 韓文的量詞跟著名詞變。
    中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
@@ -1150,7 +1155,7 @@ const COUNTER_OVERRIDES = {
   '蘆筍|根': '대',      /* 豆腐 0.5盒 → 찌개용 두부 0.5모。「盒」的一般翻譯 팩 是包裝單位，不是豆腐的量詞 */   /* 秀珍菇 數朵 → 느타리버섯 몇 가닥 */
 };
 const counterOf = (name, unit) =>
-  (isKo() && (COUNTER_OVERRIDES[name + '|' + unit] || TERM[unit])) || unit;
+  (isKo() && (S('COUNTER.' + name + '|' + unit) || S('TERM.' + unit))) || unit;
 
 /* 量詞沒登記時要出聲 —— 不然它會安靜地用一般翻譯，錯了也看不出來。
 
@@ -1164,7 +1169,7 @@ function auditCounters() {
       const u = splitUnit(unit || '').u;
       if (!COUNTER_UNITS.includes(u)) return;
       const key = (BUY_AS[name] || name) + '|' + u;
-      if (!COUNTER_OVERRIDES[key]) miss.add(key + '  →  ' + (TERM[u] || u));
+      if (!S('COUNTER.' + key)) miss.add(key + '  →  ' + (S('TERM.' + u) || u));
     });
   }));
   if (miss.size) console.warn(
@@ -1180,7 +1185,7 @@ function auditNotes() {
   RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
     (Array.isArray(item) ? [item] : item.items).forEach(([, , unit]) => {
       const n = bare(splitUnit(unit || '').note || '');
-      if (n && !NOTE[n]) miss.add(n);
+      if (n && !S('NOTE.' + n)) miss.add(n);
     });
   }));
   if (miss.size) console.warn(
@@ -1197,7 +1202,7 @@ function auditUnits() {
     (Array.isArray(item) ? [item] : item.items).forEach(([name, , unit]) => {
       const u = splitUnit(unit || '').u;
       if (!u || /^[\d\s./–-]*(g|ml)?$/.test(u)) return;      // 純數字和 g/ml 不用翻
-      if (TERM[u] || COUNTER_OVERRIDES[(BUY_AS[name] || name) + '|' + u]) return;
+      if (S('TERM.' + u) || S('COUNTER.' + (BUY_AS[name] || name) + '|' + u)) return;
       miss.add(`${u}（${name}）`);
     });
   }));
@@ -1317,8 +1322,12 @@ function auditSubtitles() {
 }
 
 /* 食譜欄位：先看 r.ko，沒有就回中文 */
-const L  = (r, f)    => (isKo() && r.ko && r.ko[f]) || r[f];
-const La = (r, f, i) => (isKo() && r.ko && r.ko[f] && r.ko[f][i]) || null;
+/* ⛔ 舊版是「r.ko 的陣列第 i 格」—— 中文插一句、韓文沒跟著插，整段錯位而且不報錯。
+   改成編號對位之後那個坑消失。 */
+const FIELD_ID = { urgentNote: 'urgent' };
+const ARR_ID   = { stages: 'stage', steps: 'step', tips: 'tip', prep: 'prep' };
+const L  = (r, f)    => S(`R${r.id}.${FIELD_ID[f] || f}`) ?? r[f];
+const La = (r, f, i) => S(`R${r.id}.${ARR_ID[f]}.${i + 1}`);
 
 /* 慢寶的自我介紹，兩種語言各一組句子 */
 const BO_INTRO_KO = [
@@ -1329,7 +1338,7 @@ const BO_INTRO_KO = [
   '맛있는 거 앞에서는 나도 달라지거든.',
   '우리, 밥만큼은 제대로 먹고 살자.',
 ];
-const introLines = () => (isKo() ? BO_INTRO_KO : BO_INTRO_LINES);
+const introLines = () => BO_INTRO_LINES.map((_, i) => S(`BO.intro.${i + 1}`));
 
 /* ── 慢寶 ── */
 const BO = {
