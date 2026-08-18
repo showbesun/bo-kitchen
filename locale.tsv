@@ -175,9 +175,9 @@ R5.prep.6	recipes.js · id 5	切厚塊	두툼하게 썬다
 R5.prep.7	recipes.js · id 5	斜切段	어슷썬다	
 R5.prep.8	recipes.js · id 5	斜切片	어슷썬다	
 R6.title	recipes.js · id 6	櫛瓜小煎餅	애호박전	
-R6.subtitle	recipes.js · id 6	沾薄蛋衣慢煎，一口一個。翻面不要催我。	달걀옷 얇게 입혀 노릇하게. 뒤집는 거 보채지 마.	
-R6.note	recipes.js · id 6	櫛瓜甜甜的，剛煎好最香。沾薄蛋衣慢煎，別急著翻面，邊邊定型了才漂亮。	애호박은 달큰해서 갓 부쳤을 때가 찐이야. 달걀옷 얇게 입혀 약불에 부치고, 가장자리 각 잡히면 뒤집어.	
-R6.murmur	recipes.js · id 6	剛煎好的第一片，先給我。	첫 장은 내 거.	
+R6.subtitle	recipes.js · id 6	櫛瓜清甜多汁。薄蛋衣煎到微金黃，一口一個剛剛好。	달큰한 애호박 채즙 팡팡. 얇은 달걀옷 입혀 한입에 쏙.	
+R6.note	recipes.js · id 6	沾薄蛋衣慢火煎，別急著翻面。等邊邊定型、微泛金黃再翻才漂亮。	달걀옷 얇게 입혀 약불에 부치고, 가장자리 각 잡히면 뒤집어.	
+R6.murmur	recipes.js · id 6	翻面不要催我，這盤我包了。	뒤집는 거 재촉하지 마, 이건 나 혼자 순삭각.	
 R6.stage.1	recipes.js · id 6	櫛瓜裹蛋	애호박에 달걀옷	
 R6.stage.2	recipes.js · id 6	兩面煎金黃	양면 노릇하게	
 R6.step.1	recipes.js · id 6	平底鍋加入食用油 2 湯匙，以中小火熱鍋。	팬에 식용유 2큰술을 두르고 중약불로 달군다.	
@@ -192,9 +192,9 @@ R6.prep.1	recipes.js · id 6	切成 0.5–0.7 cm 圓片，撒鹽靜置 5 分鐘�
 R6.prep.2	recipes.js · id 6	薄薄沾在櫛瓜兩面，拍掉多餘的粉	애호박 양면에 얇게 묻힌 뒤 남는 가루는 털어낸다	
 R6.prep.3	recipes.js · id 6	加幾滴芝麻油打散備用	참기름 몇 방울을 넣어 풀어 둔다.	
 R7.title	recipes.js · id 7	一秒回羅馬番茄肉醬	라구 소스	
-R7.subtitle	recipes.js · id 7	燉滿兩小時。你在沙發躺好，時間會處理一切。	두 시간 푹 끓이기. 넌 소파에 누워 있어, 불이 다 해.	
-R7.note	recipes.js · id 7	番茄肉醬就是要讓肉香、番茄和蔬菜甜味慢慢融在一起。拌麵的時候，醬別客氣。	토마토 미트소스는 고기 향, 토마토, 채소 단맛이 천천히 하나가 되는 맛이야. 파스타에 비빌 땐 소스 아끼지 마.	
-R7.murmur	recipes.js · id 7	這個香氣，值得我慢慢等。	이 향이면 기다릴 만해.	
+R7.subtitle	recipes.js · id 7	蔬菜底香甜、肉香濃郁。兩小時，時間會處理一切。	채소 베이스의 단맛과 고기 풍미. 시간과 불이 완성하는 라구.	
+R7.note	recipes.js · id 7	蔬菜丁耐心炒出甜香，下肉末與番茄慢燉。拌麵抹麵包都無敵。	다진 채소 달달 볶아 단맛 내고 뭉근하게 졸이기. 빵에 얹어도 최고야.	
+R7.murmur	recipes.js · id 7	躺在沙發聞肉醬香，就是幸福。	소파에 누워 라구 향 솔솔 맡는 게 찐 행복.	
 R7.urgent	recipes.js · id 7	開始前先確認這段時間人在家。煮上了就別急著出門。	집에 계속 있을 수 있는지 먼저 확인. 끓이기 시작하면 나가지 마.	
 R7.stage.1	recipes.js · id 7	蔬菜慢慢炒甜	채소 단맛 천천히 끌어내기	
 R7.stage.2	recipes.js · id 7	肉末炒散香	다진 고기 풀어 볶기	
@@ -224,9 +224,9 @@ R7.prep.4	recipes.js · id 7	切小丁	작게 깍둑썬다
 R7.prep.5	recipes.js · id 7	下鍋前 10 分鐘從冰箱取出	조리 10분 전에 냉장고에서 꺼낸다	
 R7.prep.6	recipes.js · id 7	下鍋前 10 分鐘從冰箱取出	조리 10분 전에 냉장고에서 꺼낸다	
 R8.title	recipes.js · id 8	大口吃肉泡菜鍋	돼지고기 김치찌개	
-R8.subtitle	recipes.js · id 8	泡菜不夠酸不要煮。厚切五花在等它變一家人。	안 신 김치로는 끓이지 마. 두툼한 삼겹살한테 실례야.	
-R8.note	recipes.js · id 8	豬五花先煎香，這鍋就有底氣。豆腐吸一點湯，挖一匙蓋在飯上——嗯，這樣吃。	삼겹살을 먼저 고소하게 구워야 이 찌개가 힘이 있어. 두부에 국물 좀 먹여서 밥 위에 한 숟갈. 응, 이렇게.	
-R8.murmur	recipes.js · id 8	這鍋一開，白飯就守不住了。	이거 끓기 시작하면 밥은 못 버텨.	
+R8.subtitle	recipes.js · id 8	泡菜不夠酸不要煮。厚切五花在等它變一家人。	덜 익은 김치로는 끓이지 마. 두툼한 삼겹살한테 실례야.	
+R8.note	recipes.js · id 8	厚切五花先煎出豬油再下酸泡菜炒香。油脂包覆酸氣，湯頭才夠濃。	삼겹살 기름에 신김치 달달 볶기. 돼지기름이 신맛을 감싸줘야 국물이 찐해져.	
+R8.murmur	recipes.js · id 8	盛好白飯，我已經準備好大口吃肉。	밥 펐다. 이제 고기 흡입할 준비 완료.	
 R8.urgent	recipes.js · id 8	泡菜如果還很新鮮，先密封放室溫半天讓它變酸。	김치가 아직 덜 익었으면 밀폐해 실온에 반나절 두어 신맛을 낸다.	
 R8.stage.1	recipes.js · id 8	五花先煎香	삼겹살 먼저 굽기	
 R8.stage.2	recipes.js · id 8	泡菜咕嘟	김치 보글보글	
@@ -249,7 +249,7 @@ R8.prep.3	recipes.js · id 8	切絲	채 썬다
 R8.prep.4	recipes.js · id 8	斜切段	어슷썬다	
 R8.prep.5	recipes.js · id 8	切厚片	두툼하게 썬다	
 R9.title	recipes.js · id 9	有肉有菜雞腿炒麵	닭다리살 볶음면	
-R9.subtitle	recipes.js · id 9	大白菜爽脆、雞腿肉焦香。大火快炒封住肉汁。	배추는 아삭, 닭다리살은 불향. 센 불로 육즙 꽉 가두기.	
+R9.subtitle	recipes.js · id 9	白菜爽脆、雞腿肉焦香。大火快炒封住肉汁。	배추는 아삭, 닭다리살은 노릇하게. 센 불로 육즙 꽉 가두기.	
 R9.note	recipes.js · id 9	有肉有菜有碳水，一盤就把晚餐交代完。洗一個鍋子是我的極限。	고기, 채소, 탄수화물까지 한 팬으로 저녁 끝. 설거지는 냄비 하나가 내 한계야.	
 R9.murmur	recipes.js · id 9	麵熟了叫我一聲。	면 다 볶아지면 나 깨워줘.	
 R9.stage.1	recipes.js · id 9	雞腿先上色	닭다리살 먼저 노릇하게	
@@ -275,9 +275,9 @@ R9.prep.8	recipes.js · id 9	用手撕成細條	손으로 가늘게 찢는다
 R9.prep.9	recipes.js · id 9	先調勻備用	미리 섞어 둔다	
 R9.prep.10	recipes.js · id 9	煮到九分熟，沖冷水後瀝乾，拌少量油防黏	90% 정도만 삶고 찬물에 헹군 뒤 물기를 뺀다. 기름을 조금 버무려 달라붙지 않게 한다	
 R10.title	recipes.js · id 10	韓式醬醃洋蔥	양파장아찌	
-R10.subtitle	recipes.js · id 10	解膩小菜也是煎餅沾醬。冰箱常備這盒，隨時能開吃。	밑반찬도 되고 전 찍먹 소스도 됨. 냉장고에 무조건 쟁여둬.	
-R10.note	recipes.js · id 10	烤肉、炸物、煎餅最搭。半顆洋蔥切塊，熱醬汁沖下去，冰兩小時就能開吃。	고기, 튀김, 전이랑 환상조합. 양파 반 개 썰어 뜨거운 간장 붓고 두 시간 냉장하면 끝.	
-R10.murmur	recipes.js · id 10	有煎餅或炸物，就把這盒拿出來。	전이나 튀김 있으면 이거 꺼내.	
+R10.subtitle	recipes.js · id 10	解膩小菜、煎餅沾醬。酸甜微辣，洋蔥醬汁是精髓。	밑반찬이자 전 찍먹 소스. 양파 향 밴 새콤달콤 간장이 킥.	
+R10.note	recipes.js · id 10	半顆洋蔥切塊，熱醬汁沖下去冷藏兩小時。配烤肉、炸物、煎餅都絕配。	양파 반 개 썰어 뜨거운 간장 붓고 두 시간 냉장. 고기, 튀김, 전에 찰떡.	
+R10.murmur	recipes.js · id 10	冰箱常備這一盒，我隨時能開動。	냉장고에 이거 하나면 언제든 든든하지.	
 R10.stage.1	recipes.js · id 10	醬汁煮開	간장물 끓이기	
 R10.stage.2	recipes.js · id 10	關火加醋熱沖	불 끄고 식초 넣어 뜨겁게 붓기	
 R10.stage.3	recipes.js · id 10	冰著等入味	냉장고에서 간 들이기	
