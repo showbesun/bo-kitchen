@@ -275,7 +275,7 @@ R9.prep.8	recipes.js · id 9	用手撕成細條	손으로 가늘게 찢는다
 R9.prep.9	recipes.js · id 9	先調勻備用	미리 섞어 둔다	
 R9.prep.10	recipes.js · id 9	煮到九分熟，沖冷水後瀝乾，拌少量油防黏	90% 정도만 삶고 찬물에 헹군 뒤 물기를 뺀다. 기름을 조금 버무려 달라붙지 않게 한다	
 R10.title	recipes.js · id 10	韓式醬醃洋蔥	양파장아찌	
-R10.subtitle	recipes.js · id 10	是解膩小菜也是煎餅沾醬。冰箱常備這盒，隨時能開吃。	밑반찬도 되고 전 찍먹 소스도 됨. 냉장고에 무조건 쟁여둬.	
+R10.subtitle	recipes.js · id 10	解膩小菜也是煎餅沾醬。冰箱常備這盒，隨時能開吃。	밑반찬도 되고 전 찍먹 소스도 됨. 냉장고에 무조건 쟁여둬.	
 R10.note	recipes.js · id 10	烤肉、炸物、煎餅最搭。半顆洋蔥就夠。	고기, 튀김, 전이랑 제일 잘 어울려.	
 R10.murmur	recipes.js · id 10	有煎餅或炸物，就把這盒拿出來。	전이나 튀김 있으면 이거 꺼내.	
 R10.stage.1	recipes.js · id 10	醬汁煮開	간장물 끓이기	
@@ -294,7 +294,7 @@ R10.tip.5	recipes.js · id 10	這是冷藏小菜，不是長期保存罐頭。�
 R10.prep.1	recipes.js · id 10	切成一口大小；不要切得太細	한입 크기로 썬다. 너무 잘게 자르지 않는다	
 R10.prep.2	recipes.js · id 10	切段	어슷썬다	
 R11.title	recipes.js · id 11	不用銅盤的銅盤烤肉	서울식 불고기	
-R11.subtitle	recipes.js · id 11	肉肉派菇菇派都愛。平底鍋燜出甜汁，最後一定要拌飯。	고기파도 버섯파도 대만족. 팬에 자작하게 끓여 마지막엔 밥 비비기.	
+R11.subtitle	recipes.js · id 11	肉肉派菇菇派都愛。平底鍋燜出甜汁，最後要拌飯。	고기파도 버섯파도 좋아해. 자작하게 끓이고 마지막엔 밥.	
 R11.note	recipes.js · id 11	肉肉派、菇菇派都會喜歡。牛肉選嫩一點的，菇類隨你加。	고기파도 버섯파도 좋아할 메뉴야. 고기는 등심 추천. 버섯은 취향대로.	
 R11.murmur	recipes.js · id 11	冬粉先吃，最後用白飯收尾。	당면부터 먼저.	
 R11.urgent	recipes.js · id 11	這道不能臨時起意 —— 開火前一小時就要動手。	이건 즉흥으로 못 한다 —— 불 켜기 한 시간 전에는 시작해야 한다.	
@@ -323,7 +323,7 @@ R11.prep.7	recipes.js · id 11	切片	얇게 썬다
 R11.prep.8	recipes.js · id 11	撕成小朵	먹기 좋게 찢는다	
 R11.prep.9	recipes.js · id 11	斜切段	어슷썬다	
 R12.title	recipes.js · id 12	澱粉回魂脆邊馬鈴薯餅	감자전	
-R12.subtitle	recipes.js · id 12	沉澱澱粉抓回來才夠 Q 彈，邊邊煎脆配洋蔥醬汁。	가라앉은 전분 넣어야 겉바속쫀. 양파장아찌 찍먹이 정석이지.	
+R12.subtitle	recipes.js · id 12	沉澱澱粉抓回來才夠 Q 彈，邊邊煎脆配洋蔥醬汁。	가라앉은 전분 넣어야 겉바속쫀. 양파장아찌 찍먹이 정석.	
 R12.note	recipes.js · id 12	外脆內Q的馬鈴薯餅，旁邊放一小碟洋蔥醬菜剛剛好。鹹、酸、甜補上來，一口就完整了。	겉바속쫀 감자전 옆엔 양파장아찌 조금 곁들이면 딱이야. 짭짤하고 새콤달콤한 맛이 붙으면 한입이 완성돼.	
 R12.murmur	recipes.js · id 12	外脆內Q，旁邊要有洋蔥醬菜。	바삭한 가장자리부터.	
 R12.stage.1	recipes.js · id 12	澱粉拌回去	전분 다시 섞기	
@@ -360,7 +360,7 @@ R13.prep.3	recipes.js · id 13	切成蔥花	송송 썬다
 R13.prep.4	recipes.js · id 13	切細絲	가늘게 채 썬다	
 R13.prep.5	recipes.js · id 13	分出蛋黃，蛋白留著別的用	노른자만 분리하고 흰자는 따로 둔다	
 R14.title	recipes.js · id 14	鮮蝦蘆筍義大利麵	새우 아스파라거스 파스타	
-R14.subtitle	recipes.js · id 14	蝦頭煉油是精髓。清爽歸清爽，鮮味不能少。	새우 머리로 기름 내기가 핵심. 산뜻해도 감칠맛은 꽉 채워야지.	
+R14.subtitle	recipes.js · id 14	蝦頭煉油是精髓。清爽歸清爽，鮮味不能少。	새우 머리로 기름 내기가 핵심. 산뜻해도 감칠맛은 챙겨야지.	
 R14.note	recipes.js · id 14	蝦和蘆筍都很清爽，後面用一片培根撐住味道。最後那點檸檬一進來，整盤就亮了。	새우랑 아스파라거스는 산뜻하고, 베이컨 한 장이 뒤에서 맛을 받쳐 줘. 마지막에 레몬까지 들어오면 맛이 확 살아나.	
 R14.murmur	recipes.js · id 14	蝦子要嫩，這個不能讓。	새우는 탱글해야지.	
 R14.stage.1	recipes.js · id 14	麵先下鍋	면 먼저 삶기	
@@ -417,7 +417,7 @@ R15.prep.4	recipes.js · id 15	切極細末	아주 잘게 다진다
 R15.prep.5	recipes.js · id 15	現磨	강판에 갈아 둔다	
 R15.prep.6	recipes.js · id 15	分兩份；收尾那份冷藏到要用	두 몫으로 나누고 마무리용은 쓸 때까지 냉장한다	
 R16.title	recipes.js · id 16	阿馬特里恰納義大利麵	아마트리치아나	
-R16.subtitle	recipes.js · id 16	羅馬正統經典。認明 Guanciale 與 DOP 番茄，不接受代換。	로마 4대 파스타의 찐 클래식. 관찰레와 DOP 토마토, 대체 불가.	
+R16.subtitle	recipes.js · id 16	羅馬正統經典。Guanciale 與 DOP 番茄，不接受代換。	로마 파스타의 찐 클래식. 관찰레와 DOP 토마토, 대체 불가.	
 R16.note	recipes.js · id 16	這道我只認 Guanciale。培根不是它，Pancetta 也不是它。番茄我也指定 San Marzano DOP。油慢慢逼出來，再讓番茄接住 —— 味道就從這裡開始。	이건 관찰레로 해야 해. 베이컨도 아니고 판체타도 아니야. 토마토도 산 마르자노 DOP로 가. 기름을 천천히 빼고 그 맛을 토마토가 받아야 해. 여기서부터 맛이 시작돼.	
 R16.murmur	recipes.js · id 16	在義大利吃過的就知道。	이탈리아에서 먹어봤으면 알지.	
 R16.stage.1	recipes.js · id 16	Guanciale 冷鍋逼油	관찰레 기름 내기	
