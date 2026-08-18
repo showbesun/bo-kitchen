@@ -2747,7 +2747,7 @@ const RECIPES = [
       [
         "Guanciale 義式醃豬頰肉",
         100,
-        "g（不可用培根或 Pancetta 代替）"
+        "g"
       ],
       [
         "義大利直麵",
