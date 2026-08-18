@@ -2370,5 +2370,116 @@ const RECIPES = [
         "撒蔥椒起鍋 ✅"
       ]
     ]
+  },
+  {
+    "id": 19,
+    "cuisine": "CUI.西式",
+    "stars": 1,
+    "starsLabel": "新手村",
+    "image": "assets/dish/r19.webp",
+    "tags": [
+      "TAG.蔬菜",
+      "TAG.小菜",
+      "TAG.30分鐘上桌",
+      "TAG.錢包友善"
+    ],
+    "basePortions": 2,
+    "time": "約25分鐘",
+    "shoppingList": [
+      [
+        "ING.櫛瓜",
+        1,
+        "UNIT.根"
+      ],
+      [
+        "ING.雞蛋",
+        1,
+        "UNIT.顆"
+      ],
+      [
+        "ING.中筋麵粉",
+        50,
+        "UNIT.g"
+      ],
+      [
+        "ING.胡蘿蔔",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.洋蔥",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.鹽",
+        0.75,
+        "UNIT.茶匙（櫛瓜出水 1/2、麵糊調味 1/4）"
+      ],
+      [
+        "ING.黑胡椒粉",
+        null,
+        "UNIT.少許"
+      ],
+      [
+        "ING.帕瑪森起司",
+        null,
+        "UNIT.適量（可省）"
+      ],
+      [
+        "ING.食用油",
+        null,
+        "UNIT.適量（炒料與煎餅都要）"
+      ]
+    ],
+    "prepNotes": [
+      {
+        "name": "ING.櫛瓜",
+        "amount": "1 根",
+        "group": "先醃"
+      },
+      {
+        "name": "ING.胡蘿蔔",
+        "amount": "少許",
+        "group": "切絲"
+      },
+      {
+        "name": "ING.洋蔥",
+        "amount": "少許",
+        "group": "切絲"
+      }
+    ],
+    "steps": [
+      "stage",
+      "step",
+      "stage",
+      "step",
+      "stage",
+      "step",
+      "step"
+    ],
+    "tips": 4,
+    "schedule": [
+      [
+        0,
+        "櫛瓜刨絲、撒鹽靜置"
+      ],
+      [
+        8,
+        "炒胡蘿蔔洋蔥、放涼"
+      ],
+      [
+        13,
+        "擠乾、拌麵糊"
+      ],
+      [
+        17,
+        "分四五塊慢火厚煎"
+      ],
+      [
+        25,
+        "兩面金黃 ✅"
+      ]
+    ]
   }
 ];
