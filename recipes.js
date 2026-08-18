@@ -41,7 +41,7 @@ const RECIPES = [
         "UNIT.包"
       ],
       [
-        "ING.米酒或燒酒",
+        "ING.米酒",
         2,
         "UNIT.湯匙"
       ],
@@ -1055,7 +1055,7 @@ const RECIPES = [
             "UNIT.湯匙"
           ],
           [
-            "ING.米酒或燒酒",
+            "ING.米酒",
             0.5,
             "UNIT.湯匙"
           ],
@@ -1143,7 +1143,7 @@ const RECIPES = [
     "prepNotes": [
       {
         "name": "GRP.雞腿醃料",
-        "amount": "醬油・米酒或燒酒・太白粉",
+        "amount": "醬油・米酒・太白粉",
         "group": "PGRP.調醬汁"
       },
       {
@@ -1238,7 +1238,7 @@ const RECIPES = [
             "UNIT.湯匙"
           ],
           [
-            "ING.米酒或燒酒",
+            "ING.米酒",
             1,
             "UNIT.湯匙（可省略；省略時水多補 1 湯匙）"
           ],
@@ -1375,7 +1375,7 @@ const RECIPES = [
             "UNIT.湯匙"
           ],
           [
-            "ING.米酒或燒酒",
+            "ING.米酒",
             1,
             "UNIT.湯匙"
           ],
@@ -2636,11 +2636,11 @@ const RECIPES = [
       [
         "ING.去骨雞腿肉",
         2,
-        "UNIT.片"
+        "UNIT.片（約 300g）"
       ],
       [
         "ING.白米",
-        1.5,
+        1,
         "UNIT.米杯"
       ],
       [
@@ -2649,9 +2649,9 @@ const RECIPES = [
         "UNIT.顆（超商的맛밤直接用最方便）"
       ],
       [
-        "ING.秀珍菇",
+        "ING.菇類",
         null,
-        "UNIT.適量（約一小把）"
+        "UNIT.適量（約一小把，香菇最香）"
       ],
       [
         "ING.洋蔥",
@@ -2709,7 +2709,7 @@ const RECIPES = [
           [
             "ING.米酒",
             1,
-            "UNIT.湯匙（沒有可用清酒代替）"
+            "UNIT.湯匙"
           ],
           [
             "ING.味醂",
@@ -2752,7 +2752,7 @@ const RECIPES = [
       },
       {
         "name": "ING.白米",
-        "amount": "1.5 米杯",
+        "amount": "1 米杯",
         "group": "先洗"
       },
       {
@@ -2761,7 +2761,7 @@ const RECIPES = [
         "group": "切塊"
       },
       {
-        "name": "ING.秀珍菇",
+        "name": "ING.菇類",
         "amount": "一小把",
         "group": "切絲"
       },
