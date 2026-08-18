@@ -2481,5 +2481,347 @@ const RECIPES = [
         "兩面金黃 ✅"
       ]
     ]
+  },
+  {
+    "id": 20,
+    "cuisine": "CUI.中式",
+    "stars": 3,
+    "starsLabel": "深夜炫技",
+    "image": "assets/dish/r20.webp",
+    "tags": [
+      "TAG.週末慢慢煮",
+      "TAG.錢包友善"
+    ],
+    "basePortions": 2,
+    "time": "約60分鐘",
+    "shoppingList": [
+      [
+        "ING.中筋麵粉",
+        300,
+        "UNIT.g"
+      ],
+      [
+        "ING.滾水",
+        165,
+        "UNIT.ml"
+      ],
+      [
+        "ING.冷水",
+        60,
+        "UNIT.ml"
+      ],
+      [
+        "ING.鹽",
+        2,
+        "UNIT.g"
+      ],
+      {
+        "label": "ING.油酥",
+        "items": [
+          [
+            "ING.沙拉油",
+            36,
+            "UNIT.ml（有豬油優先用，最傳統最香）"
+          ],
+          [
+            "ING.中筋麵粉",
+            24,
+            "UNIT.g"
+          ],
+          [
+            "ING.鹽",
+            1,
+            "UNIT.g"
+          ]
+        ]
+      },
+      {
+        "label": "ING.蔥油內餡",
+        "items": [
+          [
+            "ING.大蔥",
+            60,
+            "UNIT.g（約 3–4 根）"
+          ],
+          [
+            "ING.鹽",
+            1.5,
+            "UNIT.g"
+          ],
+          [
+            "ING.芝麻油",
+            4,
+            "UNIT.g（不到 1 茶匙）"
+          ]
+        ]
+      },
+      [
+        "ING.食用油",
+        null,
+        "UNIT.適量（每張約 8ml）"
+      ]
+    ],
+    "prepNotes": [
+      {
+        "name": "ING.大蔥",
+        "amount": "60 g",
+        "group": "切末"
+      },
+      {
+        "name": "ING.蔥油內餡",
+        "amount": "大蔥・鹽・芝麻油",
+        "group": "調醬汁"
+      }
+    ],
+    "steps": [
+      "stage",
+      "step",
+      "step",
+      "stage",
+      "step",
+      "stage",
+      "step",
+      "stage",
+      "step",
+      "step",
+      "step",
+      "stage",
+      "step",
+      "step",
+      "step"
+    ],
+    "tips": 4,
+    "urgentNote": true,
+    "schedule": [
+      [
+        0,
+        "燙麵揉團"
+      ],
+      [
+        10,
+        "靜置 30 分鐘"
+      ],
+      [
+        40,
+        "做油酥、切蔥"
+      ],
+      [
+        45,
+        "擀捲盤起"
+      ],
+      [
+        55,
+        "蓋鍋悶煎"
+      ],
+      [
+        60,
+        "搓鬆上桌 ✅"
+      ]
+    ]
+  },
+  {
+    "id": 21,
+    "cuisine": "CUI.中式",
+    "stars": 2,
+    "starsLabel": "家常實力",
+    "image": "assets/dish/r21.webp",
+    "tags": [
+      "TAG.雞肉",
+      "TAG.一鍋到底",
+      "TAG.想吃熱的"
+    ],
+    "basePortions": 2,
+    "time": "約50分鐘",
+    "shoppingList": [
+      [
+        "ING.去骨雞腿肉",
+        2,
+        "UNIT.片"
+      ],
+      [
+        "ING.白米",
+        1.5,
+        "UNIT.米杯"
+      ],
+      [
+        "ING.熟栗子",
+        12,
+        "UNIT.顆（超商的맛밤直接用最方便）"
+      ],
+      [
+        "ING.秀珍菇",
+        null,
+        "UNIT.適量（約一小把）"
+      ],
+      [
+        "ING.洋蔥",
+        0.5,
+        "UNIT.顆"
+      ],
+      [
+        "ING.大蔥",
+        1,
+        "UNIT.根（蔥白爆香、蔥綠當蔥花）"
+      ],
+      [
+        "ING.大蒜",
+        2,
+        "UNIT.瓣"
+      ],
+      {
+        "label": "ING.雞腿醃料",
+        "items": [
+          [
+            "ING.鹽",
+            0.25,
+            "UNIT.茶匙"
+          ],
+          [
+            "ING.黑胡椒粉",
+            null,
+            "UNIT.少許"
+          ],
+          [
+            "ING.醬油",
+            1,
+            "UNIT.湯匙"
+          ],
+          [
+            "ING.蠔油",
+            1,
+            "UNIT.茶匙"
+          ],
+          [
+            "ING.太白粉",
+            1,
+            "UNIT.茶匙"
+          ]
+        ]
+      },
+      {
+        "label": "ING.調味汁",
+        "items": [
+          [
+            "ING.醬油",
+            2,
+            "UNIT.湯匙"
+          ],
+          [
+            "ING.米酒",
+            1,
+            "UNIT.湯匙（沒有可用清酒代替）"
+          ],
+          [
+            "ING.味醂",
+            1,
+            "UNIT.茶匙（沒有可用清酒加半茶匙糖代替）"
+          ],
+          [
+            "ING.白糖",
+            0.5,
+            "UNIT.茶匙"
+          ],
+          [
+            "ING.蠔油",
+            1,
+            "UNIT.湯匙（補乾香菇的鮮味）"
+          ],
+          [
+            "ING.白胡椒粉",
+            null,
+            "UNIT.少許"
+          ]
+        ]
+      }
+    ],
+    "prepNotes": [
+      {
+        "name": "ING.去骨雞腿肉",
+        "amount": "2 片",
+        "group": "先醃"
+      },
+      {
+        "name": "ING.雞腿醃料",
+        "amount": "鹽・黑胡椒・醬油・蠔油・太白粉",
+        "group": "調醬汁"
+      },
+      {
+        "name": "ING.調味汁",
+        "amount": "醬油・米酒・味醂・糖・蠔油・白胡椒",
+        "group": "調醬汁"
+      },
+      {
+        "name": "ING.白米",
+        "amount": "1.5 米杯",
+        "group": "先洗"
+      },
+      {
+        "name": "ING.熟栗子",
+        "amount": "12 顆",
+        "group": "切塊"
+      },
+      {
+        "name": "ING.秀珍菇",
+        "amount": "一小把",
+        "group": "切絲"
+      },
+      {
+        "name": "ING.洋蔥",
+        "amount": "1/2 顆",
+        "group": "切絲"
+      },
+      {
+        "name": "ING.大蔥",
+        "amount": "1 根",
+        "group": "切段"
+      },
+      {
+        "name": "ING.大蒜",
+        "amount": "2 瓣",
+        "group": "切末"
+      }
+    ],
+    "steps": [
+      "stage",
+      "step",
+      "step",
+      "stage",
+      "step",
+      "step",
+      "stage",
+      "step",
+      "step",
+      "stage",
+      "step",
+      "step"
+    ],
+    "tips": 4,
+    "urgentNote": true,
+    "schedule": [
+      [
+        0,
+        "切雞腿、下醃料"
+      ],
+      [
+        20,
+        "備其餘食材、調醬汁"
+      ],
+      [
+        28,
+        "乾煎雞皮逼油"
+      ],
+      [
+        36,
+        "爆香蔥蒜菇"
+      ],
+      [
+        40,
+        "電子鍋組合、按下"
+      ],
+      [
+        50,
+        "悶 10 分鐘後翻拌 ✅"
+      ]
+    ]
   }
 ];
