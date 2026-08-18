@@ -2,66 +2,66 @@
 const RECIPES = [
   {
     "id": 1,
-    "cuisine": "中式",
+    "cuisine": "CUI.中式",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r1.webp",
     "tags": [
-      "雞肉",
-      "下飯菜",
-      "一鍋到底",
-      "隔夜更好吃"
+      "TAG.雞肉",
+      "TAG.下飯菜",
+      "TAG.一鍋到底",
+      "TAG.隔夜更好吃"
     ],
     "basePortions": 2,
     "time": "約45分鐘",
     "shoppingList": [
       [
-        "雞翅",
+        "ING.雞翅",
         300,
-        "g（也可用整隻雞切塊；本食譜採這個組合，因為我就愛）"
+        "UNIT.g（也可用整隻雞切塊；本食譜採這個組合，因為我就愛）"
       ],
       [
-        "棒棒腿",
+        "ING.棒棒腿",
         300,
-        "g"
+        "UNIT.g"
       ],
       [
-        "胡蘿蔔",
+        "ING.胡蘿蔔",
         0.5,
-        "根"
+        "UNIT.根"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "甘栗仁",
+        "ING.甘栗仁",
         1,
-        "包"
+        "UNIT.包"
       ],
       [
-        "米酒或燒酒",
+        "ING.米酒或燒酒",
         2,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       {
-        "label": "靈魂黑金醬汁",
+        "label": "GRP.靈魂黑金醬汁",
         "items": [
           [
-            "醬油",
+            "ING.醬油",
             4,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "蠔油",
+            "ING.蠔油",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "黑糖",
+            "ING.黑糖",
             1.5,
-            "茶匙"
+            "UNIT.茶匙"
           ]
         ]
       }
@@ -104,77 +104,77 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "雞翅",
+        "name": "ING.雞翅",
         "amount": "300g",
-        "group": "先洗"
+        "group": "PGRP.先洗"
       },
       {
-        "name": "棒棒腿",
+        "name": "ING.棒棒腿",
         "amount": "300g",
-        "group": "先洗"
+        "group": "PGRP.先洗"
       },
       {
-        "name": "靈魂黑金醬汁",
+        "name": "GRP.靈魂黑金醬汁",
         "amount": "醬油 4 湯匙・蠔油 1 湯匙・黑糖 1.5 茶匙",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "胡蘿蔔",
+        "name": "ING.胡蘿蔔",
         "amount": "半根",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "半顆",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       }
     ]
   },
   {
     "id": 2,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r2.webp",
     "tags": [
-      "牛肉",
-      "湯",
-      "一鍋到底",
-      "生日",
-      "想吃熱的"
+      "TAG.牛肉",
+      "TAG.湯",
+      "TAG.一鍋到底",
+      "TAG.生日",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約40分鐘",
     "shoppingList": [
       [
-        "乾海帶",
+        "ING.乾海帶",
         5,
-        "g"
+        "UNIT.g"
       ],
       [
-        "牛腩",
+        "ING.牛腩",
         100,
-        "g"
+        "UNIT.g"
       ],
       [
-        "大蒜",
+        "ING.大蒜",
         1.5,
-        "瓣"
+        "UNIT.瓣"
       ],
       [
-        "高湯",
+        "ING.高湯",
         750,
-        "ml（推薦昆布魚乾或牛骨風味）"
+        "UNIT.ml（推薦昆布魚乾或牛骨風味）"
       ],
       [
-        "芝麻油",
+        "ING.芝麻油",
         1,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "韓式湯醬油（可用日式薄口醬油）",
+        "ING.韓式湯醬油（可用日式薄口醬油）",
         1.5,
-        "湯匙（醃牛腩 1.5 茶匙、湯底 1 湯匙，試味再補）"
+        "UNIT.湯匙（醃牛腩 1.5 茶匙、湯底 1 湯匙，試味再補）"
       ]
     ],
     "steps": [
@@ -217,61 +217,61 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "乾海帶",
+        "name": "ING.乾海帶",
         "amount": "5g",
-        "group": "先泡"
+        "group": "PGRP.先泡"
       },
       {
-        "name": "牛腩",
+        "name": "ING.牛腩",
         "amount": "100g",
-        "group": "先醃"
+        "group": "PGRP.先醃"
       },
       {
-        "name": "大蒜",
+        "name": "ING.大蒜",
         "amount": "1.5 瓣份量",
-        "group": "切末"
+        "group": "PGRP.切末"
       }
     ]
   },
   {
     "id": 3,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 3,
     "starsLabel": "深夜炫技",
     "image": "assets/dish/r3.webp",
     "tags": [
-      "麵",
-      "蔬菜",
-      "下班後",
-      "30分鐘上桌"
+      "TAG.麵",
+      "TAG.蔬菜",
+      "TAG.下班後",
+      "TAG.30分鐘上桌"
     ],
     "basePortions": 2,
     "time": "約25分鐘",
     "shoppingList": [
       [
-        "義大利直麵",
+        "ING.義大利直麵",
         180,
-        "g（推薦 Spaghetti No.5，最剛好）"
+        "UNIT.g（推薦 Spaghetti No.5，最剛好）"
       ],
       [
-        "大蒜",
+        "ING.大蒜",
         8,
-        "瓣"
+        "UNIT.瓣"
       ],
       [
-        "義式乾辣椒",
+        "ING.義式乾辣椒",
         2,
-        "根（愛吃辣再加，不吃辣可省略）"
+        "UNIT.根（愛吃辣再加，不吃辣可省略）"
       ],
       [
-        "橄欖油",
+        "ING.橄欖油",
         3,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "松露橄欖油",
+        "ING.松露橄欖油",
         null,
-        "1–1.5湯匙（熄火後加，有就封神，沒有可省略）"
+        "UNIT.1–1.5湯匙（熄火後加，有就封神，沒有可省略）"
       ]
     ],
     "steps": [
@@ -317,82 +317,82 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "大蒜",
+        "name": "ING.大蒜",
         "amount": "8 瓣",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "義式乾辣椒",
+        "name": "ING.義式乾辣椒",
         "amount": "2 根",
-        "group": "切末"
+        "group": "PGRP.切末"
       }
     ]
   },
   {
     "id": 4,
-    "cuisine": "甜點",
+    "cuisine": "CUI.甜點",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r4.webp",
     "tags": [
-      "甜點",
-      "烘焙",
-      "下午茶",
-      "剩菜救援"
+      "CUI.甜點",
+      "TAG.烘焙",
+      "TAG.下午茶",
+      "TAG.剩菜救援"
     ],
     "basePortions": 4,
     "time": "約35分鐘",
     "shoppingList": [
       [
-        "熟透香蕉",
+        "ING.熟透香蕉",
         2,
-        "根"
+        "UNIT.根"
       ],
       [
-        "低筋麵粉",
+        "ING.低筋麵粉",
         160,
-        "g"
+        "UNIT.g"
       ],
       {
-        "label": "糖",
+        "label": "GRP.糖",
         "note": "黑糖提焦糖香，白糖給甜度",
         "items": [
           [
-            "黑糖",
+            "ING.黑糖",
             25,
-            "g"
+            "UNIT.g"
           ],
           [
-            "白糖",
+            "ING.白糖",
             75,
-            "g"
+            "UNIT.g"
           ]
         ]
       },
       [
-        "奶油",
+        "ING.奶油",
         75,
-        "g"
+        "UNIT.g"
       ],
       [
-        "喝的優格",
+        "ING.喝的優格",
         40,
-        "ml"
+        "UNIT.ml"
       ],
       [
-        "雞蛋",
+        "ING.雞蛋",
         1,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "香草精",
+        "ING.香草精",
         0.5,
-        "茶匙"
+        "UNIT.茶匙"
       ],
       [
-        "小蘇打粉",
+        "ING.小蘇打粉",
         0.75,
-        "茶匙"
+        "UNIT.茶匙"
       ]
     ],
     "steps": [
@@ -431,105 +431,105 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "熟透香蕉",
+        "name": "ING.熟透香蕉",
         "amount": "2 根",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "奶油",
+        "name": "ING.奶油",
         "amount": "75g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ]
   },
   {
     "id": 5,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r5.webp",
     "tags": [
-      "豬肉",
-      "鍋物",
-      "一鍋到底",
-      "韓劇感",
-      "想吃熱的"
+      "TAG.豬肉",
+      "TAG.鍋物",
+      "TAG.一鍋到底",
+      "TAG.韓劇感",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約40分鐘",
     "shoppingList": [
       [
-        "豬五花或梅花肉",
+        "ING.豬五花或梅花肉",
         250,
-        "g"
+        "UNIT.g"
       ],
       [
-        "韓國櫛瓜",
+        "ING.韓國櫛瓜",
         0.5,
-        "根"
+        "UNIT.根"
       ],
       [
-        "馬鈴薯",
+        "ING.馬鈴薯",
         1,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "板豆腐",
+        "ING.板豆腐",
         0.5,
-        "盒"
+        "UNIT.盒"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "大蔥",
+        "ING.大蔥",
         0.5,
-        "根"
+        "UNIT.根"
       ],
       [
-        "青陽辣椒",
+        "ING.青陽辣椒",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "韓式醃蝦醬（可用少量魚露替代）",
+        "ING.韓式醃蝦醬（可用少量魚露替代）",
         0.5,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "醋",
+        "ING.醋",
         0.5,
-        "湯匙（關火前）"
+        "UNIT.湯匙（關火前）"
       ],
       {
-        "label": "辣醬鍋醬汁",
+        "label": "GRP.辣醬鍋醬汁",
         "items": [
           [
-            "韓式辣椒醬",
+            "ING.韓式辣椒醬",
             2,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "韓式辣椒粉",
+            "ING.韓式辣椒粉",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "蒜末",
+            "ING.蒜末",
             0.5,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "醬油",
+            "ING.醬油",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "白糖",
+            "ING.白糖",
             0.25,
-            "湯匙"
+            "UNIT.湯匙"
           ]
         ]
       }
@@ -583,81 +583,81 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "辣醬鍋醬汁",
+        "name": "GRP.辣醬鍋醬汁",
         "amount": "辣椒醬 2 湯匙・辣椒粉 1 湯匙・蒜末・醬油・白糖",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "豬五花或梅花肉",
+        "name": "ING.豬五花或梅花肉",
         "amount": "250g",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "馬鈴薯",
+        "name": "ING.馬鈴薯",
         "amount": "1 顆",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "韓國櫛瓜",
+        "name": "ING.韓國櫛瓜",
         "amount": "半根",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "半顆",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "板豆腐",
+        "name": "ING.板豆腐",
         "amount": "半盒",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "大蔥",
+        "name": "ING.大蔥",
         "amount": "半根",
-        "group": "切段"
+        "group": "PGRP.切段"
       },
       {
-        "name": "青陽辣椒",
+        "name": "ING.青陽辣椒",
         "amount": "1 根",
-        "group": "切片"
+        "group": "PGRP.切片"
       }
     ]
   },
   {
     "id": 6,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r6.webp",
     "tags": [
-      "蔬菜",
-      "小菜",
-      "30分鐘上桌",
-      "錢包友善"
+      "TAG.蔬菜",
+      "TAG.小菜",
+      "TAG.30分鐘上桌",
+      "TAG.錢包友善"
     ],
     "basePortions": 2,
     "time": "約20分鐘",
     "shoppingList": [
       [
-        "櫛瓜",
+        "ING.櫛瓜",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "雞蛋",
+        "ING.雞蛋",
         2,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "煎餅粉或中筋麵粉",
+        "ING.煎餅粉或中筋麵粉",
         1.5,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "芝麻油",
+        "ING.芝麻油",
         null,
-        "幾滴（蛋汁用）"
+        "UNIT.幾滴（蛋汁用）"
       ]
     ],
     "steps": [
@@ -693,76 +693,76 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "櫛瓜",
+        "name": "ING.櫛瓜",
         "amount": "1 根",
-        "group": "先醃"
+        "group": "PGRP.先醃"
       },
       {
-        "name": "煎餅粉或中筋麵粉",
+        "name": "ING.煎餅粉或中筋麵粉",
         "amount": "1.5 湯匙",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "雞蛋",
+        "name": "ING.雞蛋",
         "amount": "2 顆",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ]
   },
   {
     "id": 7,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 1,
     "starsLabel": "新手村",
     "time": "約 120 分鐘",
     "basePortions": 10,
     "image": "assets/dish/r7.webp",
     "tags": [
-      "豬肉",
-      "麵",
-      "週末慢慢煮",
-      "隔夜更好吃"
+      "TAG.豬肉",
+      "TAG.麵",
+      "TAG.週末慢慢煮",
+      "TAG.隔夜更好吃"
     ],
     "shoppingList": [
       [
-        "豬絞肉",
+        "ING.豬絞肉",
         400,
-        "g"
+        "UNIT.g"
       ],
       [
-        "牛絞肉",
+        "ING.牛絞肉",
         200,
-        "g"
+        "UNIT.g"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         1,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "胡蘿蔔",
+        "ING.胡蘿蔔",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "西洋芹",
+        "ING.西洋芹",
         2,
-        "支"
+        "UNIT.支"
       ],
       [
-        "蘑菇",
+        "ING.蘑菇",
         6,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "紅酒",
+        "ING.紅酒",
         180,
-        "ml"
+        "UNIT.ml"
       ],
       [
-        "番茄義大利麵醬",
+        "ING.番茄義大利麵醬",
         1200,
-        "g（Barilla 派在此小聲強推）"
+        "UNIT.g（Barilla 派在此小聲強推）"
       ]
     ],
     "steps": [
@@ -817,102 +817,102 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "1 顆",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "胡蘿蔔",
+        "name": "ING.胡蘿蔔",
         "amount": "1 根",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "西洋芹",
+        "name": "ING.西洋芹",
         "amount": "2 支",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "蘑菇",
+        "name": "ING.蘑菇",
         "amount": "6 顆",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "豬絞肉",
+        "name": "ING.豬絞肉",
         "amount": "400g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "牛絞肉",
+        "name": "ING.牛絞肉",
         "amount": "200g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ]
   },
   {
     "id": 8,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 2,
     "starsLabel": "家常實力",
     "time": "約45分鐘",
     "basePortions": 2,
     "image": "assets/dish/r8.webp",
     "tags": [
-      "豬肉",
-      "鍋物",
-      "一鍋到底",
-      "韓劇感",
-      "想吃熱的"
+      "TAG.豬肉",
+      "TAG.鍋物",
+      "TAG.一鍋到底",
+      "TAG.韓劇感",
+      "TAG.想吃熱的"
     ],
     "shoppingList": [
       [
-        "熟成泡菜",
+        "ING.熟成泡菜",
         400,
-        "g"
+        "UNIT.g"
       ],
       [
-        "豬五花肉",
+        "ING.豬五花肉",
         200,
-        "g"
+        "UNIT.g"
       ],
       [
-        "板豆腐",
+        "ING.板豆腐",
         0.5,
-        "盒"
+        "UNIT.盒"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.25,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "大蔥",
+        "ING.大蔥",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "蒜末",
+        "ING.蒜末",
         1,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "韓式辣椒粉",
+        "ING.韓式辣椒粉",
         1,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "韓式醃蝦醬（可用少量魚露替代）",
+        "ING.韓式醃蝦醬（可用少量魚露替代）",
         1,
-        "茶匙"
+        "UNIT.茶匙"
       ],
       [
-        "昆布魚乾高湯",
+        "ING.昆布魚乾高湯",
         500,
-        "ml"
+        "UNIT.ml"
       ],
       [
-        "芝麻油",
+        "ING.芝麻油",
         1,
-        "茶匙"
+        "UNIT.茶匙"
       ]
     ],
     "steps": [
@@ -965,134 +965,134 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "熟成泡菜",
+        "name": "ING.熟成泡菜",
         "amount": "400g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "豬五花肉",
+        "name": "ING.豬五花肉",
         "amount": "200g",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "1/4 顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "大蔥",
+        "name": "ING.大蔥",
         "amount": "1 根",
-        "group": "切段"
+        "group": "PGRP.切段"
       },
       {
-        "name": "板豆腐",
+        "name": "ING.板豆腐",
         "amount": "半盒",
-        "group": "切片"
+        "group": "PGRP.切片"
       }
     ]
   },
   {
     "id": 9,
-    "cuisine": "中式",
+    "cuisine": "CUI.中式",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r9.webp",
     "tags": [
-      "雞肉",
-      "麵",
-      "下班後",
-      "30分鐘上桌"
+      "TAG.雞肉",
+      "TAG.麵",
+      "TAG.下班後",
+      "TAG.30分鐘上桌"
     ],
     "basePortions": 2,
     "time": "約 30 分鐘",
     "shoppingList": [
       [
-        "去骨雞腿肉",
+        "ING.去骨雞腿肉",
         200,
-        "g"
+        "UNIT.g"
       ],
       [
-        "生麵條",
+        "ING.生麵條",
         240,
-        "g"
+        "UNIT.g"
       ],
       [
-        "大白菜",
+        "ING.大白菜",
         4,
-        "片葉子"
+        "UNIT.片葉子"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "秀珍菇",
+        "ING.秀珍菇",
         10,
-        "朵"
+        "UNIT.朵"
       ],
       [
-        "紅甜椒",
+        "ING.紅甜椒",
         0.25,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "黃甜椒",
+        "ING.黃甜椒",
         0.25,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "大蔥",
+        "ING.大蔥",
         0.5,
-        "根"
+        "UNIT.根"
       ],
       {
-        "label": "雞腿醃料",
+        "label": "GRP.雞腿醃料",
         "items": [
           [
-            "醬油",
+            "ING.醬油",
             0.5,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "米酒或燒酒",
+            "ING.米酒或燒酒",
             0.5,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "太白粉",
+            "ING.太白粉",
             0.5,
-            "茶匙"
+            "UNIT.茶匙"
           ]
         ]
       },
       {
-        "label": "醬香炒麵醬汁",
+        "label": "GRP.醬香炒麵醬汁",
         "items": [
           [
-            "醬油",
+            "ING.醬油",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "白糖",
+            "ING.白糖",
             1,
-            "茶匙"
+            "UNIT.茶匙"
           ],
           [
-            "鹽",
+            "ING.鹽",
             null,
-            "一小撮"
+            "UNIT.一小撮"
           ],
           [
-            "白胡椒粉",
+            "ING.白胡椒粉",
             null,
-            "一小撮"
+            "UNIT.一小撮"
           ],
           [
-            "水",
+            "ING.水",
             2,
-            "湯匙"
+            "UNIT.湯匙"
           ]
         ]
       }
@@ -1142,110 +1142,110 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "雞腿醃料",
+        "name": "GRP.雞腿醃料",
         "amount": "醬油・米酒或燒酒・太白粉",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "去骨雞腿肉",
+        "name": "ING.去骨雞腿肉",
         "amount": "200g",
-        "group": "先醃"
+        "group": "PGRP.先醃"
       },
       {
-        "name": "大白菜",
+        "name": "ING.大白菜",
         "amount": "4 片",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "半顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "紅甜椒",
+        "name": "ING.紅甜椒",
         "amount": "1/4 顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "黃甜椒",
+        "name": "ING.黃甜椒",
         "amount": "1/4 顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "大蔥",
+        "name": "ING.大蔥",
         "amount": "半根",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "秀珍菇",
+        "name": "ING.秀珍菇",
         "amount": "10 朵",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "醬香炒麵醬汁",
+        "name": "GRP.醬香炒麵醬汁",
         "amount": "醬油 1 湯匙・白糖 1 茶匙・白胡椒粉・水 2 湯匙",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "生麵條",
+        "name": "ING.生麵條",
         "amount": "240g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ]
   },
   {
     "id": 10,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r10.webp",
     "tags": [
-      "蔬菜",
-      "小菜",
-      "醬料",
-      "隔夜更好吃"
+      "TAG.蔬菜",
+      "TAG.小菜",
+      "TAG.醬料",
+      "TAG.隔夜更好吃"
     ],
     "basePortions": 2,
     "time": "約 10 分鐘（冷藏 2 小時以上）",
     "shoppingList": [
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "青辣椒",
+        "ING.青辣椒",
         1,
-        "根"
+        "UNIT.根"
       ],
       {
-        "label": "醬醃醬汁",
+        "label": "GRP.醬醃醬汁",
         "note": "醬油、糖、酒先煮開；關火後才加白醋",
         "items": [
           [
-            "醬油",
+            "ING.醬油",
             5,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "白糖",
+            "ING.白糖",
             null,
-            "1 湯匙 + 2 茶匙"
+            "UNIT.1 湯匙 + 2 茶匙"
           ],
           [
-            "黑糖",
+            "ING.黑糖",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "米酒或燒酒",
+            "ING.米酒或燒酒",
             1,
-            "湯匙（可省略；省略時水多補 1 湯匙）"
+            "UNIT.湯匙（可省略；省略時水多補 1 湯匙）"
           ],
           [
-            "白醋",
+            "ING.白醋",
             null,
-            "3 湯匙 + 1.5 茶匙"
+            "UNIT.3 湯匙 + 1.5 茶匙"
           ]
         ]
       }
@@ -1289,110 +1289,110 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "半顆",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "青辣椒",
+        "name": "ING.青辣椒",
         "amount": "1 根",
-        "group": "切段"
+        "group": "PGRP.切段"
       }
     ]
   },
   {
     "id": 11,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r11.webp",
     "tags": [
-      "牛肉",
-      "鍋物",
-      "下飯菜",
-      "想吃熱的"
+      "TAG.牛肉",
+      "TAG.鍋物",
+      "TAG.下飯菜",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約 75 分鐘",
     "timeNote": "牛肉先睡 1 小時，開火 15 分鐘就能上桌。",
     "shoppingList": [
       [
-        "牛肉片",
+        "ING.牛肉片",
         300,
-        "g"
+        "UNIT.g"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "香菇",
+        "ING.香菇",
         1,
-        "朵"
+        "UNIT.朵"
       ],
       [
-        "杏鮑菇",
+        "ING.杏鮑菇",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "秀珍菇",
+        "ING.秀珍菇",
         null,
-        "數朵"
+        "UNIT.數朵"
       ],
       [
-        "胡蘿蔔",
+        "ING.胡蘿蔔",
         0.25,
-        "根"
+        "UNIT.根"
       ],
       [
-        "大蔥",
+        "ING.大蔥",
         0.5,
-        "根"
+        "UNIT.根"
       ],
       [
-        "韓式冬粉",
+        "ING.韓式冬粉",
         60,
-        "g"
+        "UNIT.g"
       ],
       {
-        "label": "黃金比例梨汁醃醬",
+        "label": "GRP.黃金比例梨汁醃醬",
         "items": [
           [
-            "水梨汁",
+            "ING.水梨汁",
             150,
-            "ml"
+            "UNIT.ml"
           ],
           [
-            "白糖",
+            "ING.白糖",
             null,
-            "1/2 湯匙（只有使用無加糖 100% 天然梨汁時才加；韓國含糖水梨汁不用）"
+            "UNIT.1/2 湯匙（只有使用無加糖 100% 天然梨汁時才加；韓國含糖水梨汁不用）"
           ],
           [
-            "醬油",
+            "ING.醬油",
             5,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "米酒或燒酒",
+            "ING.米酒或燒酒",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "蒜末",
+            "ING.蒜末",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "芝麻油",
+            "ING.芝麻油",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "黑胡椒粉",
+            "ING.黑胡椒粉",
             null,
-            "少許"
+            "UNIT.少許"
           ]
         ]
       }
@@ -1443,76 +1443,76 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "牛肉片",
+        "name": "ING.牛肉片",
         "amount": "300g",
-        "group": "先醃"
+        "group": "PGRP.先醃"
       },
       {
-        "name": "黃金比例梨汁醃醬",
+        "name": "GRP.黃金比例梨汁醃醬",
         "amount": "梨汁 150ml・醬油 5 湯匙・清酒 1 湯匙・蒜末・芝麻油",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "韓式冬粉",
+        "name": "ING.韓式冬粉",
         "amount": "60g",
-        "group": "先泡"
+        "group": "PGRP.先泡"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "半顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "胡蘿蔔",
+        "name": "ING.胡蘿蔔",
         "amount": "1/4 根",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "香菇",
+        "name": "ING.香菇",
         "amount": "1 朵",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "杏鮑菇",
+        "name": "ING.杏鮑菇",
         "amount": "1 朵",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "秀珍菇",
+        "name": "ING.秀珍菇",
         "amount": "數朵",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "大蔥",
+        "name": "ING.大蔥",
         "amount": "半根",
-        "group": "切段"
+        "group": "PGRP.切段"
       }
     ]
   },
   {
     "id": 12,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r12.webp",
     "tags": [
-      "蔬菜",
-      "韓劇感",
-      "小酌良伴",
-      "錢包友善"
+      "TAG.蔬菜",
+      "TAG.韓劇感",
+      "TAG.小酌良伴",
+      "TAG.錢包友善"
     ],
     "basePortions": 2,
     "time": "約 30 分鐘",
     "shoppingList": [
       [
-        "馬鈴薯",
+        "ING.馬鈴薯",
         3,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "青辣椒",
+        "ING.青辣椒",
         1,
-        "根（不放也可以）"
+        "UNIT.根（不放也可以）"
       ]
     ],
     "steps": [
@@ -1557,122 +1557,122 @@ const RECIPES = [
     ],
     "prepNotes": [
       {
-        "name": "馬鈴薯",
+        "name": "ING.馬鈴薯",
         "amount": "3 顆",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "青辣椒",
+        "name": "ING.青辣椒",
         "amount": "1 根",
-        "group": "切片"
+        "group": "PGRP.切片"
       }
     ]
   },
   {
     "id": 13,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 1,
     "starsLabel": "新手村",
     "image": "assets/dish/r13.webp",
     "tags": [
-      "麵",
-      "30分鐘上桌",
-      "下班後"
+      "TAG.麵",
+      "TAG.30分鐘上桌",
+      "TAG.下班後"
     ],
     "basePortions": 2,
     "time": "約15分鐘",
     "shoppingList": [
       [
-        "蕎麥麵",
+        "ING.蕎麥麵",
         200,
-        "g"
+        "UNIT.g"
       ],
       {
-        "label": "紫蘇油醬汁",
+        "label": "GRP.紫蘇油醬汁",
         "items": [
           [
-            "紫蘇油",
+            "ING.紫蘇油",
             3,
-            "湯匙（選香氣新鮮的，這碗差很多）"
+            "UNIT.湯匙（選香氣新鮮的，這碗差很多）"
           ],
           [
-            "醬油",
+            "ING.醬油",
             2,
-            "湯匙（淡醬油基準；換韓式濃醬油先減量）"
+            "UNIT.湯匙（淡醬油基準；換韓式濃醬油先減量）"
           ],
           [
-            "白芝麻",
+            "ING.白芝麻",
             1,
-            "湯匙"
+            "UNIT.湯匙"
           ],
           [
-            "芝麻油",
+            "ING.芝麻油",
             0.5,
-            "茶匙"
+            "UNIT.茶匙"
           ],
           [
-            "糖",
+            "GRP.糖",
             0.5,
-            "茶匙"
+            "UNIT.茶匙"
           ],
           [
-            "白醋或檸檬汁",
+            "ING.白醋或檸檬汁",
             0.5,
-            "茶匙"
+            "UNIT.茶匙"
           ],
           [
-            "黑胡椒粉",
+            "ING.黑胡椒粉",
             null,
-            "少許"
+            "UNIT.少許"
           ]
         ]
       },
       [
-        "海苔",
+        "ING.海苔",
         null,
-        "大把（別省）"
+        "UNIT.大把（別省）"
       ],
       [
-        "青蔥",
+        "ING.青蔥",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "蛋黃",
+        "ING.蛋黃",
         1,
-        "顆（依口味添加）"
+        "UNIT.顆（依口味添加）"
       ],
       [
-        "小黃瓜",
+        "ING.小黃瓜",
         0.25,
-        "根（依口味添加）"
+        "UNIT.根（依口味添加）"
       ]
     ],
     "prepNotes": [
       {
-        "name": "紫蘇油醬汁",
+        "name": "GRP.紫蘇油醬汁",
         "amount": "紫蘇油 3 湯匙・醬油 2 湯匙・白芝麻・芝麻油・糖・醋",
-        "group": "調醬汁"
+        "group": "PGRP.調醬汁"
       },
       {
-        "name": "海苔",
+        "name": "ING.海苔",
         "amount": "大把",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "青蔥",
+        "name": "ING.青蔥",
         "amount": "1 根",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "小黃瓜",
+        "name": "ING.小黃瓜",
         "amount": "1/4 根",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "蛋黃",
+        "name": "ING.蛋黃",
         "amount": "1 顆",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ],
     "steps": [
@@ -1707,95 +1707,95 @@ const RECIPES = [
   },
   {
     "id": 14,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 3,
     "starsLabel": "深夜炫技",
     "image": "assets/dish/r14.webp",
     "tags": [
-      "麵",
-      "海鮮",
-      "蔬菜",
-      "30分鐘上桌"
+      "TAG.麵",
+      "TAG.海鮮",
+      "TAG.蔬菜",
+      "TAG.30分鐘上桌"
     ],
     "basePortions": 2,
     "time": "約30分鐘",
     "shoppingList": [
       [
-        "義大利直麵",
+        "ING.義大利直麵",
         180,
-        "g（Spaghetti 或 Linguine）"
+        "UNIT.g（Spaghetti 或 Linguine）"
       ],
       [
-        "蝦子",
+        "ING.蝦子",
         8,
-        "隻（帶頭帶殼 16/20 大蝦；偷懶買蝦仁也行，少一道蝦頭油）"
+        "UNIT.隻（帶頭帶殼 16/20 大蝦；偷懶買蝦仁也行，少一道蝦頭油）"
       ],
       [
-        "蘆筍",
+        "ING.蘆筍",
         1,
-        "把"
+        "UNIT.把"
       ],
       [
-        "培根",
+        "ING.培根",
         1,
-        "片（提味用，不是主角）"
+        "UNIT.片（提味用，不是主角）"
       ],
       [
-        "大蒜",
+        "ING.大蒜",
         4,
-        "瓣"
+        "UNIT.瓣"
       ],
       [
-        "橄欖油",
+        "ING.橄欖油",
         3,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "白酒",
+        "ING.白酒",
         3,
-        "湯匙（沒有白酒時，可用清酒或燒酒代替）"
+        "UNIT.湯匙（沒有白酒時，可用清酒或燒酒代替）"
       ],
       [
-        "檸檬",
+        "ING.檸檬",
         0.5,
-        "顆（皮屑和果汁都要）"
+        "UNIT.顆（皮屑和果汁都要）"
       ],
       [
-        "松露鹽",
+        "ING.松露鹽",
         null,
-        "少許（起鍋前撒）"
+        "UNIT.少許（起鍋前撒）"
       ],
       [
-        "帕瑪森起司",
+        "ING.帕瑪森起司",
         null,
-        "適量（可省）"
+        "UNIT.適量（可省）"
       ]
     ],
     "prepNotes": [
       {
-        "name": "蝦子",
+        "name": "ING.蝦子",
         "amount": "8 隻",
-        "group": "先醃"
+        "group": "PGRP.先醃"
       },
       {
-        "name": "蘆筍",
+        "name": "ING.蘆筍",
         "amount": "1 把",
-        "group": "切段"
+        "group": "PGRP.切段"
       },
       {
-        "name": "培根",
+        "name": "ING.培根",
         "amount": "1 片",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "大蒜",
+        "name": "ING.大蒜",
         "amount": "4 瓣",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "檸檬",
+        "name": "ING.檸檬",
         "amount": "1/2 顆",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ],
     "steps": [
@@ -1840,114 +1840,114 @@ const RECIPES = [
   },
   {
     "id": 15,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 3,
     "starsLabel": "深夜炫技",
     "image": "assets/dish/r15.webp",
     "tags": [
-      "蔬菜",
-      "週末慢慢煮",
-      "想吃熱的"
+      "TAG.蔬菜",
+      "TAG.週末慢慢煮",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約40分鐘",
     "shoppingList": [
       [
-        "燉飯米",
+        "ING.燉飯米",
         160,
-        "g（Carnaroli）"
+        "UNIT.g（Carnaroli）"
       ],
       [
-        "蘆筍",
+        "ING.蘆筍",
         12,
-        "根（約 250–300g；嫩頭、中段、硬梗分開用）"
+        "UNIT.根（約 250–300g；嫩頭、中段、硬梗分開用）"
       ],
       [
-        "菇類",
+        "ING.菇類",
         120,
-        "g（香菇、杏鮑菇、蘑菇都可以，混著用更好）"
+        "UNIT.g（香菇、杏鮑菇、蘑菇都可以，混著用更好）"
       ],
       [
-        "蘑菇",
+        "ING.蘑菇",
         1,
-        "顆（擺盤用）"
+        "UNIT.顆（擺盤用）"
       ],
       [
-        "牛骨高湯",
+        "ING.牛骨高湯",
         750,
-        "ml"
+        "UNIT.ml"
       ],
       [
-        "奶油",
+        "ING.奶油",
         50,
-        "g"
+        "UNIT.g"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.25,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "白酒",
+        "ING.白酒",
         50,
-        "ml（沒有白酒時，可用清酒或燒酒代替）"
+        "UNIT.ml（沒有白酒時，可用清酒或燒酒代替）"
       ],
       [
-        "橄欖油",
+        "ING.橄欖油",
         2,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "帕瑪森起司",
+        "ING.帕瑪森起司",
         50,
-        "g"
+        "UNIT.g"
       ],
       [
-        "鹽",
+        "ING.鹽",
         null,
-        "少許"
+        "UNIT.少許"
       ],
       [
-        "黑胡椒粉",
+        "ING.黑胡椒粉",
         null,
-        "少許"
+        "UNIT.少許"
       ],
       [
-        "松露橄欖油",
+        "ING.松露橄欖油",
         null,
-        "少許（可省）"
+        "UNIT.少許（可省）"
       ]
     ],
     "prepNotes": [
       {
-        "name": "蘆筍",
+        "name": "ING.蘆筍",
         "amount": "12 根",
-        "group": "切段"
+        "group": "PGRP.切段"
       },
       {
-        "name": "菇類",
+        "name": "ING.菇類",
         "amount": "120g",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "蘑菇",
+        "name": "ING.蘑菇",
         "amount": "1 顆",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "1/4 顆",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "帕瑪森起司",
+        "name": "ING.帕瑪森起司",
         "amount": "50g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "奶油",
+        "name": "ING.奶油",
         "amount": "50g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ],
     "steps": [
@@ -1994,68 +1994,68 @@ const RECIPES = [
   },
   {
     "id": 16,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r16.webp",
     "tags": [
-      "麵",
-      "豬肉"
+      "TAG.麵",
+      "TAG.豬肉"
     ],
     "basePortions": 2,
     "time": "約35分鐘",
     "shoppingList": [
       [
-        "Guanciale 義式醃豬頰肉",
+        "ING.Guanciale 義式醃豬頰肉",
         100,
-        "g"
+        "UNIT.g"
       ],
       [
-        "義大利直麵",
+        "ING.義大利直麵",
         160,
-        "g（Bucatini 或 Spaghetti）"
+        "UNIT.g（Bucatini 或 Spaghetti）"
       ],
       [
-        "San Marzano DOP 去皮整番茄",
+        "ING.San Marzano DOP 去皮整番茄",
         400,
-        "g（整番茄，認明 DOP 標示）"
+        "UNIT.g（整番茄，認明 DOP 標示）"
       ],
       [
-        "Pecorino Romano",
+        "ING.Pecorino Romano",
         null,
-        "適量"
+        "UNIT.適量"
       ],
       [
-        "義式乾辣椒",
+        "ING.義式乾辣椒",
         null,
-        "少許（乾辣椒或辣椒片）"
+        "UNIT.少許（乾辣椒或辣椒片）"
       ],
       [
-        "黑胡椒粉",
+        "ING.黑胡椒粉",
         null,
-        "少許（現磨）"
+        "UNIT.少許（現磨）"
       ],
       [
-        "鹽",
+        "ING.鹽",
         null,
-        "少許（煮麵水用）"
+        "UNIT.少許（煮麵水用）"
       ]
     ],
     "prepNotes": [
       {
-        "name": "Guanciale 義式醃豬頰肉",
+        "name": "ING.Guanciale 義式醃豬頰肉",
         "amount": "100g",
-        "group": "切絲"
+        "group": "PGRP.切絲"
       },
       {
-        "name": "San Marzano DOP 去皮整番茄",
+        "name": "ING.San Marzano DOP 去皮整番茄",
         "amount": "400g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "Pecorino Romano",
+        "name": "ING.Pecorino Romano",
         "amount": "適量",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ],
     "steps": [
@@ -2097,78 +2097,78 @@ const RECIPES = [
   },
   {
     "id": 17,
-    "cuisine": "義式",
+    "cuisine": "CUI.義式",
     "stars": 3,
     "starsLabel": "深夜炫技",
     "image": "assets/dish/r17.webp",
     "tags": [
-      "週末慢慢煮",
-      "想吃熱的"
+      "TAG.週末慢慢煮",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約35分鐘",
     "shoppingList": [
       [
-        "燉飯米",
+        "ING.燉飯米",
         160,
-        "g（Carnaroli）"
+        "UNIT.g（Carnaroli）"
       ],
       [
-        "番紅花",
+        "ING.番紅花",
         0.1,
-        "g"
+        "UNIT.g"
       ],
       [
-        "高湯",
+        "ING.高湯",
         700,
-        "ml（牛骨或雞高湯）"
+        "UNIT.ml（牛骨或雞高湯）"
       ],
       [
-        "奶油",
+        "ING.奶油",
         40,
-        "g"
+        "UNIT.g"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.25,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "白酒",
+        "ING.白酒",
         50,
-        "ml（沒有白酒時，可用清酒或燒酒代替）"
+        "UNIT.ml（沒有白酒時，可用清酒或燒酒代替）"
       ],
       [
-        "帕馬森起司粉",
+        "ING.帕馬森起司粉",
         30,
-        "g"
+        "UNIT.g"
       ],
       [
-        "鹽",
+        "ING.鹽",
         null,
-        "少許"
+        "UNIT.少許"
       ],
       [
-        "黑胡椒粉",
+        "ING.黑胡椒粉",
         null,
-        "少許"
+        "UNIT.少許"
       ]
     ],
     "prepNotes": [
       {
-        "name": "番紅花",
+        "name": "ING.番紅花",
         "amount": "0.1 g",
-        "group": "先泡"
+        "group": "PGRP.先泡"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "1/4 顆",
-        "group": "切末"
+        "group": "PGRP.切末"
       },
       {
-        "name": "奶油",
+        "name": "ING.奶油",
         "amount": "40g",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       }
     ],
     "steps": [
@@ -2217,115 +2217,115 @@ const RECIPES = [
   },
   {
     "id": 18,
-    "cuisine": "韓式",
+    "cuisine": "CUI.韓式",
     "stars": 2,
     "starsLabel": "家常實力",
     "image": "assets/dish/r18.webp",
     "tags": [
-      "牛肉",
-      "鍋物",
-      "一鍋到底",
-      "想吃熱的"
+      "TAG.牛肉",
+      "TAG.鍋物",
+      "TAG.一鍋到底",
+      "TAG.想吃熱的"
     ],
     "basePortions": 2,
     "time": "約20分鐘",
     "shoppingList": [
       [
-        "牛胸肉",
+        "ING.牛胸肉",
         150,
-        "g"
+        "UNIT.g"
       ],
       [
-        "淘米水",
+        "ING.淘米水",
         400,
-        "ml"
+        "UNIT.ml"
       ],
       [
-        "韓式大醬",
+        "ING.韓式大醬",
         1.5,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "韓式辣椒醬",
+        "ING.韓式辣椒醬",
         0.5,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "蒜末",
+        "ING.蒜末",
         1,
-        "湯匙"
+        "UNIT.湯匙"
       ],
       [
-        "韓式辣椒粉",
+        "ING.韓式辣椒粉",
         1,
-        "茶匙"
+        "UNIT.茶匙"
       ],
       [
-        "板豆腐",
+        "ING.板豆腐",
         0.5,
-        "盒（約 150g）"
+        "UNIT.盒（約 150g）"
       ],
       [
-        "洋蔥",
+        "ING.洋蔥",
         0.5,
-        "顆"
+        "UNIT.顆"
       ],
       [
-        "韓國櫛瓜",
+        "ING.韓國櫛瓜",
         0.33,
-        "根"
+        "UNIT.根"
       ],
       [
-        "香菇",
+        "ING.香菇",
         2,
-        "朵"
+        "UNIT.朵"
       ],
       [
-        "青辣椒",
+        "ING.青辣椒",
         1,
-        "根"
+        "UNIT.根"
       ],
       [
-        "大蔥",
+        "ING.大蔥",
         0.5,
-        "根"
+        "UNIT.根"
       ]
     ],
     "prepNotes": [
       {
-        "name": "淘米水",
+        "name": "ING.淘米水",
         "amount": "400 ml",
-        "group": "開火前放旁邊"
+        "group": "PGRP.開火前放旁邊"
       },
       {
-        "name": "板豆腐",
+        "name": "ING.板豆腐",
         "amount": "1/2 盒",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "洋蔥",
+        "name": "ING.洋蔥",
         "amount": "1/2 顆",
-        "group": "切塊"
+        "group": "PGRP.切塊"
       },
       {
-        "name": "韓國櫛瓜",
+        "name": "ING.韓國櫛瓜",
         "amount": "1/3 根",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "香菇",
+        "name": "ING.香菇",
         "amount": "2 朵",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "青辣椒",
+        "name": "ING.青辣椒",
         "amount": "1 根",
-        "group": "切片"
+        "group": "PGRP.切片"
       },
       {
-        "name": "大蔥",
+        "name": "ING.大蔥",
         "amount": "1/2 根",
-        "group": "切段"
+        "group": "PGRP.切段"
       }
     ],
     "steps": [

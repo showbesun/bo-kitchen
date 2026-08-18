@@ -493,210 +493,201 @@ R18.prep.7	strings.js · R18	斜切段	어슷썬다
 R17.prep.1	strings.js · R17	舀一勺溫熱（不是滾燙）的高湯，放進番紅花泡至少 30 分鐘	따뜻한(끓지 않은) 육수를 한 국자 덜어 사프란을 최소 30분 우린다	
 R17.prep.2	strings.js · R17	切極細末	아주 잘게 다진다	
 R17.prep.3	strings.js · R17	分兩份；收尾那份冷藏到要用	두 몫으로 나누고 마무리용은 쓸 때까지 냉장한다	
-TERM.乾海帶	strings.js · 詞彙	乾海帶	마른 미역	
-TERM.低筋麵粉	strings.js · 詞彙	低筋麵粉	박력분	
-TERM.去骨雞腿肉	strings.js · 詞彙	去骨雞腿肉	닭다리살	
-TERM.喝的優格	strings.js · 詞彙	喝的優格	마시는 요거트	
-TERM.大白菜	strings.js · 詞彙	大白菜	배추	
-TERM.大蒜	strings.js · 詞彙	大蒜	마늘	
-TERM.大蔥	strings.js · 詞彙	大蔥	대파	
-TERM.太白粉	strings.js · 詞彙	太白粉	감자전분	
-TERM.奶油	strings.js · 詞彙	奶油	버터	
-TERM.小蘇打粉	strings.js · 詞彙	小蘇打粉	베이킹소다	
-TERM.昆布魚乾高湯	strings.js · 詞彙	昆布魚乾高湯	다시마·멸치 육수	
-TERM.杏鮑菇	strings.js · 詞彙	杏鮑菇	새송이버섯	
-TERM.松露橄欖油	strings.js · 詞彙	松露橄欖油	트러플 올리브오일	
-TERM.板豆腐	strings.js · 詞彙	板豆腐	찌개용 두부	
-TERM.棒棒腿	strings.js · 詞彙	棒棒腿	닭봉	
-TERM.橄欖油	strings.js · 詞彙	橄欖油	올리브오일	
-TERM.櫛瓜	strings.js · 詞彙	櫛瓜	애호박	
-TERM.水	strings.js · 詞彙	水	물	
-TERM.水梨汁	strings.js · 詞彙	水梨汁	배즙	
-TERM.洋蔥	strings.js · 詞彙	洋蔥	양파	
-TERM.煎餅粉或中筋麵粉	strings.js · 詞彙	煎餅粉或中筋麵粉	부침가루 또는 중력분	
-TERM.熟成泡菜	strings.js · 詞彙	熟成泡菜	잘 익은 김치	
-TERM.熟透香蕉	strings.js · 詞彙	熟透香蕉	잘 익은 바나나	
-TERM.牛絞肉	strings.js · 詞彙	牛絞肉	다진 소고기	
-TERM.牛肉片	strings.js · 詞彙	牛肉片	불고기용 소고기	
-TERM.牛腩	strings.js · 詞彙	牛腩	양지	
-TERM.甘栗仁	strings.js · 詞彙	甘栗仁	깐밤	
-TERM.生麵條	strings.js · 詞彙	生麵條	생면	
-TERM.番茄義大利麵醬	strings.js · 詞彙	番茄義大利麵醬	토마토 파스타 소스	
-TERM.白糖	strings.js · 詞彙	白糖	설탕	
-TERM.白胡椒粉	strings.js · 詞彙	白胡椒粉	흰후추	
-TERM.白醋	strings.js · 詞彙	白醋	식초	
-TERM.秀珍菇	strings.js · 詞彙	秀珍菇	느타리버섯	
-TERM.米酒或燒酒	strings.js · 詞彙	米酒或燒酒	청주나 소주	
-TERM.紅甜椒	strings.js · 詞彙	紅甜椒	빨강 파프리카	
-TERM.紅蘿蔔	strings.js · 詞彙	紅蘿蔔	당근	
-TERM.紅酒	strings.js · 詞彙	紅酒	레드와인	
-TERM.義大利直麵	strings.js · 詞彙	義大利直麵	스파게티	
-TERM.胡蘿蔔	strings.js · 詞彙	胡蘿蔔	당근	
-TERM.芝麻油	strings.js · 詞彙	芝麻油	참기름	
-TERM.菇類	strings.js · 詞彙	菇類	버섯	
-TERM.蒜末	strings.js · 詞彙	蒜末	다진 마늘	
-TERM.蘑菇	strings.js · 詞彙	蘑菇	양송이버섯	
-TERM.蛋	strings.js · 詞彙	蛋	달걀	
-TERM.蠔油	strings.js · 詞彙	蠔油	굴소스	
-TERM.西洋芹	strings.js · 詞彙	西洋芹	셀러리	
-TERM.豬五花或梅花肉	strings.js · 詞彙	豬五花或梅花肉	삼겹살 또는 목살	
-TERM.豬五花肉	strings.js · 詞彙	豬五花肉	삼겹살	
-TERM.豬絞肉	strings.js · 詞彙	豬絞肉	다진 돼지고기	
-TERM.義式乾辣椒	strings.js · 詞彙	義式乾辣椒	페페론치노	
-TERM.辣醬鍋醬汁	strings.js · 詞彙	辣醬鍋醬汁	고추장찌개 양념	
-TERM.醋	strings.js · 詞彙	醋	식초	
-TERM.醬油	strings.js · 詞彙	醬油	간장	
-TERM.醬香炒麵醬汁	strings.js · 詞彙	醬香炒麵醬汁	간장 볶음면 소스	
-TERM.雞翅	strings.js · 詞彙	雞翅	닭날개	
-TERM.雞腿醃料	strings.js · 詞彙	雞腿醃料	닭다리살 밑간 양념	
-TERM.雞蛋	strings.js · 詞彙	雞蛋	달걀	
-TERM.靈魂黑金醬汁	strings.js · 詞彙	靈魂黑金醬汁	비법 간장 양념	
-TERM.青辣椒	strings.js · 詞彙	青辣椒	고추	
-TERM.青陽辣椒	strings.js · 詞彙	青陽辣椒	청양고추	
-TERM.韓國櫛瓜	strings.js · 詞彙	韓國櫛瓜	애호박	
-TERM.韓式冬粉	strings.js · 詞彙	韓式冬粉	당면	
-TERM.韓式湯醬油（可用日式薄口醬油）	strings.js · 詞彙	韓式湯醬油（可用日式薄口醬油）	국간장 (없으면 우스쿠치 간장)	
-TERM.牛胸肉	strings.js · 詞彙	牛胸肉	차돌박이	
-TERM.淘米水	strings.js · 詞彙	淘米水	쌀뜨물	
-TERM.韓式大醬	strings.js · 詞彙	韓式大醬	된장	
-TERM.韓式辣椒粉	strings.js · 詞彙	韓式辣椒粉	고춧가루	
-TERM.韓式辣椒醬	strings.js · 詞彙	韓式辣椒醬	고추장	
-TERM.韓式醃蝦醬（可用少量魚露替代）	strings.js · 詞彙	韓式醃蝦醬（可用少量魚露替代）	새우젓 (없으면 액젓 약간)	
-TERM.香草精	strings.js · 詞彙	香草精	바닐라 익스트랙	
-TERM.香菇	strings.js · 詞彙	香菇	표고버섯	
-TERM.馬鈴薯	strings.js · 詞彙	馬鈴薯	감자	
-TERM.高湯	strings.js · 詞彙	高湯	육수	
-TERM.鹽	strings.js · 詞彙	鹽	소금	
-TERM.黃甜椒	strings.js · 詞彙	黃甜椒	노랑 파프리카	
-TERM.黃金比例梨汁醃醬	strings.js · 詞彙	黃金比例梨汁醃醬	배즙 불고기 양념	
-TERM.黑糖	strings.js · 詞彙	黑糖	흑설탕	
-TERM.黑胡椒粉	strings.js · 詞彙	黑胡椒粉	후추	
-TERM.先泡	strings.js · 詞彙	先泡	미리 불리기	
-TERM.先洗	strings.js · 詞彙	先洗	씻기	
-TERM.先醃	strings.js · 詞彙	先醃	미리 재우기	
-TERM.切塊	strings.js · 詞彙	切塊	큼직하게 썰기	
-TERM.切末	strings.js · 詞彙	切末	다지기	
-TERM.切段	strings.js · 詞彙	切段	어슷썰기	
-TERM.切片	strings.js · 詞彙	切片	얇게 썰기	
-TERM.切絲	strings.js · 詞彙	切絲	채 썰기	
-TERM.糖	strings.js · 詞彙	糖	설탕	
-TERM.調醬汁	strings.js · 詞彙	調醬汁	소스 섞기	
-TERM.醬醃醬汁	strings.js · 詞彙	醬醃醬汁	장아찌 간장물	
-TERM.開火前放旁邊	strings.js · 詞彙	開火前放旁邊	불 켜기 전에 꺼내 두기	
-TERM.1 湯匙 + 2 茶匙	strings.js · 詞彙	1 湯匙 + 2 茶匙	1큰술 + 2작은술	
-TERM.1/2 湯匙	strings.js · 詞彙	1/2 湯匙	1/2큰술	
-TERM.1–1.5湯匙	strings.js · 詞彙	1–1.5湯匙	1–1.5큰술	
-TERM.3 湯匙 + 1.5 茶匙	strings.js · 詞彙	3 湯匙 + 1.5 茶匙	3큰술 + 1.5작은술	
-TERM.g	strings.js · 詞彙	g	g	
-TERM.ml	strings.js · 詞彙	ml	ml	
-TERM.一小撮	strings.js · 詞彙	一小撮	한 꼬집	
-TERM.包	strings.js · 詞彙	包	봉지	
-TERM.少許	strings.js · 詞彙	少許	약간	
-TERM.幾滴	strings.js · 詞彙	幾滴	몇 방울	
-TERM.支	strings.js · 詞彙	支	대	
-TERM.數朵	strings.js · 詞彙	數朵	몇 가닥	
-TERM.朵	strings.js · 詞彙	朵	개	
-TERM.根	strings.js · 詞彙	根	개	
-TERM.湯匙	strings.js · 詞彙	湯匙	큰술	
-TERM.片葉子	strings.js · 詞彙	片葉子	장	
-TERM.瓣	strings.js · 詞彙	瓣	쪽	
-TERM.盒	strings.js · 詞彙	盒	팩	
-TERM.茶匙	strings.js · 詞彙	茶匙	작은술	
-TERM.顆	strings.js · 詞彙	顆	개	
-TERM.30分鐘上桌	strings.js · 詞彙	30分鐘上桌	30분 완성	
-TERM.一鍋到底	strings.js · 詞彙	一鍋到底	원팬	
-TERM.下午茶	strings.js · 詞彙	下午茶	간식	
-TERM.下班後	strings.js · 詞彙	下班後	퇴근 후	
-TERM.下飯菜	strings.js · 詞彙	下飯菜	밥도둑	
-TERM.剩菜救援	strings.js · 詞彙	剩菜救援	남은 재료 활용	
-TERM.小菜	strings.js · 詞彙	小菜	밑반찬	
-TERM.小酌良伴	strings.js · 詞彙	小酌良伴	술안주	
-TERM.想吃熱的	strings.js · 詞彙	想吃熱的	뜨끈한 게 당길 때	
-TERM.湯	strings.js · 詞彙	湯	국물요리	
-TERM.烘焙	strings.js · 詞彙	烘焙	베이킹	
-TERM.牛肉	strings.js · 詞彙	牛肉	소고기	
-TERM.甜點	strings.js · 詞彙	甜點	디저트	
-TERM.生日	strings.js · 詞彙	生日	생일	
-TERM.蔬菜	strings.js · 詞彙	蔬菜	채소	
-TERM.豬肉	strings.js · 詞彙	豬肉	돼지고기	
-TERM.週末慢慢煮	strings.js · 詞彙	週末慢慢煮	주말 요리	
-TERM.醬料	strings.js · 詞彙	醬料	소스	
-TERM.錢包友善	strings.js · 詞彙	錢包友善	가성비	
-TERM.鍋物	strings.js · 詞彙	鍋物	냄비요리	
-TERM.隔夜更好吃	strings.js · 詞彙	隔夜更好吃	다음 날 더 맛있어	
-TERM.雞肉	strings.js · 詞彙	雞肉	닭고기	
-TERM.韓劇感	strings.js · 詞彙	韓劇感	집밥 감성	
-TERM.麵	strings.js · 詞彙	麵	면요리	
-TERM.蕎麥麵	strings.js · 詞彙	蕎麥麵	메밀면	
-TERM.青蔥	strings.js · 詞彙	青蔥	쪽파	
-TERM.紫蘇油	strings.js · 詞彙	紫蘇油	들기름	
-TERM.白芝麻	strings.js · 詞彙	白芝麻	통깨	
-TERM.海苔	strings.js · 詞彙	海苔	김	
-TERM.蛋黃	strings.js · 詞彙	蛋黃	노른자	
-TERM.小黃瓜	strings.js · 詞彙	小黃瓜	오이	
-TERM.白醋或檸檬汁	strings.js · 詞彙	白醋或檸檬汁	식초 또는 레몬즙	
-TERM.紫蘇油醬汁	strings.js · 詞彙	紫蘇油醬汁	들기름 양념장	
-TERM.蝦仁	strings.js · 詞彙	蝦仁	손질 새우	
-TERM.蝦子	strings.js · 詞彙	蝦子	새우	
-TERM.蘆筍	strings.js · 詞彙	蘆筍	아스파라거스	
-TERM.番紅花	strings.js · 詞彙	番紅花	사프란	
-TERM.培根	strings.js · 詞彙	培根	베이컨	
-TERM.清酒	strings.js · 詞彙	清酒	청주	
-TERM.燒酒	strings.js · 詞彙	燒酒	소주	
-TERM.白酒	strings.js · 詞彙	白酒	화이트와인	
-TERM.牛骨高湯	strings.js · 詞彙	牛骨高湯	사골 육수	
-TERM.牛高湯	strings.js · 詞彙	牛高湯	소고기 육수	
-TERM.雞高湯	strings.js · 詞彙	雞高湯	닭육수	
-TERM.蔬菜高湯	strings.js · 詞彙	蔬菜高湯	채소 육수	
-TERM.檸檬	strings.js · 詞彙	檸檬	레몬	
-TERM.松露鹽	strings.js · 詞彙	松露鹽	트러플 소금	
-TERM.帕瑪森起司	strings.js · 詞彙	帕瑪森起司	파르미지아노 치즈	
-TERM.帕馬森起司粉	strings.js · 詞彙	帕馬森起司粉	파르미지아노 치즈 가루	
-TERM.燉飯米	strings.js · 詞彙	燉飯米	리조또용 쌀	
-TERM.Guanciale 義式醃豬頰肉	strings.js · 詞彙	Guanciale 義式醃豬頰肉	관찰레	
-TERM.San Marzano DOP 去皮整番茄	strings.js · 詞彙	San Marzano DOP 去皮整番茄	산 마르자노 DOP 홀토마토	
-TERM.Pecorino Romano	strings.js · 詞彙	Pecorino Romano	페코리노 로마노	
-TERM.海鮮	strings.js · 詞彙	海鮮	해산물	
-TERM.隻	strings.js · 詞彙	隻	마리	
-TERM.片	strings.js · 詞彙	片	장	
-TERM.把	strings.js · 詞彙	把	단	
-TERM.適量	strings.js · 詞彙	適量	적당량	
-TERM.中式	strings.js · 詞彙	中式	중식	
-TERM.義式	strings.js · 詞彙	義式	이탈리안	
-TERM.西式	strings.js · 詞彙	西式	양식	
-TERM.韓式	strings.js · 詞彙	韓式	한식	
-COUNTER.大蔥|根	strings.js · 量詞例外	大蔥|根	대	
-COUNTER.西洋芹|支	strings.js · 量詞例外	西洋芹|支	대	
-COUNTER.秀珍菇|數朵	strings.js · 量詞例外	秀珍菇|數朵	몇 가닥	
-COUNTER.秀珍菇|朵	strings.js · 量詞例外	秀珍菇|朵	가닥	
-COUNTER.板豆腐|盒	strings.js · 量詞例外	板豆腐|盒	모	
-COUNTER.海苔|大把	strings.js · 量詞例外	海苔|大把	넉넉히	
-COUNTER.小黃瓜|根	strings.js · 量詞例外	小黃瓜|根	개	
-COUNTER.青蔥|根	strings.js · 量詞例外	青蔥|根	뿌리	
-COUNTER.蘆筍|根	strings.js · 量詞例外	蘆筍|根	대	
-COUNTER.培根|片	strings.js · 量詞例外	培根|片	장	
-COUNTER.大白菜|片葉子	strings.js · 量詞例外	大白菜|片葉子	장	
-COUNTER.大蒜|瓣	strings.js · 量詞例外	大蒜|瓣	쪽	
-COUNTER.甘栗仁|包	strings.js · 量詞例外	甘栗仁|包	봉지	
-COUNTER.蘆筍|把	strings.js · 量詞例外	蘆筍|把	단	
-COUNTER.蝦子|隻	strings.js · 量詞例外	蝦子|隻	마리	
-COUNTER.洋蔥|顆	strings.js · 量詞例外	洋蔥|顆	개	
-COUNTER.馬鈴薯|顆	strings.js · 量詞例外	馬鈴薯|顆	개	
-COUNTER.檸檬|顆	strings.js · 量詞例外	檸檬|顆	개	
-COUNTER.紅甜椒|顆	strings.js · 量詞例外	紅甜椒|顆	개	
-COUNTER.黃甜椒|顆	strings.js · 量詞例外	黃甜椒|顆	개	
-COUNTER.蘑菇|顆	strings.js · 量詞例外	蘑菇|顆	개	
-COUNTER.雞蛋|顆	strings.js · 量詞例外	雞蛋|顆	개	
-COUNTER.蛋黃|顆	strings.js · 量詞例外	蛋黃|顆	개	
-COUNTER.胡蘿蔔|根	strings.js · 量詞例外	胡蘿蔔|根	개	
-COUNTER.櫛瓜|根	strings.js · 量詞例外	櫛瓜|根	개	
-COUNTER.韓國櫛瓜|根	strings.js · 量詞例外	韓國櫛瓜|根	개	
-COUNTER.熟透香蕉|根	strings.js · 量詞例外	熟透香蕉|根	개	
-COUNTER.杏鮑菇|根	strings.js · 量詞例外	杏鮑菇|根	개	
-COUNTER.青辣椒|根	strings.js · 量詞例外	青辣椒|根	개	
-COUNTER.青陽辣椒|根	strings.js · 量詞例外	青陽辣椒|根	개	
-COUNTER.義式乾辣椒|根	strings.js · 量詞例外	義式乾辣椒|根	개	
-COUNTER.香菇|朵	strings.js · 量詞例外	香菇|朵	개	
+ING.乾海帶	strings.js · 介面與固定台詞	乾海帶	마른 미역	
+ING.低筋麵粉	strings.js · 介面與固定台詞	低筋麵粉	박력분	
+ING.去骨雞腿肉	strings.js · 介面與固定台詞	去骨雞腿肉	닭다리살	
+ING.喝的優格	strings.js · 介面與固定台詞	喝的優格	마시는 요거트	
+ING.大白菜	strings.js · 介面與固定台詞	大白菜	배추	
+ING.大蒜	strings.js · 介面與固定台詞	大蒜	마늘	
+ING.大蔥	strings.js · 介面與固定台詞	大蔥	대파	
+ING.太白粉	strings.js · 介面與固定台詞	太白粉	감자전분	
+ING.奶油	strings.js · 介面與固定台詞	奶油	버터	
+ING.小蘇打粉	strings.js · 介面與固定台詞	小蘇打粉	베이킹소다	
+ING.昆布魚乾高湯	strings.js · 介面與固定台詞	昆布魚乾高湯	다시마·멸치 육수	
+ING.杏鮑菇	strings.js · 介面與固定台詞	杏鮑菇	새송이버섯	
+ING.松露橄欖油	strings.js · 介面與固定台詞	松露橄欖油	트러플 올리브오일	
+ING.板豆腐	strings.js · 介面與固定台詞	板豆腐	찌개용 두부	
+ING.棒棒腿	strings.js · 介面與固定台詞	棒棒腿	닭봉	
+ING.橄欖油	strings.js · 介面與固定台詞	橄欖油	올리브오일	
+ING.櫛瓜	strings.js · 介面與固定台詞	櫛瓜	애호박	
+ING.水	strings.js · 介面與固定台詞	水	물	
+ING.水梨汁	strings.js · 介面與固定台詞	水梨汁	배즙	
+ING.洋蔥	strings.js · 介面與固定台詞	洋蔥	양파	
+ING.煎餅粉或中筋麵粉	strings.js · 介面與固定台詞	煎餅粉或中筋麵粉	부침가루 또는 중력분	
+ING.熟成泡菜	strings.js · 介面與固定台詞	熟成泡菜	잘 익은 김치	
+ING.熟透香蕉	strings.js · 介面與固定台詞	熟透香蕉	잘 익은 바나나	
+ING.牛絞肉	strings.js · 介面與固定台詞	牛絞肉	다진 소고기	
+ING.牛肉片	strings.js · 介面與固定台詞	牛肉片	불고기용 소고기	
+ING.牛腩	strings.js · 介面與固定台詞	牛腩	양지	
+ING.甘栗仁	strings.js · 介面與固定台詞	甘栗仁	깐밤	
+ING.生麵條	strings.js · 介面與固定台詞	生麵條	생면	
+ING.番茄義大利麵醬	strings.js · 介面與固定台詞	番茄義大利麵醬	토마토 파스타 소스	
+ING.白糖	strings.js · 介面與固定台詞	白糖	설탕	
+ING.白胡椒粉	strings.js · 介面與固定台詞	白胡椒粉	흰후추	
+ING.白醋	strings.js · 介面與固定台詞	白醋	식초	
+ING.秀珍菇	strings.js · 介面與固定台詞	秀珍菇	느타리버섯	
+ING.米酒或燒酒	strings.js · 介面與固定台詞	米酒或燒酒	청주나 소주	
+ING.紅甜椒	strings.js · 介面與固定台詞	紅甜椒	빨강 파프리카	
+ING.紅酒	strings.js · 介面與固定台詞	紅酒	레드와인	
+ING.義大利直麵	strings.js · 介面與固定台詞	義大利直麵	스파게티	
+ING.胡蘿蔔	strings.js · 介面與固定台詞	胡蘿蔔	당근	
+ING.芝麻油	strings.js · 介面與固定台詞	芝麻油	참기름	
+ING.菇類	strings.js · 介面與固定台詞	菇類	버섯	
+ING.蒜末	strings.js · 介面與固定台詞	蒜末	다진 마늘	
+ING.蘑菇	strings.js · 介面與固定台詞	蘑菇	양송이버섯	
+ING.蠔油	strings.js · 介面與固定台詞	蠔油	굴소스	
+ING.西洋芹	strings.js · 介面與固定台詞	西洋芹	셀러리	
+ING.豬五花或梅花肉	strings.js · 介面與固定台詞	豬五花或梅花肉	삼겹살 또는 목살	
+ING.豬五花肉	strings.js · 介面與固定台詞	豬五花肉	삼겹살	
+ING.豬絞肉	strings.js · 介面與固定台詞	豬絞肉	다진 돼지고기	
+ING.義式乾辣椒	strings.js · 介面與固定台詞	義式乾辣椒	페페론치노	
+GRP.辣醬鍋醬汁	strings.js · 介面與固定台詞	辣醬鍋醬汁	고추장찌개 양념	
+ING.醋	strings.js · 介面與固定台詞	醋	식초	
+ING.醬油	strings.js · 介面與固定台詞	醬油	간장	
+GRP.醬香炒麵醬汁	strings.js · 介面與固定台詞	醬香炒麵醬汁	간장 볶음면 소스	
+ING.雞翅	strings.js · 介面與固定台詞	雞翅	닭날개	
+GRP.雞腿醃料	strings.js · 介面與固定台詞	雞腿醃料	닭다리살 밑간 양념	
+ING.雞蛋	strings.js · 介面與固定台詞	雞蛋	달걀	
+GRP.靈魂黑金醬汁	strings.js · 介面與固定台詞	靈魂黑金醬汁	비법 간장 양념	
+ING.青辣椒	strings.js · 介面與固定台詞	青辣椒	고추	
+ING.青陽辣椒	strings.js · 介面與固定台詞	青陽辣椒	청양고추	
+ING.韓國櫛瓜	strings.js · 介面與固定台詞	韓國櫛瓜	애호박	
+ING.韓式冬粉	strings.js · 介面與固定台詞	韓式冬粉	당면	
+ING.韓式湯醬油（可用日式薄口醬油）	strings.js · 介面與固定台詞	韓式湯醬油（可用日式薄口醬油）	국간장 (없으면 우스쿠치 간장)	
+ING.牛胸肉	strings.js · 介面與固定台詞	牛胸肉	차돌박이	
+ING.淘米水	strings.js · 介面與固定台詞	淘米水	쌀뜨물	
+ING.韓式大醬	strings.js · 介面與固定台詞	韓式大醬	된장	
+ING.韓式辣椒粉	strings.js · 介面與固定台詞	韓式辣椒粉	고춧가루	
+ING.韓式辣椒醬	strings.js · 介面與固定台詞	韓式辣椒醬	고추장	
+ING.韓式醃蝦醬（可用少量魚露替代）	strings.js · 介面與固定台詞	韓式醃蝦醬（可用少量魚露替代）	새우젓 (없으면 액젓 약간)	
+ING.香草精	strings.js · 介面與固定台詞	香草精	바닐라 익스트랙	
+ING.香菇	strings.js · 介面與固定台詞	香菇	표고버섯	
+ING.馬鈴薯	strings.js · 介面與固定台詞	馬鈴薯	감자	
+ING.高湯	strings.js · 介面與固定台詞	高湯	육수	
+ING.鹽	strings.js · 介面與固定台詞	鹽	소금	
+ING.黃甜椒	strings.js · 介面與固定台詞	黃甜椒	노랑 파프리카	
+GRP.黃金比例梨汁醃醬	strings.js · 介面與固定台詞	黃金比例梨汁醃醬	배즙 불고기 양념	
+ING.黑糖	strings.js · 介面與固定台詞	黑糖	흑설탕	
+ING.黑胡椒粉	strings.js · 介面與固定台詞	黑胡椒粉	후추	
+PGRP.先泡	strings.js · 介面與固定台詞	先泡	미리 불리기	
+PGRP.先洗	strings.js · 介面與固定台詞	先洗	씻기	
+PGRP.先醃	strings.js · 介面與固定台詞	先醃	미리 재우기	
+PGRP.切塊	strings.js · 介面與固定台詞	切塊	큼직하게 썰기	
+PGRP.切末	strings.js · 介面與固定台詞	切末	다지기	
+PGRP.切段	strings.js · 介面與固定台詞	切段	어슷썰기	
+PGRP.切片	strings.js · 介面與固定台詞	切片	얇게 썰기	
+PGRP.切絲	strings.js · 介面與固定台詞	切絲	채 썰기	
+GRP.糖	strings.js · 介面與固定台詞	糖	설탕	
+PGRP.調醬汁	strings.js · 介面與固定台詞	調醬汁	소스 섞기	
+GRP.醬醃醬汁	strings.js · 介面與固定台詞	醬醃醬汁	장아찌 간장물	
+PGRP.開火前放旁邊	strings.js · 介面與固定台詞	開火前放旁邊	불 켜기 전에 꺼내 두기	
+UNIT.1 湯匙 + 2 茶匙	strings.js · 介面與固定台詞	1 湯匙 + 2 茶匙	1큰술 + 2작은술	
+UNIT.1/2 湯匙	strings.js · 介面與固定台詞	1/2 湯匙	1/2큰술	
+UNIT.1–1.5湯匙	strings.js · 介面與固定台詞	1–1.5湯匙	1–1.5큰술	
+UNIT.3 湯匙 + 1.5 茶匙	strings.js · 介面與固定台詞	3 湯匙 + 1.5 茶匙	3큰술 + 1.5작은술	
+UNIT.g	strings.js · 介面與固定台詞	g	g	
+UNIT.ml	strings.js · 介面與固定台詞	ml	ml	
+UNIT.一小撮	strings.js · 介面與固定台詞	一小撮	한 꼬집	
+UNIT.包	strings.js · 介面與固定台詞	包	봉지	
+UNIT.少許	strings.js · 介面與固定台詞	少許	약간	
+UNIT.幾滴	strings.js · 介面與固定台詞	幾滴	몇 방울	
+UNIT.支	strings.js · 介面與固定台詞	支	대	
+UNIT.數朵	strings.js · 介面與固定台詞	數朵	몇 가닥	
+UNIT.朵	strings.js · 介面與固定台詞	朵	개	
+UNIT.根	strings.js · 介面與固定台詞	根	개	
+UNIT.湯匙	strings.js · 介面與固定台詞	湯匙	큰술	
+UNIT.片葉子	strings.js · 介面與固定台詞	片葉子	장	
+UNIT.瓣	strings.js · 介面與固定台詞	瓣	쪽	
+UNIT.盒	strings.js · 介面與固定台詞	盒	팩	
+UNIT.茶匙	strings.js · 介面與固定台詞	茶匙	작은술	
+UNIT.顆	strings.js · 介面與固定台詞	顆	개	
+TAG.30分鐘上桌	strings.js · 介面與固定台詞	30分鐘上桌	30분 완성	
+TAG.一鍋到底	strings.js · 介面與固定台詞	一鍋到底	원팬	
+TAG.下午茶	strings.js · 介面與固定台詞	下午茶	간식	
+TAG.下班後	strings.js · 介面與固定台詞	下班後	퇴근 후	
+TAG.下飯菜	strings.js · 介面與固定台詞	下飯菜	밥도둑	
+TAG.剩菜救援	strings.js · 介面與固定台詞	剩菜救援	남은 재료 활용	
+TAG.小菜	strings.js · 介面與固定台詞	小菜	밑반찬	
+TAG.小酌良伴	strings.js · 介面與固定台詞	小酌良伴	술안주	
+TAG.想吃熱的	strings.js · 介面與固定台詞	想吃熱的	뜨끈한 게 당길 때	
+TAG.湯	strings.js · 介面與固定台詞	湯	국물요리	
+TAG.烘焙	strings.js · 介面與固定台詞	烘焙	베이킹	
+TAG.牛肉	strings.js · 介面與固定台詞	牛肉	소고기	
+CUI.甜點	strings.js · 介面與固定台詞	甜點	디저트	
+TAG.生日	strings.js · 介面與固定台詞	生日	생일	
+TAG.蔬菜	strings.js · 介面與固定台詞	蔬菜	채소	
+TAG.豬肉	strings.js · 介面與固定台詞	豬肉	돼지고기	
+TAG.週末慢慢煮	strings.js · 介面與固定台詞	週末慢慢煮	주말 요리	
+TAG.醬料	strings.js · 介面與固定台詞	醬料	소스	
+TAG.錢包友善	strings.js · 介面與固定台詞	錢包友善	가성비	
+TAG.鍋物	strings.js · 介面與固定台詞	鍋物	냄비요리	
+TAG.隔夜更好吃	strings.js · 介面與固定台詞	隔夜更好吃	다음 날 더 맛있어	
+TAG.雞肉	strings.js · 介面與固定台詞	雞肉	닭고기	
+TAG.韓劇感	strings.js · 介面與固定台詞	韓劇感	집밥 감성	
+TAG.麵	strings.js · 介面與固定台詞	麵	면요리	
+ING.蕎麥麵	strings.js · 介面與固定台詞	蕎麥麵	메밀면	
+ING.青蔥	strings.js · 介面與固定台詞	青蔥	쪽파	
+ING.紫蘇油	strings.js · 介面與固定台詞	紫蘇油	들기름	
+ING.白芝麻	strings.js · 介面與固定台詞	白芝麻	통깨	
+ING.海苔	strings.js · 介面與固定台詞	海苔	김	
+ING.蛋黃	strings.js · 介面與固定台詞	蛋黃	노른자	
+ING.小黃瓜	strings.js · 介面與固定台詞	小黃瓜	오이	
+ING.白醋或檸檬汁	strings.js · 介面與固定台詞	白醋或檸檬汁	식초 또는 레몬즙	
+GRP.紫蘇油醬汁	strings.js · 介面與固定台詞	紫蘇油醬汁	들기름 양념장	
+ING.蝦子	strings.js · 介面與固定台詞	蝦子	새우	
+ING.蘆筍	strings.js · 介面與固定台詞	蘆筍	아스파라거스	
+ING.番紅花	strings.js · 介面與固定台詞	番紅花	사프란	
+ING.培根	strings.js · 介面與固定台詞	培根	베이컨	
+ING.白酒	strings.js · 介面與固定台詞	白酒	화이트와인	
+ING.牛骨高湯	strings.js · 介面與固定台詞	牛骨高湯	사골 육수	
+ING.檸檬	strings.js · 介面與固定台詞	檸檬	레몬	
+ING.松露鹽	strings.js · 介面與固定台詞	松露鹽	트러플 소금	
+ING.帕瑪森起司	strings.js · 介面與固定台詞	帕瑪森起司	파르미지아노 치즈	
+ING.帕馬森起司粉	strings.js · 介面與固定台詞	帕馬森起司粉	파르미지아노 치즈 가루	
+ING.燉飯米	strings.js · 介面與固定台詞	燉飯米	리조또용 쌀	
+ING.Guanciale 義式醃豬頰肉	strings.js · 介面與固定台詞	Guanciale 義式醃豬頰肉	관찰레	
+ING.San Marzano DOP 去皮整番茄	strings.js · 介面與固定台詞	San Marzano DOP 去皮整番茄	산 마르자노 DOP 홀토마토	
+ING.Pecorino Romano	strings.js · 介面與固定台詞	Pecorino Romano	페코리노 로마노	
+TAG.海鮮	strings.js · 介面與固定台詞	海鮮	해산물	
+UNIT.隻	strings.js · 介面與固定台詞	隻	마리	
+UNIT.片	strings.js · 介面與固定台詞	片	장	
+UNIT.把	strings.js · 介面與固定台詞	把	단	
+UNIT.適量	strings.js · 介面與固定台詞	適量	적당량	
+CUI.中式	strings.js · 介面與固定台詞	中式	중식	
+CUI.義式	strings.js · 介面與固定台詞	義式	이탈리안	
+CUI.韓式	strings.js · 介面與固定台詞	韓式	한식	
+COUNTER.ING.大蔥|UNIT.根	strings.js · 量詞例外	大蔥|根	대	
+COUNTER.ING.西洋芹|UNIT.支	strings.js · 量詞例外	西洋芹|支	대	
+COUNTER.ING.秀珍菇|UNIT.數朵	strings.js · 量詞例外	秀珍菇|數朵	몇 가닥	
+COUNTER.ING.秀珍菇|UNIT.朵	strings.js · 量詞例外	秀珍菇|朵	가닥	
+COUNTER.ING.板豆腐|UNIT.盒	strings.js · 量詞例外	板豆腐|盒	모	
+COUNTER.ING.海苔|UNIT.大把	strings.js · 量詞例外	海苔|大把	넉넉히	
+COUNTER.ING.小黃瓜|UNIT.根	strings.js · 量詞例外	小黃瓜|根	개	
+COUNTER.ING.青蔥|UNIT.根	strings.js · 量詞例外	青蔥|根	뿌리	
+COUNTER.ING.蘆筍|UNIT.根	strings.js · 量詞例外	蘆筍|根	대	
+COUNTER.ING.培根|UNIT.片	strings.js · 量詞例外	培根|片	장	
+COUNTER.ING.大白菜|UNIT.片葉子	strings.js · 量詞例外	大白菜|片葉子	장	
+COUNTER.ING.大蒜|UNIT.瓣	strings.js · 量詞例外	大蒜|瓣	쪽	
+COUNTER.ING.甘栗仁|UNIT.包	strings.js · 量詞例外	甘栗仁|包	봉지	
+COUNTER.ING.蘆筍|UNIT.把	strings.js · 量詞例外	蘆筍|把	단	
+COUNTER.ING.蝦子|UNIT.隻	strings.js · 量詞例外	蝦子|隻	마리	
+COUNTER.ING.洋蔥|UNIT.顆	strings.js · 量詞例外	洋蔥|顆	개	
+COUNTER.ING.馬鈴薯|UNIT.顆	strings.js · 量詞例外	馬鈴薯|顆	개	
+COUNTER.ING.檸檬|UNIT.顆	strings.js · 量詞例外	檸檬|顆	개	
+COUNTER.ING.紅甜椒|UNIT.顆	strings.js · 量詞例外	紅甜椒|顆	개	
+COUNTER.ING.黃甜椒|UNIT.顆	strings.js · 量詞例外	黃甜椒|顆	개	
+COUNTER.ING.蘑菇|UNIT.顆	strings.js · 量詞例外	蘑菇|顆	개	
+COUNTER.ING.雞蛋|UNIT.顆	strings.js · 量詞例外	雞蛋|顆	개	
+COUNTER.ING.蛋黃|UNIT.顆	strings.js · 量詞例外	蛋黃|顆	개	
+COUNTER.ING.胡蘿蔔|UNIT.根	strings.js · 量詞例外	胡蘿蔔|根	개	
+COUNTER.ING.櫛瓜|UNIT.根	strings.js · 量詞例外	櫛瓜|根	개	
+COUNTER.ING.韓國櫛瓜|UNIT.根	strings.js · 量詞例外	韓國櫛瓜|根	개	
+COUNTER.ING.熟透香蕉|UNIT.根	strings.js · 量詞例外	熟透香蕉|根	개	
+COUNTER.ING.杏鮑菇|UNIT.根	strings.js · 量詞例外	杏鮑菇|根	개	
+COUNTER.ING.青辣椒|UNIT.根	strings.js · 量詞例外	青辣椒|根	개	
+COUNTER.ING.青陽辣椒|UNIT.根	strings.js · 量詞例外	青陽辣椒|根	개	
+COUNTER.ING.義式乾辣椒|UNIT.根	strings.js · 量詞例外	義式乾辣椒|根	개	
+COUNTER.ING.香菇|UNIT.朵	strings.js · 量詞例外	香菇|朵	개	
 NOTE.也可用整隻雞切塊；本食譜採這個組合，因為我就愛	strings.js · 份量括號註	也可用整隻雞切塊；本食譜採這個組合，因為我就愛	통닭을 토막 내서 써도 된다. 이 조합인 건 그냥 내가 좋아해서.	
 NOTE.約 150g	strings.js · 份量括號註	約 150g	약 150g	
 NOTE.推薦昆布魚乾或牛骨風味	strings.js · 份量括號註	推薦昆布魚乾或牛骨風味	다시마·멸치나 사골 육수를 추천.	

@@ -774,7 +774,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=4"></script>
+<script src="strings.js?v=6"></script>
 <script src="recipes.js?v=86"></script>
 <script>
 /* ══════════════════════════════════════════════
@@ -844,7 +844,9 @@ const t = k => S(k) ?? k;
 /* 買菜清單份量後面那個小括號。是「句」不是「詞」，所以跟 TERM 分開放 ——
    兩者混在一起，生成語系總表時就分不出哪些該用詞彙的標準審，哪些該用句子的。
    用中文原句當 key（不是編號）：位置會變，句子不會，重複的句子也自動共用一條。 */
-const tr = x => (isKo() && S('TERM.' + x)) || x;
+/* 詞彙：食材、單位、標籤、菜系、醬料組名 —— recipes.js 存的是編號（ING./UNIT./…），
+   這裡把編號換成當前語言的顯示名。查不到就退回編號裡的中文，畫面不會出現編號。 */
+const tr = id => S(id) ?? String(id).replace(/^[A-Z]+\./, '');
 /* note 是連著全形括號一起拆出來的，查表前脫掉、查到再包回去 ——
    這樣 NOTE 的 key 就是乾淨的句子，跟 recipes.js 裡看到的一樣 */
 const bare = x => String(x).replace(/^（|）$/g, '');
@@ -854,14 +856,18 @@ const trNote = x => (isKo() && S('NOTE.' + bare(x)) && '（' + S('NOTE.' + bare(
    中文的「根」對大蔥是 대、對紅蘿蔔是 개；「支」對西洋芹是 대。
    所以先查「食材|中文單位」，沒中才回退到 TERM 的一般翻譯。
    ⚠️ 沒列在這裡的組合會用一般翻譯，不要為了「看起來一致」自己補 —— 補錯比沒補糟。 */
+/* 量詞：先查「食材＋單位」的例外，沒有才用單位的一般翻譯。
+   ⚠️ name / unit 進來的都是編號（ING.洋蔥 · UNIT.顆），最後一定要 tr() 回顯示名，
+   不然中文模式會把編號原樣印在畫面上。 */
 const counterOf = (name, unit) =>
-  (isKo() && (S('COUNTER.' + name + '|' + unit) || S('TERM.' + unit))) || unit;
+  (isKo() && (S(`COUNTER.${name}|${unit}`) || S(unit))) || tr(unit);
 
 /* 量詞沒登記時要出聲 —— 不然它會安靜地用一般翻譯，錯了也看不出來。
 
    會變的量詞才檢查：g / ml / 匙 不隨名詞變，個／대／장／쪽／가닥 才會。
    啟動時掃一次就好，不必每次渲染都算。 */
-const COUNTER_UNITS = ['根', '支', '朵', '顆', '瓣', '盒', '包', '片葉子', '數朵'];
+const COUNTER_UNITS = ['根', '支', '朵', '顆', '瓣', '盒', '包', '片葉子', '數朵']
+  .map(u => 'UNIT.' + u);   // recipes.js 存的是編號
 function auditCounters() {
   const miss = new Set();
   RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
@@ -869,7 +875,7 @@ function auditCounters() {
       const u = splitUnit(unit || '').u;
       if (!COUNTER_UNITS.includes(u)) return;
       const key = (BUY_AS[name] || name) + '|' + u;
-      if (!S('COUNTER.' + key)) miss.add(key + '  →  ' + (S('TERM.' + u) || u));
+      if (!S('COUNTER.' + key)) miss.add(`${zhOf(BUY_AS[name] || name)}|${zhOf(u)}  →  ${tr(u)}`);
     });
   }));
   if (miss.size) console.warn(
@@ -901,9 +907,9 @@ function auditUnits() {
   RECIPES.forEach(r => (r.shoppingList || []).forEach(item => {
     (Array.isArray(item) ? [item] : item.items).forEach(([name, , unit]) => {
       const u = splitUnit(unit || '').u;
-      if (!u || /^[\d\s./–-]*(g|ml)?$/.test(u)) return;      // 純數字和 g/ml 不用翻
-      if (S('TERM.' + u) || S('COUNTER.' + (BUY_AS[name] || name) + '|' + u)) return;
-      miss.add(`${u}（${name}）`);
+      if (!u || /^[\d\s./–-]*(g|ml)?$/.test(zhOf(u))) return;   // 純數字和 g/ml 不用翻
+      if (S(u) || S(`COUNTER.${BUY_AS[name] || name}|${u}`)) return;
+      miss.add(`${zhOf(u)}（${zhOf(name)}）`);
     });
   }));
   if (miss.size) console.warn(
@@ -1029,7 +1035,7 @@ const FIELD_ID = { urgentNote: 'urgent' };
 const ARR_ID   = { stages: 'stage', steps: 'step', tips: 'tip', prep: 'prep' };
 const L  = (r, f)    => S(`R${r.id}.${FIELD_ID[f] || f}`) ?? r[f];
 const has  = (r, f) => `R${r.id}.${FIELD_ID[f] || f}` in STR;   // 有沒有這個欄位（取代舊的 r.note ? …）
-const zhOf = id => (STR[id] || {}).zh || '';                    // 比對關鍵字一律用中文，不跟著語言跑
+const zhOf = id => (STR[id] || {}).zh ?? String(id).replace(/^[A-Z]+\./, '');   // 比對一律用中文，不跟著語言跑
 const La = (r, f, i) => S(`R${r.id}.${ARR_ID[f]}.${i + 1}`);
 
 /* 慢寶的自我介紹，兩種語言各一組句子 */
@@ -1926,10 +1932,10 @@ const CATS = [
               '番茄','青椒','甜椒','高麗','芹','豆']],
 ];
 /* groc 是 fallback，要保持籠統 —— 它接的是所有沒被認出來的東西 */
-const catOf = n => (CATS.find(([, ws]) => ws.some(w => n.includes(w))) || ['groc'])[0];
+const catOf = n => (CATS.find(([, ws]) => ws.some(w => zhOf(n).includes(w))) || ['groc'])[0];
 
 /* 食譜寫的是料理時的形態，買菜清單要換成貨架上的形態 */
-const BUY_AS = { '蒜末': '大蒜' };
+const BUY_AS = { 'ING.蒜末': 'ING.大蒜' };   // 料理時的形態 → 貨架上的形態
 
 /* 彙總這份菜單要買的東西。買菜清單和底部橫條都靠它，兩邊才不會各算各的 */
 /* 一個名字一行。單位不同就並列，不要拆成兩行。
@@ -1985,7 +1991,7 @@ function aggregate(sel) {
    「麵」要寫成 直麵|麵條|冬粉，不能只寫「麵」—— 不然低筋麵粉、
    煎餅粉或中筋麵粉會一起被拉進來。 */
 const SHOW_AMOUNT = name =>
-  catOf(name) === 'meat' || /直麵|麵條|冬粉|麵醬|高湯/.test(name);
+  catOf(name) === 'meat' || /直麵|麵條|冬粉|麵醬|高湯/.test(zhOf(name));
 
 /* row.fixed（數朵、一小撮、1 湯匙 + 2 茶匙）永遠不顯示 —— 那些是煮飯時的講法 */
 const amountOf = row => SHOW_AMOUNT(row.name)
