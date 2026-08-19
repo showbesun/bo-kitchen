@@ -171,6 +171,30 @@ img { display: block; max-width: 100%; }
   animation: pop .32s cubic-bezier(.34,1.5,.64,1) both;
 }
 .bub > span { position: relative; z-index: 1; text-wrap: balance; }
+
+/* ⛔ 韓文絕對不能從字中間斷開。
+
+   瀏覽器預設把韓文當中日文處理 —— 任何字元之間都可以換行，所以
+   `맛있는` 會被切成 `맛 / 있는`。韓文有空格，斷行只能斷在空格。
+   `word-break: keep-all` 就是為這件事存在的。
+
+   ⚠️ 只能對韓文設。中文沒有空格，設了 keep-all 會整段無處可斷、撐爆版面。
+   所以靠 <html lang> 分流（setLang 會維護它）。
+
+   ⚠️ 同時關掉 text-wrap: balance。它為了「每行等長」會挑意想不到的位置斷，
+   跟「在該斷的地方斷」是兩個目標。韓文寧可長短不齊，也不要斷在怪地方。 */
+:lang(ko) .bub > span,
+:lang(ko) .r-sub,
+:lang(ko) .r-title,
+:lang(ko) .card-t,
+:lang(ko) .tray-line,
+:lang(ko) .sect-t,
+:lang(ko) .tips li,
+:lang(ko) .step,
+:lang(ko) .ing-name,
+:lang(ko) .urgent p { word-break: keep-all; }
+
+:lang(ko) .bub > span { text-wrap: initial; }
 .bub > svg {
   position: absolute;
   overflow: visible;
@@ -774,7 +798,7 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=20"></script>
+<script src="strings.js?v=21"></script>
 <script src="recipes.js?v=94"></script>
 <script>
 /* ══════════════════════════════════════════════
@@ -817,9 +841,17 @@ let portions = 2;
 let lang = localStorage.getItem('bo_lang')
   || (/^ko\b/i.test(navigator.language || '') ? 'ko' : 'zh');
 const isKo = () => lang === 'ko';
+
+/* ⚠️ 語言要標到 <html lang> 上，CSS 才有辦法只對韓文設斷行規則。
+   韓文有空格，斷行只能斷在空格；中文沒有空格，只能任意斷。
+   同一套規則套兩語一定有一邊壞掉，所以必須分開 —— 見 .bub 附近的 :lang(ko)。 */
+const markLang = () => { document.documentElement.lang = lang; };
+markLang();
+
 function setLang(v) {
   if (v === lang) return;
   lang = v; localStorage.setItem('bo_lang', v);
+  markLang();
   fadeNext = true;                 // 同一頁換語言，用淡的，不要左右滑
   route();                         // homeGreeted 維持原樣：在封面就留在封面
 }
