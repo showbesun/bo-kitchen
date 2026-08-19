@@ -807,6 +807,7 @@ const STR = {
   'COUNTER.ING.大白菜|UNIT.片葉子': { zh: '大白菜|片葉子', ko: '장' },
   'COUNTER.ING.大蒜|UNIT.瓣': { zh: '大蒜|瓣', ko: '쪽' },
   'COUNTER.ING.甘栗仁|UNIT.包': { zh: '甘栗仁|包', ko: '봉지' },
+  'COUNTER.ING.熟栗子|UNIT.顆': { zh: '熟栗子|顆', ko: '알' },
   'COUNTER.ING.蘆筍|UNIT.把': { zh: '蘆筍|把', ko: '단' },
   'COUNTER.ING.蝦子|UNIT.隻': { zh: '蝦子|隻', ko: '마리' },
   'COUNTER.ING.洋蔥|UNIT.顆': { zh: '洋蔥|顆', ko: '개' },
