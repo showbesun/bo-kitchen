@@ -1,0 +1,123 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>跟煮模式 · 進度呈現三案</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F9E6D1; --surface:#FFFCF7; --line:#E8D5BE; --text:#4A3B32;
+  --muted:#8A7361; --faint:#A89380; --brand:#B0724F; --gold:#D9A441;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:'Noto Sans TC',-apple-system,sans-serif;padding:22px 14px 60px}
+h2{font-size:15px;margin:34px 0 4px;letter-spacing:.5px}
+.sub{font-size:12px;color:var(--muted);margin:0 0 14px;line-height:1.6}
+.card{background:var(--surface);border-radius:14px;padding:16px;margin-bottom:10px;
+  border:1px solid var(--line)}
+
+/* ── 共用：菜色圖 ── */
+.dish{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:10px}
+
+/* ── 案 A：顯影（灰→彩） ── */
+.rowA{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.rowA .thumb{width:74px;flex:0 0 74px;border-radius:9px;overflow:hidden;position:relative;
+  border:1px solid var(--line)}
+.rowA .thumb img{width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  transition:filter .6s ease, opacity .6s ease}
+.rowA .meta{flex:1;min-width:0}
+.rowA .name{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rowA .step{font-size:11.5px;color:var(--faint);margin-top:2px}
+.done .name{color:var(--brand)}
+
+/* ── 案 B：由下往上填色 ── */
+.rowB{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.rowB .thumb{width:74px;flex:0 0 74px;border-radius:9px;overflow:hidden;position:relative;
+  border:1px solid var(--line)}
+.rowB .base{width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  filter:grayscale(1) opacity(.35)}
+.rowB .fill{position:absolute;inset:0;overflow:hidden;transition:height .6s ease}
+.rowB .fill img{width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  position:absolute;bottom:0}
+
+/* ── 案 C：手繪抖動的圓弧 ── */
+.rowC{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.ring{width:64px;height:64px;flex:0 0 64px;position:relative}
+.ring svg{position:absolute;inset:0;filter:url(#wob)}
+.ring img{position:absolute;inset:7px;width:50px;height:50px;border-radius:50%;
+  object-fit:cover}
+
+/* ── 上菜合影 ── */
+.table{margin-top:12px;border-radius:16px;overflow:hidden;position:relative;
+  background:url('assets/bg/wood.webp') repeat;background-size:150px;
+  padding:26px 16px 30px;text-align:center;
+  box-shadow:inset 0 0 60px rgba(74,59,50,.35)}
+.plates{display:flex;gap:10px;justify-content:center;align-items:flex-end}
+.plate{width:31%;border-radius:50%/32%;overflow:hidden;
+  box-shadow:0 8px 18px rgba(74,59,50,.4);border:3px solid #FFFCF7}
+.plate img{width:100%;aspect-ratio:1.25;object-fit:cover;display:block}
+.tline{margin-top:18px;font-size:15px;font-weight:700;color:#FFF8EC;
+  text-shadow:0 2px 6px rgba(74,59,50,.6)}
+.tsub{font-size:12px;color:#F2E2CB;margin-top:3px}
+.bo{width:76px;margin:-6px auto 0;display:block}
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="9" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter>
+</svg>
+
+<h2>案 A ── 顯影（灰階 → 彩色）</h2>
+<p class="sub">越接近完成，圖越清晰越有顏色。零新素材，用的是你那 21 張菜色圖。</p>
+<div class="card">
+  <div class="rowA"><div class="thumb"><img src="assets/dish/r18.webp" style="filter:grayscale(.75) opacity(.5)"></div>
+    <div class="meta"><div class="name">烤肉店那鍋大醬湯</div><div class="step">4 / 6　湯滾了，正在燉</div></div></div>
+  <div class="rowA done"><div class="thumb"><img src="assets/dish/r6.webp"></div>
+    <div class="meta"><div class="name">櫛瓜小煎餅　🍽 上菜！</div><div class="step">3 / 3</div></div></div>
+  <div class="rowA"><div class="thumb"><img src="assets/dish/r12.webp" style="filter:grayscale(1) opacity(.32)"></div>
+    <div class="meta"><div class="name">澱粉回魂脆邊馬鈴薯餅</div><div class="step">1 / 6　還在等澱粉沉澱</div></div></div>
+</div>
+
+<h2>案 B ── 由下往上填色</h2>
+<p class="sub">像鍋子慢慢裝滿。灰底是「還沒到」，彩色是「已經走過的」。</p>
+<div class="card">
+  <div class="rowB"><div class="thumb"><img class="base" src="assets/dish/r18.webp">
+      <div class="fill" style="height:67%"><img src="assets/dish/r18.webp"></div></div>
+    <div class="meta"><div class="name">烤肉店那鍋大醬湯</div><div class="step">4 / 6</div></div></div>
+  <div class="rowB"><div class="thumb"><img class="base" src="assets/dish/r6.webp">
+      <div class="fill" style="height:100%"><img src="assets/dish/r6.webp"></div></div>
+    <div class="meta"><div class="name" style="color:var(--brand)">櫛瓜小煎餅　🍽 上菜！</div><div class="step">3 / 3</div></div></div>
+  <div class="rowB"><div class="thumb"><img class="base" src="assets/dish/r12.webp">
+      <div class="fill" style="height:17%"><img src="assets/dish/r12.webp"></div></div>
+    <div class="meta"><div class="name">澱粉回魂脆邊馬鈴薯餅</div><div class="step">1 / 6</div></div></div>
+</div>
+
+<h2>案 C ── 手繪抖動的圈</h2>
+<p class="sub">用 app 現有的 <code>#wobble</code> 濾鏡畫圓弧，跟對話框、卡片同一套筆觸。</p>
+<div class="card">
+  <div class="rowC"><div class="ring">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="#E8D5BE" stroke-width="4"/>
+      <circle cx="32" cy="32" r="29" fill="none" stroke="#B0724F" stroke-width="4" stroke-linecap="round"
+        stroke-dasharray="182" stroke-dashoffset="61" transform="rotate(-90 32 32)"/></svg>
+      <img src="assets/dish/r18.webp"></div>
+    <div class="meta"><div class="name">烤肉店那鍋大醬湯</div><div class="step">4 / 6</div></div></div>
+  <div class="rowC"><div class="ring">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="#E8D5BE" stroke-width="4"/>
+      <circle cx="32" cy="32" r="29" fill="none" stroke="#D9A441" stroke-width="4" stroke-linecap="round"
+        stroke-dasharray="182" stroke-dashoffset="0" transform="rotate(-90 32 32)"/></svg>
+      <img src="assets/dish/r6.webp"></div>
+    <div class="meta"><div class="name" style="color:var(--brand)">櫛瓜小煎餅　🍽 上菜！</div><div class="step">3 / 3</div></div></div>
+</div>
+
+<h2>最後那一頁 ── 全部上桌</h2>
+<p class="sub">用現有的 <code>bg/wood.webp</code> 當桌面（食譜牆用的同一張），三道菜擺上去。
+沒生新圖 —— 先看這樣夠不夠，不夠再生一張真正的木桌。</p>
+<div class="table">
+  <div class="plates">
+    <div class="plate"><img src="assets/dish/r18.webp"></div>
+    <div class="plate"><img src="assets/dish/r6.webp"></div>
+    <div class="plate"><img src="assets/dish/r12.webp"></div>
+  </div>
+  <div class="tline">開飯了。</div>
+  <div class="tsub">三道，一次到位</div>
+</div>
+<img class="bo" src="assets/bo/eat_bowl.webp" alt="">
