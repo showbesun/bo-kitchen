@@ -1004,12 +1004,26 @@ const SUB_BASE_W = 375;   // 設計基準：現行最窄的 iPhone（SE）。她
    再疊一層就會開始誤報。誤報比不報糟：報幾次沒事之後，真的爆版那次也會被忽略。 */
 const SUB_SAFE = 6;
 
+/* ⚠️ 一定要等字體載完再量。app 用 Google Fonts 的 Noto Sans TC（display=swap），
+   稽核如果同步跑，量到的是備援字體 —— 寬度差很多，而且**每次開的結果還不一樣**
+   （看字體在不在快取裡）。2026-08-19 實測同一句量出 249 / 305 / 311 三種答案。 */
 function auditSubtitles() {
+  document.fonts.ready.then(measureSubtitles);
+}
+
+function measureSubtitles() {
   const probe = document.createElement('div');
   probe.style.cssText =
     `position:absolute;left:-9999px;top:0;visibility:hidden;width:${SUB_BASE_W}px`;
   probe.innerHTML = '<div class="page"><div class="r-card"><div class="r-sub"></div></div></div>';
   document.body.appendChild(probe);
+
+  /* ⚠️ 探針裡的 .page 要關掉縱向捲動，否則量到的寬度會**跟著瀏覽器變**。
+     `.page` 是 overflow-y:auto。桌機的實體捲軸會佔掉 15px（375 → 360，
+     可用寬 311 → 296），真手機的覆蓋式捲軸則不佔寬。
+     不關的話，同一份文案在桌機開會誤報一堆折行、在手機開又不報。
+     2026-08-19 實測：桌機 296 / 手機模擬 311 / 關掉之後兩邊都是 311。 */
+  probe.querySelector('.page').style.overflowY = 'hidden';
 
   const el = probe.querySelector('.r-sub');
   const cs = getComputedStyle(el);
@@ -2076,7 +2090,7 @@ auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
 auditNotes();
 auditKorean();
 auditUnits();
-auditSubtitles();         // 要量真的字體，所以在 CSS 進 DOM 之後
+auditSubtitles();         // 內部會等 document.fonts.ready —— 早於字體載完的量測是錯的
 auditAlignment();         // 對不齊是無聲的壞法，所以用 console.error 不是 warn
 
 /* ══════════ 起飛 ══════════ */
