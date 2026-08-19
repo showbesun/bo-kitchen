@@ -471,7 +471,7 @@ const RECIPES = [
         "UNIT.g"
       ],
       [
-        "ING.韓國櫛瓜",
+        "ING.櫛瓜",
         0.5,
         "UNIT.根"
       ],
@@ -605,7 +605,7 @@ const RECIPES = [
         "group": "PGRP.切塊"
       },
       {
-        "name": "ING.韓國櫛瓜",
+        "name": "ING.櫛瓜",
         "amount": "半根",
         "group": "PGRP.切塊"
       },
@@ -1203,8 +1203,8 @@ const RECIPES = [
         "group": "PGRP.開火前放旁邊"
       }
     ],
-    "prepTime": 14,
-    "cookTime": 21
+    "prepTime": 19,
+    "cookTime": 16
   },
   {
     "id": 10,
@@ -1581,8 +1581,8 @@ const RECIPES = [
         "group": "PGRP.切片"
       }
     ],
-    "prepTime": 10,
-    "cookTime": 22
+    "prepTime": 22,
+    "cookTime": 10
   },
   {
     "id": 13,
@@ -2335,7 +2335,7 @@ const RECIPES = [
         "UNIT.顆"
       ],
       [
-        "ING.韓國櫛瓜",
+        "ING.櫛瓜",
         0.33,
         "UNIT.根"
       ],
@@ -2372,7 +2372,7 @@ const RECIPES = [
         "group": "PGRP.切塊"
       },
       {
-        "name": "ING.韓國櫛瓜",
+        "name": "ING.櫛瓜",
         "amount": "1/3 根",
         "group": "PGRP.切片"
       },

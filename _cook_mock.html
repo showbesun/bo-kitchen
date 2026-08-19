@@ -1,0 +1,233 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>跟煮模式 · 可點草圖</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F9E6D1; --surface:#FFFCF7; --line:#E8D5BE; --text:#4A3B32;
+  --muted:#8A7361; --faint:#A89380; --brand:#B0724F; --brand-dim:#C9977A; --gold:#D9A441;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',-apple-system,sans-serif;
+  min-height:100dvh;display:flex;flex-direction:column}
+
+/* ── 頂：進度環一排 ───────────────────────────── */
+.rings{display:flex;gap:14px;justify-content:center;padding:16px 12px 12px;
+  position:sticky;top:0;background:var(--bg);z-index:3}
+.ring{width:76px;text-align:center;position:relative}
+.ring .art{width:64px;height:64px;margin:0 auto;position:relative}
+.ring svg{position:absolute;inset:0}   /* ⛔ 這裡不要抖 —— 她說「像畫壞掉的東西」 */
+.ring img{position:absolute;inset:8px;width:48px;height:48px;border-radius:50%;
+  object-fit:cover;transition:filter .5s}
+.ring.wait img{filter:grayscale(.55) opacity(.72)}
+.ring .nm{font-size:10.5px;color:var(--faint);margin-top:5px;line-height:1.35;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ring.now .nm{color:var(--brand);font-weight:700}
+.ring .served{font-size:10.5px;color:var(--gold);font-weight:700;margin-top:5px}
+
+/* ── 中：這一頁要做的事 ───────────────────────── */
+.wrap{flex:1;padding:6px 16px 96px;overflow-y:auto}
+.phase{font-size:12px;color:var(--faint);letter-spacing:2px;margin:10px 2px 12px}
+/* ⛔ 濾鏡不能套在卡片本身 —— 會把裡面的字一起位移，看起來像印壞了。
+   要套在一層純背景的 ::before 上，字浮在上面不受影響（app 的卡片就是這樣做的）。 */
+.task{position:relative;padding:15px 16px;margin-bottom:11px}
+.task::before{content:'';position:absolute;inset:0;z-index:0;
+  background:var(--surface);border:2px solid var(--line);
+  border-radius:16px 13px 15px 12px/13px 16px 12px 15px;filter:url(#wobble)}
+.task > *{position:relative;z-index:1}
+.task .who{font-size:11.5px;color:var(--brand-dim);font-weight:700;margin-bottom:5px}
+.task .what{font-size:16px;line-height:1.62}
+.task .what + .what{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line)}
+.task.wait{background:#FFF6E6}
+.task .tag{display:inline-block;font-size:11px;color:var(--gold);font-weight:700;margin-right:6px}
+
+/* 備料頁：一行一項，緊湊 */
+.prep{position:relative;padding:6px 14px;margin-bottom:11px}
+.prep::before{content:'';position:absolute;inset:0;z-index:0;
+  background:var(--surface);border:2px solid var(--line);
+  border-radius:16px 13px 15px 12px/13px 16px 12px 15px;filter:url(#wobble)}
+.prep > *{position:relative;z-index:1}
+.prep .it{display:flex;gap:9px;padding:9px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+.prep .it:last-child{border:0}
+.prep .ing{font-weight:700;font-size:14px;flex:0 0 auto}
+.prep .how{font-size:13px;color:var(--muted);line-height:1.55}
+.prep .min{color:var(--gold);font-weight:700;font-style:normal}
+.prep .amt{font-size:13px;color:var(--brand);font-weight:700;flex:0 0 auto}
+.prep .w{color:var(--gold);font-weight:700;font-size:12px;flex:0 0 auto}
+
+/* ── 底：下一步 ─────────────────────────────── */
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--bg) 72%,transparent);display:flex;gap:10px;align-items:center}
+.next{flex:1;background:var(--brand);color:#fff;border:0;border-radius:999px;
+  padding:15px;font-size:16px;font-weight:700;font-family:inherit}
+.next:active{transform:scale(.97)}
+.back{width:46px;height:46px;border-radius:50%;background:var(--surface);
+  border:1.5px solid var(--line);color:var(--muted);font-size:20px;font-family:inherit}
+.pg{position:fixed;left:0;right:0;bottom:76px;text-align:center;
+  font-size:11px;color:var(--faint);z-index:4;letter-spacing:1px}
+
+/* ── 最後一頁 ───────────────────────────────── */
+.table{margin:8px 0;border-radius:18px;overflow:hidden;position:relative;text-align:center;
+  background:url('assets/bg/wood.webp') repeat;background-size:150px;padding:30px 16px 34px;
+  box-shadow:inset 0 0 60px rgba(74,59,50,.35)}
+.plates{display:flex;gap:9px;justify-content:center;align-items:flex-end}
+.plate{width:31%;border-radius:50%/32%;overflow:hidden;border:3px solid #FFFCF7;
+  box-shadow:0 8px 18px rgba(74,59,50,.4)}
+.plate img{width:100%;aspect-ratio:1.25;object-fit:cover;display:block}
+.tline{margin-top:20px;font-size:17px;font-weight:700;color:#FFF8EC;text-shadow:0 2px 6px rgba(74,59,50,.6)}
+.tsub{font-size:12px;color:#F2E2CB;margin-top:4px}
+.note{font-size:11.5px;color:var(--faint);line-height:1.7;margin:14px 4px}
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <filter id="wobble">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/>
+  </filter>
+</svg>
+
+<div class="rings" id="rings"></div>
+<div class="pg" id="pg"></div>
+<div class="wrap" id="wrap"></div>
+<div class="bar"><button class="back" id="back">‹</button><button class="next" id="next">下一步</button></div>
+
+<!-- 帶時間戳，免得瀏覽器吃舊快取（草圖常常在改資料，踩過一次） -->
+<script>document.write('<scr'+'ipt src="strings.js?t='+Date.now()+'"></scr'+'ipt>');
+        document.write('<scr'+'ipt src="recipes.js?t='+Date.now()+'"></scr'+'ipt>');</script>
+<script>
+/* ══ 分頁演算法：_proto3.py 的 JS 版 ══
+   GAP=8、一頁最多 3 件、上菜不換頁（照 待辦_跟煮模式.md）。 */
+const GAP = 8, MAX = 3;
+/* ⭐ 排序：總時間短的在最前面／最左邊。
+   這樣「上菜！」會自然地從左往右一個一個亮起來，最慢的那道收在最後。 */
+const PICK = (location.hash.slice(1) || '18,6,12').split(',').map(Number)
+  .sort((a, b) => {
+    const t = i => { const r = RECIPES.find(x => x.id === i); return r.prepTime + r.cookTime; };
+    return t(a) - t(b) || a - b;
+  });
+
+const zh = id => (STR[id] || {}).zh || '';
+const byId = i => RECIPES.find(r => r.id === i);
+const WAIT = /靜置\s*(\d+)|放\s*(\d+)\s*分|醃(?:至少)?\s*(\d+)|泡\s*(\d+)\s*分/;
+
+/* 只有**備料清單**的時間要標起來（她指定的範圍）。
+   ⛔ 步驟卡不標 —— 一頁上好幾種顏色很醜。 */
+const hiMin = t => t.replace(/(\d+(?:[–~-]\d+)?\s*(?:分鐘|分|小時))/g, '<b class="min">$1</b>');
+
+/* 裹粉這類的份量沒有意義（薄薄沾一層，不是量出來的）—— 不顯示。 */
+const COAT = /沾|裹|拍掉/;
+
+function build(pick) {
+  const prep = [];
+  pick.forEach(i => (byId(i).prepNotes || []).forEach((p, n) => {
+    const how = zh(`R${i}.prep.${n + 1}`);
+    const m = how.match(WAIT);
+    prep.push({ dish: i, ing: zh(p.name), amt: p.amount || '', how,
+                wait: m ? +m.slice(1).find(Boolean) : 0 });
+  }));
+  prep.sort((a, b) => b.wait - a.wait || a.dish - b.dish);
+
+  const rows = [];
+  pick.forEach(i => byId(i).schedule.forEach(([t, what]) => {
+    if (t >= byId(i).prepTime) rows.push({ t, dish: i, what, done: what.includes('✅') });
+  }));
+  rows.sort((a, b) => a.t - b.t || a.dish - b.dish);
+
+  const pages = []; let cur = [];
+  rows.forEach((r, k) => {
+    cur.push(r);
+    const nx = rows[k + 1];
+    if (!nx || nx.t - r.t > GAP || cur.length >= MAX) { pages.push(cur); cur = []; }
+  });
+  const total = {}; pick.forEach(i => total[i] = rows.filter(r => r.dish === i).length);
+  return { prep, pages, total };
+}
+
+/* 乾淨的圓弧。⛔ 試過手繪抖動版（半徑帶隨機位移＋wobble 濾鏡），
+   她的評語是「像畫壞掉的東西」—— 三個圈並排時，抖動讀起來是瑕疵不是筆觸。 */
+function ring(id, frac) {
+  const R = 28, C = 2 * Math.PI * R;
+  return `<svg viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="${R}" fill="none" stroke="var(--line)" stroke-width="3.2"/>
+    <circle cx="32" cy="32" r="${R}" fill="none" stroke="${frac >= 1 ? 'var(--gold)' : 'var(--brand)'}"
+            stroke-width="3.6" stroke-linecap="round" transform="rotate(-90 32 32)"
+            stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"
+            style="transition:stroke-dashoffset .45s ease"/>
+  </svg>`;
+}
+
+const { prep, pages, total } = build(PICK);
+const LAST = pages.length + 1;      // 0=備料, 1..n=步驟, LAST=全部上桌
+let page = 0;
+const done = {}; PICK.forEach(i => done[i] = 0);
+
+/* 進度算到「正在看的這一頁」為止 —— 包含這頁。
+   ⛔ 我一度改成只算翻過去的頁，理由是「最後一步還沒做怎麼可以顯示上菜」。
+      那是我自己想出來的規則，她的判斷相反且更合理：
+      **最後一個步驟所在的那一頁就要顯示上菜** —— 步驟都寫著「上桌」了，
+      還要再翻一頁才承認它完成，很怪。 */
+function recount() {
+  PICK.forEach(i => done[i] = 0);
+  pages.slice(0, page).forEach(pg => pg.forEach(r => done[r.dish]++));
+  if (page === LAST) PICK.forEach(i => done[i] = total[i]);
+}
+
+function paint() {
+  recount();
+  const active = new Set((pages[page - 1] || []).map(r => r.dish));
+
+  // 備料頁不出現進度條 —— 那時候一格都還沒動，三個空圈只是佔位子
+  // 備料頁還沒開始、最後一頁全部做完 —— 兩邊都不需要進度環
+  document.getElementById('rings').style.display = (page === 0 || page === LAST) ? 'none' : 'flex';
+  document.getElementById('rings').innerHTML = PICK.map(i => {
+    const f = total[i] ? done[i] / total[i] : 0;
+    const fin = f >= 1;
+    const cls = fin ? '' : active.has(i) ? 'now' : 'wait';
+    return `<div class="ring ${cls}">
+      <div class="art">${ring(i, f)}<img src="${byId(i).image}"></div>
+      ${fin ? '<div class="served">上菜！</div>' : `<div class="nm">${zh('R' + i + '.title')}</div>`}
+    </div>`;
+  }).join('');
+
+  const wrap = document.getElementById('wrap');
+  document.getElementById('pg').textContent = (page + 1) + ' / ' + (LAST + 1);
+
+  if (page === 0) {
+    wrap.innerHTML = `<div class="phase">先把料備好</div>
+      <div class="prep">${prep.map(p => `
+        <div class="it">
+          <span class="ing">${p.ing}</span>
+          ${p.amt && !COAT.test(p.how) ? `<span class="amt">${p.amt}</span>` : ''}
+          <span class="how">${hiMin(p.how)}</span>
+        </div>`).join('')}</div>
+      <div class="note">要等的排在最前面 —— 先讓它們泡著、醃著，其他料才不會白切。</div>`;
+  } else if (page < LAST) {
+    /* 同一道菜的步驟併成一張卡，菜名只寫一次 —— 連續兩張卡都掛同一個名字看起來很傻。
+       卡片順序固定成 PICK 的順序（跟上面的進度環一致），不照時間排：
+       同一道菜一下最上面、一下跑到最下面，視覺上太錯亂。 */
+    const byDish = new Map();
+    pages[page - 1].forEach(r => {
+      if (!byDish.has(r.dish)) byDish.set(r.dish, []);
+      byDish.get(r.dish).push(r.what.replace(' ✅', ''));
+    });
+    wrap.innerHTML = PICK.filter(i => byDish.has(i)).map(i => `
+      <div class="task">
+        <div class="who">${zh('R' + i + '.title')}</div>
+        ${byDish.get(i).map(w => `<div class="what">${w}</div>`).join('')}
+      </div>`).join('');
+  } else {
+    wrap.innerHTML = `<div class="table">
+        <div class="plates">${PICK.map(i => `<div class="plate"><img src="${byId(i).image}"></div>`).join('')}</div>
+        <div class="tline">開飯了。</div><div class="tsub">${PICK.length} 道，一次到位</div>
+      </div>
+      <div class="note">這頁的木桌是拿食譜牆的貼圖充數的，真的圖還沒生。<br>
+      菜色圖也還沒去背，所以是圓形裁切、不是真的擺在桌上。</div>`;
+  }
+  document.getElementById('next').textContent = page === LAST ? '收工' : page === LAST - 1 ? '全部完成' : '下一步';
+  wrap.scrollTop = 0;
+}
+
+document.getElementById('next').onclick = () => { if (page < LAST) { page++; paint(); } };
+document.getElementById('back').onclick = () => { if (page > 0) { page--; paint(); } };
+paint();
+</script>
