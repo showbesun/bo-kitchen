@@ -4,7 +4,7 @@ app 用到的圖全部在這裡，沒有第二個地方。
 
 ```
 assets/
-  bo/       慢寶本人（34 張）
+  bo/       慢寶本人（35 張）
   dish/     菜色（17 張，檔名對應食譜 id）
   bg/       背景質感
   source/   生圖用的定稿參考 —— app 不會載入它們
@@ -37,14 +37,30 @@ assets/
 
 已去背成頭型，用在底部橫條和空狀態。
 
-### 抱食材／拿廚具（15 張）
+### 抱食材／拿廚具（14 張）
 
 `hold_beef` `hold_chicken` `hold_root` `hold_banana` `hold_basket` `hold_seaweed`
 `hold_kimchi` `hold_pot` `hold_lidpot` `hold_rice` `hold_spatula`
-`stir_pan` `taste_spoon` `crack_egg` `hourglass`
+`stir_pan` `taste_spoon` `crack_egg`
 
-用在食譜詳情的碎碎念，比對那道菜的主料。`crack_egg`、`stir_pan` 是備給以後的
-（蛋料理、燉飯），目前比對不到。
+用在食譜詳情的碎碎念，比對那道菜的主料。目前 21 道菜裡比對不到的只有
+`hold_beef` 和 `hold_rice`，備著等以後的牛肉菜和飯類。
+
+⛔ **沙漏那張不在這批裡面。** 它是計時器的臉（見下），出現在碎碎念裡
+會讓人以為某個東西正在計時。
+
+### 煮麵計時器（2 張）
+
+| 檔名 | 是什麼 | 用在哪 |
+|---|---|---|
+| `hourglass_wait` | 抱著沙漏，等到快睡著 | 計時中：彈窗 148px、右下小視窗 32px |
+| `hourglass_done` | 同一個框，張嘴在喊 | 時間到：同樣那兩處 |
+
+⚠️ **這兩張必須同尺寸同比例**（都是 560×678）—— 彈窗只換 `src` 不換版面，
+尺寸一差，倒數變成「好了」的那一刻整隻會跳一下。
+
+⚠️ **而且必須去背。** 時間到的時候小視窗整顆會變金色，
+米色底的圖會在金色上浮出一個方塊。
 
 ## dish/ — 菜色
 
@@ -100,6 +116,12 @@ assets/
 
 `bo_master.png` — **角色的唯一真相**。每次要生新的慢寶圖，都要附上它，
 否則畫出來的會一次比一次偏。詳見 `manbao` 技能。
+
+## bo_pending/ — 切好了、還沒進 app 的 PNG
+
+生完圖先落在這裡，要用的時候再轉成 WebP 放進 `bo/`。**app 不會載入這一夾。**
+
+目前還躺著沒用的：`hold_chopsticks`（拿筷子）、`hold_cutlery`（拿刀叉）。
 
 ---
 

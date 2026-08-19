@@ -569,6 +569,15 @@ R21.prep.9	strings.js · R21	切碎成蒜末	다진다
 R17.prep.1	strings.js · R17	舀一勺溫熱（不是滾燙）的高湯，放進番紅花泡至少 30 分鐘	따뜻한(끓지 않은) 육수를 한 국자 덜어 사프란을 최소 30분 우린다	
 R17.prep.2	strings.js · R17	切極細末	아주 잘게 다진다	
 R17.prep.3	strings.js · R17	分兩份；收尾那份冷藏到要用	두 몫으로 나누고 마무리용은 쓸 때까지 냉장한다	
+U40	strings.js · 介面與固定台詞	計時	타이머	
+U41	strings.js · 介面與固定台詞	開始	시작	
+U42	strings.js · 介面與固定台詞	停掉	그만	
+U43	strings.js · 介面與固定台詞	分	분	
+U45	strings.js · 介面與固定台詞	麵好了，快撈！	면 다 됐어. 얼른 건져!	
+U46	strings.js · 介面與固定台詞	點旁邊縮成小視窗，時間繼續跑	옆을 누르면 작은 창이 돼. 시간은 계속 가.	
+U47	strings.js · 介面與固定台詞	秒	초	
+U48	strings.js · 介面與固定台詞	好了！	다 됐어!	
+U49	strings.js · 介面與固定台詞	{n}還在跑。按開始就換成這道。	{n} 아직 가고 있어. 시작하면 이걸로 바뀌어.	
 ING.乾海帶	strings.js · 介面與固定台詞	乾海帶	마른 미역	
 ING.中筋麵粉	strings.js · 介面與固定台詞	中筋麵粉	중력분	
 ING.滾水	strings.js · 介面與固定台詞	滾水	끓는 물	

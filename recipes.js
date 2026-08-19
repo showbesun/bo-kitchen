@@ -259,7 +259,11 @@ const RECIPES = [
       }
     ],
     "prepTime": 5,
-    "cookTime": 20
+    "cookTime": 20,
+    "timer": {
+      "step": 1,
+      "min": 8
+    }
   },
   {
     "id": 4,
@@ -1374,7 +1378,11 @@ const RECIPES = [
     ],
     "tips": 4,
     "prepTime": 5,
-    "cookTime": 10
+    "cookTime": 10,
+    "timer": {
+      "step": 1,
+      "min": 4
+    }
   },
   {
     "id": 14,
@@ -1486,7 +1494,11 @@ const RECIPES = [
     ],
     "tips": 4,
     "prepTime": 10,
-    "cookTime": 20
+    "cookTime": 20,
+    "timer": {
+      "step": 1,
+      "min": 8
+    }
   },
   {
     "id": 15,
@@ -1701,7 +1713,11 @@ const RECIPES = [
     ],
     "tips": 5,
     "prepTime": 8,
-    "cookTime": 27
+    "cookTime": 27,
+    "timer": {
+      "step": 4,
+      "min": 8
+    }
   },
   {
     "id": 17,

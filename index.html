@@ -691,6 +691,89 @@ ol.steps li::before {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1.5C16.5 5.5 16.5 14.5 10 18.5 3.5 14.5 3.5 5.5 10 1.5Z' fill='%23A9A47C' transform='rotate(-38 10 10)'/%3E%3C/svg%3E");
 }
 
+/* ─────────── 煮麵計時器 ───────────
+   只有「麵下鍋」那一步有（r3 / r13 / r14 / r16）。
+   ⛔ 別的步驟不要加：燉 30 分鐘那種你不會盯著，麵三分鐘的差別是脆和爛。
+   分鐘由使用者自己轉 —— 包裝上寫幾分只有她看得到，程式不該猜。 */
+.tm-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-left: 7px; padding: 3px 10px 4px;
+  /* 白底配淡邊框太虛（步驟卡本來就是白的），改成淺褐色的印章 */
+  background: rgba(176, 114, 79, .11);
+  border: 1.2px solid rgba(176, 114, 79, .26);
+  border-radius: 13px 10px 12px 9px / 10px 13px 9px 12px;   /* 手繪的歪，跟卡片同一套 */
+  color: var(--brand); font-size: 12px; font-weight: 700; font-family: inherit;
+  letter-spacing: .3px; vertical-align: 1px;
+}
+.tm-btn svg { flex: none; margin-top: -1px; }
+.tm-btn:active { transform: scale(.94); background: rgba(176, 114, 79, .2); }
+/* 彈窗。⚠️ app 的規則是「不要用彈窗當畫面」—— 那講的是導覽目的地
+   （食譜、菜單那種要能返回的）。計時器是暫時的控制器，不是一個地方。
+   ⛔ 不要給它 hash 路由：煮麵中按上一頁應該回食譜牆，不是關計時器。 */
+.tm-mask {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(74, 59, 50, .34);
+  backdrop-filter: blur(2px);
+  display: grid; place-items: center;
+  animation: tmIn .18s ease;
+}
+@keyframes tmIn { from { opacity: 0 } to { opacity: 1 } }
+.tm-card {
+  width: min(88vw, 320px); padding: 22px 20px 24px; text-align: center;
+  background: var(--bg); border-radius: 26px 22px 25px 21px / 22px 26px 21px 25px;
+  box-shadow: 0 18px 44px rgba(74, 59, 50, .28);
+}
+.tm-bo { width: 148px; display: block; margin: -4px auto -10px; }
+.tm-dial { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.tm-dial button {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--line);
+  color: var(--brand); font-size: 20px; font-family: inherit; line-height: 1;
+}
+.tm-num { font-size: 26px; font-weight: 700; min-width: 118px; letter-spacing: 1px; }  /* 寬度固定，「8分」換成「4分30秒」時 ± 兩顆不會跟著移動 */
+.tm-num small { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 3px; }
+.tm-start {
+  margin-top: 11px; background: var(--brand); color: #fff; border: 0;
+  border-radius: 999px; padding: 10px 30px; font-size: 14px; font-weight: 700;
+  font-family: inherit;
+}
+.tm-start:active { transform: scale(.96); }
+.tm-live {
+  font-size: 56px; font-weight: 700; color: var(--brand);
+  letter-spacing: 2px; font-variant-numeric: tabular-nums;   /* 數字不會跳寬 */
+  margin: 2px 0 4px;
+}
+.tm-live.done { font-size: 25px; color: var(--gold); line-height: 1.5; }
+.tm-hint { font-size: 11.5px; color: var(--faint); margin-top: 12px; }
+
+/* 縮小以後的小視窗。⛔ 不要把時間塞回底部條 —— 那是慢寶講話的地方，
+   被計時器佔走牠就沒得講話了。而且收起來之後要看時間，總不能叫人再回
+   步驟裡找那顆「計時」：小視窗自己就是回去的按鈕。 */
+.tm-mini {
+  position: fixed; right: 14px; z-index: 30;
+  bottom: calc(var(--tray-h) + env(safe-area-inset-bottom) + 12px);
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 14px 5px 7px;
+  background: var(--bg); border: 1.5px solid var(--line);
+  border-radius: 21px 17px 20px 16px / 17px 21px 16px 20px;
+  box-shadow: 0 7px 20px rgba(74, 59, 50, .2);
+  font-family: inherit;
+  animation: tmMiniIn .22s ease;
+}
+.tm-mini img { width: 32px; display: block; }
+.tm-mini span {
+  font-size: 16.5px; font-weight: 700; color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+.tm-mini:active { transform: scale(.95); }
+.tm-mini.done {
+  background: var(--gold); border-color: var(--gold);
+  animation: tmMiniIn .22s ease, tmPulse 1.2s ease-in-out .22s infinite;
+}
+.tm-mini.done span { color: var(--text); }
+@keyframes tmMiniIn { from { opacity: 0; transform: translateY(10px) scale(.9); } to { opacity: 1; } }
+@keyframes tmPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
 /* ─────────── 今日菜單 ─────────── */
 
 .tray {
@@ -806,8 +889,8 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=25"></script>
-<script src="recipes.js?v=102"></script>
+<script src="strings.js?v=31"></script>
+<script src="recipes.js?v=103"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -815,7 +898,7 @@ ol.steps li::before {
    ══════════════════════════════════════════════ */
 
 /* 素材版本。換過圖就 bump 一次，否則瀏覽器會一直用舊的快取 */
-const ASSETS = '68';
+const ASSETS = '69';
 const asset = p => p + '?v=' + ASSETS;
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1129,7 +1212,8 @@ const BO = {
   basket:  asset('assets/bo/hold_basket.webp'),
   lidpot:  asset('assets/bo/hold_lidpot.webp'),
   stirpan: asset('assets/bo/stir_pan.webp'),
-  glass:   asset('assets/bo/hourglass.webp'),
+  glass:   asset('assets/bo/hourglass_wait.webp'),  // 計時中：抱著沙漏，等到快睡著
+  shout:   asset('assets/bo/hourglass_done.webp'),  // 時間到：同一個框、同一個比例，只有臉在喊
   egg:     asset('assets/bo/crack_egg.webp'),
   rice:    asset('assets/bo/hold_rice.webp'),
   think:   asset('assets/bo/hang_think.webp'),   // 問答流程用，流程還沒做
@@ -1344,7 +1428,8 @@ function typeSeq(el, lines, last, onDone) {
    掛著＝還沒決定，下來＝要煮了 —— 這是這個 app 的核心儀式。
    食譜詳情是使用者已經在看怎麼煮，牠不該還吊在樹上。
    （2026-08-16 一度放進 hang_u / hang_think / hang_drape，違反故事線，已撤。）
-   目前只有兩張合格，重複得很明顯 —— 抱著食材那批進來就會夠。
+   目前只有一張合格。（沙漏那張 2026-08-19 撤掉了 —— 沙漏現在是計時器的臉，
+   出現在碎碎念裡會讓人以為某個東西正在計時。）比對到食材的那批進來就不會單調。
 
    每個姿勢兩個數字，都是量出來的，不是調到好看為止：
 
@@ -1367,7 +1452,6 @@ function typeSeq(el, lines, last, onDone) {
 const MURMUR_POSES = [
   //                          at      ml       臉盤中心 / 右緣
   { img: () => BO.cookA, at: 37, ml: +14 },   // 站著攪碗  25% / 70%
-  { img: () => BO.glass, at: 40, ml: +9 },   // 看沙漏    27% / 67%
 ];
 
 /* 抱著食材的姿勢，對應那道菜的主料 —— 牠抱著牛肉出現在銅盤烤肉那頁，
@@ -1904,7 +1988,9 @@ function stepsHTML(r) {
       const line = La(r, 'steps', si++);
       if (skipping) return;
       if (!open) { out += '<ol class="steps">'; open = true; }
-      out += `<li>${stepText(line)}</li>`;
+      const tm = r.timer && r.timer.step === si
+        ? ` <button class="tm-btn" onclick="tmOpen(${r.id})">${TM_ICON}${t('U40')}</button>` : '';
+      out += `<li>${stepText(line)}${tm}</li>`;
     }
   });
   out += open ? '</ol>' : '';
@@ -2116,9 +2202,153 @@ function buyHTML(sel) {
 
 /* ══════════ 底部菜單條 ══════════ */
 
+/* ══════════ 煮麵計時器 ══════════
+
+   ⚠️ 手機鎖屏或切到別的 app 時，瀏覽器會凍結網頁 —— 時間到不會主動響。
+   回到畫面時秒數仍然正確（用結束時間戳算，不是累加），這是刻意的取捨：
+   真要能在鎖屏時響得做成 PWA 加通知權限，那是另一個規模的工程。（她 2026-08-19 同意）
+
+   ⛔ 不要改成「每個有分鐘數的步驟都能計時」。
+   燉 30 分鐘那種本來就不必盯，麵條三分鐘的差別才是脆跟爛。 */
+/* 步驟裡那顆按鈕上的小沙漏。不是 emoji（那個牠不要）—— 畫的，跟彈窗裡抱的那個一路 */
+const TM_ICON = `<svg width="9" height="12" viewBox="0 0 9 12" fill="none" stroke="currentColor"
+  stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+  ><path d="M1.4 1h6.2M1.4 11h6.2M2 1c0 2.2 2.5 3.4 2.5 5S2 8.8 2 11M7 1c0 2.2-2.5 3.4-2.5 5S7 8.8 7 11"/></svg>`;
+
+const TM_KEY = 'bo_timer';       // { rid, endAt, dur } —— dur 是秒
+const TM_SEC = 'bo_timer_sec';   // { [rid]: 上次設的秒數 } —— 家裡那包麵永遠是同一個時間
+                                 // ⚠️ 舊的 bo_timer_min 存的是分鐘，換單位時一起換鍵，免得 5 分被讀成 5 秒
+let tmTick = null, tmAudio = null;
+
+const tmState = () => { try { return JSON.parse(localStorage.getItem(TM_KEY)) || null; } catch { return null; } };
+const tmLeft = st => st ? Math.max(0, Math.round((st.endAt - Date.now()) / 1000)) : 0;
+const tmFmt = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+
+/* 轉盤上的數字。分和秒**永遠都寫**，即使是「4分00秒」——
+   整分時把秒藏起來的話，使用者根本不知道這裡調得動秒數。 */
+const tmDial = sec =>
+  `${Math.floor(sec / 60)}<small>${t('U43')}</small>` +
+  `${String(sec % 60).padStart(2, '0')}<small>${t('U47')}</small>`;
+
+function tmSavedSec(rid, fallback) {
+  try { return (JSON.parse(localStorage.getItem(TM_SEC)) || {})[rid] || fallback; } catch { return fallback; }
+}
+function tmRememberSec(rid, sec) {
+  let all = {}; try { all = JSON.parse(localStorage.getItem(TM_SEC)) || {}; } catch {}
+  all[rid] = sec; localStorage.setItem(TM_SEC, JSON.stringify(all));
+}
+
+/* 兩聲輕柔的鈴。用 WebAudio 合成，不必多一個音檔 ——
+   而且 AudioContext 必須由使用者的點擊建立，「開始」那一下剛好解決了這件事。 */
+function tmChime() {
+  if (!tmAudio) return;
+  [0, .42].forEach((delay, i) => {
+    const o = tmAudio.createOscillator(), g = tmAudio.createGain();
+    o.type = 'sine'; o.frequency.value = i ? 784 : 988;      // G5 · B5
+    const t0 = tmAudio.currentTime + delay;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.22, t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.9);
+    o.connect(g).connect(tmAudio.destination);
+    o.start(t0); o.stop(t0 + 1);
+  });
+}
+
+/* 彈窗。開著的時候顯示大數字；點外面收起來但**繼續跑**（底部條照樣報時），
+   按「停掉」才是真的停。不然煮麵那幾分鐘會被鎖在視窗裡看不到步驟。 */
+function tmClose() { const m = $('#tm-mask'); if (m) m.remove(); tmMini(); }
+
+/* 大視窗開著就不要小的，兩個一起出現很吵。⚠️ 每秒重寫 innerHTML 圖會閃，
+   所以只改變動的那兩個字。 */
+function tmMini() {
+  const st = tmState();
+  let el = $('#tm-mini');
+  if (!st || $('#tm-mask')) { if (el) el.remove(); return; }
+  if (!el) {
+    el = document.createElement('button');
+    el.id = 'tm-mini'; el.className = 'tm-mini';
+    el.innerHTML = `<img alt=""><span></span>`;
+    el.onclick = () => { const s = tmState(); if (s) tmOpen(s.rid); };
+    document.body.appendChild(el);
+  }
+  const left = tmLeft(st);
+  const src = left ? BO.glass : BO.shout;
+  const txt = left ? tmFmt(left) : t('U48');
+  el.classList.toggle('done', !left);
+  if ($('img', el).getAttribute('src') !== src) $('img', el).setAttribute('src', src);
+  if ($('span', el).textContent !== txt) $('span', el).textContent = txt;
+}
+
+function tmOpen(rid) {
+  const r = byId(rid); if (!r || !r.timer) return;
+  tmClose();
+  let sec = tmSavedSec(rid, r.timer.min * 60);   // 一格 30 秒，下限 30 秒、上限 30 分
+  const mask = document.createElement('div');
+  mask.className = 'tm-mask'; mask.id = 'tm-mask';
+  mask.onclick = e => { if (e.target === mask) tmClose(); };   // 點外面：縮成小視窗，繼續跑
+  document.body.appendChild(mask);
+  tmMini();                                                   // 大的開了，小的收掉
+
+  const draw = () => {
+    const st = tmState();
+    // ⚠️ 一次只有一個計時器，但它是**屬於某一道菜的**。蕎麥麵還在跑的時候
+    //    跑去義大利麵按計時，看到的必須是義大利麵的轉盤，不是蕎麥麵的剩餘時間。
+    const mine = st && st.rid === rid;
+    const left = mine ? tmLeft(st) : null;
+    mask.innerHTML = `<div class="tm-card">
+      <img class="tm-bo" src="${mine && !left ? BO.shout : BO.glass}" alt="">
+      ${mine ? `
+        <div class="tm-live ${left ? '' : 'done'}">${left ? tmFmt(left) : t('U45')}</div>
+        <button class="tm-start" id="tm-stop">${t('U42')}</button>
+        ${left ? `<div class="tm-hint">${t('U46')}</div>` : ''}`
+      : `
+        <div class="tm-dial">
+          <button id="tm-down">−</button>
+          <div class="tm-num">${tmDial(sec)}</div>
+          <button id="tm-up">＋</button>
+        </div>
+        <button class="tm-start" id="tm-go">${t('U41')}</button>
+        ${st ? `<div class="tm-hint">${t('U49').replace('{n}', L(byId(st.rid), 'title'))}</div>` : ''}`}
+    </div>`;
+    if (mine) {
+      $('#tm-stop', mask).onclick = () => { tmStop(); tmClose(); };
+    } else {
+      $('#tm-down', mask).onclick = () => { sec = Math.max(30, sec - 30); draw(); };
+      $('#tm-up', mask).onclick = () => { sec = Math.min(1800, sec + 30); draw(); };
+      $('#tm-go', mask).onclick = () => {
+        // AudioContext 一定要由使用者的點擊建立 —— 「開始」這一下剛好
+        try { tmAudio = tmAudio || new (window.AudioContext || window.webkitAudioContext)(); } catch {}
+        tmRememberSec(rid, sec);
+        localStorage.setItem(TM_KEY, JSON.stringify({ rid, endAt: Date.now() + sec * 1000, dur: sec }));
+        tmStart(); draw();
+      };
+    }
+  };
+  mask.__draw = draw;
+  draw();
+}
+
+function tmStop() { localStorage.removeItem(TM_KEY); clearInterval(tmTick); tmTick = null; tmMini(); }
+
+function tmStart() {
+  clearInterval(tmTick);
+  tmTick = setInterval(() => {
+    const st = tmState();
+    if (!st) return clearInterval(tmTick);
+    if (tmLeft(st) === 0 && !st.rang) {
+      st.rang = 1; localStorage.setItem(TM_KEY, JSON.stringify(st));
+      tmChime();
+    }
+    tmMini();
+    const m = $('#tm-mask'); if (m && m.__draw) m.__draw();
+  }, 1000);
+  tmMini();
+}
+
 function paintTray() {
   const path = (location.hash || '#/').slice(1) || '/';
-  const [face, line] = boLine(path);
+  let [face, line] = boLine(path);
+
   $('#tray-face').src = face;
   $('#tray-txt').textContent = line;
   const badge = $('#tray-badge');
@@ -2135,6 +2365,8 @@ $('#tray-go').onclick = () => {
   if (!path.startsWith('/menu')) return go('/menu');
   return shoppingDone() ? finishShopping() : back();
 };
+
+if (tmState()) tmStart();  // 重新載入時把還在跑的計時接回來（用結束時間戳，不是累加）
 
 auditCounters();          // 定義都齊了才跑 —— BUY_AS 在後面
 auditNotes();
