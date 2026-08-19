@@ -593,6 +593,14 @@ img { display: block; max-width: 100%; }
 .r-stat + .r-stat { border-left: 1px solid var(--line); padding-left: 14px; }
 .r-stat .k { font-size: 10.5px; letter-spacing: 1.5px; color: var(--faint); }
 .r-stat .v { font-size: 14.5px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+
+/* 時間那格拆成兩行：備料 / 開火。
+   小標籤用 <i>，跟卡片上的 .card-m i 同一個做法 —— 細、淡、不搶數字。 */
+.r-stat .v.split { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; }
+.r-stat .v.split i {
+  font-style: normal; font-weight: 400; font-size: 10.5px;
+  color: var(--faint); margin-right: 5px;
+}
 .portion { display: flex; align-items: center; gap: 3px; margin-top: 1px; }
 
 .r-add {
@@ -798,8 +806,8 @@ ol.steps li::before {
 </div>
 
 <!-- 改完 recipes.js 就把 v 往上加一號，不然瀏覽器會一直吃舊的快取 -->
-<script src="strings.js?v=21"></script>
-<script src="recipes.js?v=94"></script>
+<script src="strings.js?v=22"></script>
+<script src="recipes.js?v=96"></script>
 <script>
 /* ══════════════════════════════════════════════
    慢寶 · 骨架
@@ -1427,19 +1435,17 @@ function boLine(path) {
    韓文自己加回「약」和小時，等於兩邊邏輯分岔 —— 2026-08-17 糾正。
 
    韓文從數字組，不維護死字串：新增食譜自動就有。 */
-const cardTime = t => {
-  const raw = String(t || '')
-    .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
-    .replace(/約\s*/g, '')
-    .replace(/\s+/g, '');
-  if (isKo()) {
-    const m = raw.match(/([\d.]+)\s*分鐘?/);
-    if (m) return Math.round(+m[1]) + '분';
-  }
-  return raw
-    .replace(/([\d.]+)/g, ' $1 ')
-    .replace(/\s+/g, ' ').trim();
-};
+/* 時間一律從 prepTime / cookTime 兩個數字算出來，不再存字串。
+
+   ⛔ 以前存 `time: '約45分鐘'`，結果它跟 schedule 各自漂移 ——
+   2026-08-19 盤點：r2 差 25 分、r10 差 120 分。兩套數字沒有人負責對齊。
+   現在只有一組來源，顯示是算出來的，想漂也漂不了。
+
+   卡片顯示合計（要決定「今天煮不煮得完」），詳情頁拆成備料／開火
+   （備料可以提前做，開火不行 —— 那才是拆開的意義）。 */
+const totalTime = r => (r.prepTime || 0) + (r.cookTime || 0);
+const mins = n => isKo() ? `${n}분` : `${n} 分`;
+
 
 /* 小於 1 的份量寫成分數 —— 食譜寫「1/4 根」不寫「0.25 根」。
    縮放後會出現 0.375 這種不常見的值，那就維持小數，不硬湊。 */
@@ -1701,7 +1707,7 @@ function cardHTML(r) {
       <div class="card-b" onclick="go('/recipe/${r.id}')">
         <div class="card-t">${esc(L(r, 'title'))}</div>
         <div class="card-m">
-          <span><i>時間</i>${esc(cardTime(r.time))}</span>
+          <span><i>${t('U10')}</i>${esc(mins(totalTime(r)))}</span>
           <span><i>難度</i>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)}</span>
         </div>
 
@@ -1748,7 +1754,12 @@ function renderRecipe(el, m) {
       <div class="r-stats">
         <div class="r-stat">
           <div class="k">${t('U10')}</div>
-          <div class="v">${esc(cardTime(r.time))}</div>
+          ${r.cookTime ? `
+          <div class="v split">
+            <span><i>${t('U34')}</i>${esc(mins(r.prepTime || 0))}</span>
+            <span><i>${t('U35')}</i>${esc(mins(r.cookTime))}</span>
+          </div>` : `
+          <div class="v">${esc(mins(totalTime(r)))}</div>`}
         </div>
         <div class="r-stat">
           <div class="k">${t('U11')}</div>
