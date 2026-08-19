@@ -617,6 +617,7 @@ ING.秀珍菇	strings.js · 介面與固定台詞	秀珍菇	느타리버섯
 ING.紅甜椒	strings.js · 介面與固定台詞	紅甜椒	빨강 파프리카	
 ING.紅酒	strings.js · 介面與固定台詞	紅酒	레드와인	
 ING.義大利直麵	strings.js · 介面與固定台詞	義大利直麵	스파게티	
+ING.義大利麵	strings.js · 介面與固定台詞	義大利麵	파스타면	
 ING.胡蘿蔔	strings.js · 介面與固定台詞	胡蘿蔔	당근	
 ING.芝麻油	strings.js · 介面與固定台詞	芝麻油	참기름	
 ING.菇類	strings.js · 介面與固定台詞	菇類	버섯	
@@ -825,7 +826,7 @@ NOTE.Carnaroli	strings.js · 份量括號註	Carnaroli	카르나롤리
 NOTE.約 250–300g；嫩頭、中段、硬梗分開用	strings.js · 份量括號註	約 250–300g；嫩頭、中段、硬梗分開用	약 250–300g. 끝부분·가운데·밑동을 나눠서 쓴다.	
 NOTE.迷你的最好	strings.js · 份量括號註	迷你的最好	미니 사이즈 추천	
 NOTE.約 0.5g 那包的 1/4；剩下密封冷藏	strings.js · 份量括號註	約 0.5g 那包的 1/4；剩下密封冷藏	0.5g 한 봉지의 1/4 정도. 남은 것은 밀봉해 냉장한다.	
-NOTE.Bucatini 或 Spaghetti	strings.js · 份量括號註	Bucatini 或 Spaghetti	부카티니 또는 스파게티	
+NOTE.吸管麵 Bucatini 或直麵 Spaghetti 都可以	strings.js · 份量括號註	吸管麵 Bucatini 或直麵 Spaghetti 都可以	부카티니든 스파게티든 다 된다	
 NOTE.整番茄，認明 DOP 標示	strings.js · 份量括號註	整番茄，認明 DOP 標示	홀토마토. DOP 표시를 확인한다.	
 NOTE.乾辣椒或辣椒片	strings.js · 份量括號註	乾辣椒或辣椒片	홀이든 플레이크든 상관없다	
 NOTE.煮麵水用	strings.js · 份量括號註	煮麵水用	면 삶는 물에 넣는다	

@@ -1311,8 +1311,8 @@ const RECIPES = [
         "group": "PGRP.切段"
       }
     ],
-    "prepTime": 15,
-    "cookTime": 0
+    "prepTime": 8,
+    "cookTime": 7
   },
   {
     "id": 11,
@@ -2053,9 +2053,9 @@ const RECIPES = [
         "UNIT.g"
       ],
       [
-        "ING.義大利直麵",
+        "ING.義大利麵",
         160,
-        "UNIT.g（Bucatini 或 Spaghetti）"
+        "UNIT.g（吸管麵 Bucatini 或直麵 Spaghetti 都可以）"
       ],
       [
         "ING.San Marzano DOP 去皮整番茄",
@@ -2129,7 +2129,7 @@ const RECIPES = [
       ],
       [
         23,
-        "番茄醬汁中小火慢熬收濃；同時煮麵水滾下粗管麵"
+        "番茄醬汁中小火慢熬收濃；同時煮麵水滾下麵條"
       ],
       [
         28,
